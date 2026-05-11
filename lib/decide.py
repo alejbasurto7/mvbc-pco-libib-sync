@@ -5,13 +5,25 @@ MEMBER_STATUSES: set[str] = {"Member", "Associate Member"}
 
 
 def expected_patron_id(person: Person) -> str:
-    """The Libib patron_id we expect for this person.
+    """The Libib patron_id we assign when CREATING a new patron for this person.
 
-    Post-migration (per spec §16) every Libib patron's patron_id equals the
-    PCO person.id; pre-migration the value lives in PCO's remote_id field.
-    The `or` covers both populations and people with no remote_id at all.
+    Always returns PCO `person.id` — the canonical, post-migration namespace.
+    Going forward, every patron we create is keyed by PCO id.
     """
-    return person.remote_id or person.id
+    return person.id
+
+
+def candidate_patron_ids(person: Person) -> list[str]:
+    """All Libib patron_id values that could legitimately match this person.
+
+    Returns [person.id] for post-PCO-only people, or [person.id, person.remote_id]
+    for migrated people. Used to match existing Libib patrons regardless of
+    which id-scheme they were created under (some Libib patrons have CCB IDs
+    from the pre-PCO era, others have PCO IDs from newer additions).
+    """
+    if person.remote_id and person.remote_id != person.id:
+        return [person.id, person.remote_id]
+    return [person.id]
 
 
 def is_eligible(person: Person) -> bool:
@@ -23,6 +35,18 @@ def is_eligible(person: Person) -> bool:
     )
 
 
+def _find_matching_patron(
+    person: Person,
+    patrons_by_id: dict[str, Patron],
+) -> Patron | None:
+    """Return the Libib patron for this person, checking both id schemes."""
+    for pid in candidate_patron_ids(person):
+        match = patrons_by_id.get(pid)
+        if match is not None:
+            return match
+    return None
+
+
 def compute_desired_actions(
     pco_people: list[Person],
     libib_patrons: list[Patron],
@@ -31,8 +55,10 @@ def compute_desired_actions(
 
     Pure: no I/O, no mutation of inputs.
 
-    Lookup: a PCO person matches the Libib patron whose patron_id equals the
-    person's expected_patron_id (i.e., remote_id or id).
+    Lookup: a PCO person matches the Libib patron whose patron_id equals
+    EITHER the person's PCO id OR (for migrated people) their CCB remote_id.
+    This handles Libib's mixed historical state where some patron_ids are
+    CCB IDs and others are PCO IDs.
     """
     patrons_by_id: dict[str, Patron] = {}
     for patron in libib_patrons:
@@ -44,8 +70,7 @@ def compute_desired_actions(
 
     actions: list[Action] = []
     for person in pco_people:
-        expected_id = expected_patron_id(person)
-        existing = patrons_by_id.get(expected_id)
+        existing = _find_matching_patron(person, patrons_by_id)
         if is_eligible(person):
             assert person.email is not None
             if existing is None:
@@ -57,7 +82,7 @@ def compute_desired_actions(
                             "first_name": person.first_name,
                             "last_name": person.last_name,
                             "email": person.email,
-                            "patron_id": expected_id,
+                            "patron_id": expected_patron_id(person),
                         },
                     )
                 )
@@ -105,10 +130,12 @@ def find_orphan_patrons(
     pco_people: list[Person],
     libib_patrons: list[Patron],
 ) -> list[Patron]:
-    """Libib patrons whose patron_id matches no PCO person.
+    """Libib patrons whose patron_id matches no PCO person via either id scheme.
 
     Per spec §4.3, every Libib patron should have a PCO counterpart.
     Orphans are anomalies worth surfacing but never auto-actioned.
     """
-    expected_ids = {expected_patron_id(p) for p in pco_people}
-    return [pat for pat in libib_patrons if pat.patron_id not in expected_ids]
+    valid_ids: set[str] = set()
+    for person in pco_people:
+        valid_ids.update(candidate_patron_ids(person))
+    return [pat for pat in libib_patrons if pat.patron_id not in valid_ids]

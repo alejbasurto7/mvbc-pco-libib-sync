@@ -63,16 +63,34 @@ If any condition flips false, the patron should be frozen.
 
 ## 4. Action types
 
-**Patron correspondence** is established by `patron_id`, never by email. We accept a dual-namespace state in Libib: patrons created during the CCB era retain their CCB-derived `patron_id`, while patrons created after the PCO migration (by this sync, going forward) get their PCO `person.id`. The canonical lookup spans both:
+**Patron correspondence** is established by `patron_id`, never by email. Libib's `patron_id` field is in a mixed state: some patrons (older, often CCB-era) have CCB Person IDs as their `patron_id`, while others (recently added) have PCO IDs. Verified empirically during Phase 0 dry-run.
+
+The matcher tries BOTH candidate keys for each PCO person:
 
 ```python
-def expected_patron_id(pco_person) -> str:
-    return pco_person.remote_id or pco_person.id
+def candidate_patron_ids(person) -> list[str]:
+    if person.remote_id and person.remote_id != person.id:
+        return [person.id, person.remote_id]   # PCO id first (modern)
+    return [person.id]
+
+def find_matching_libib_patron(person, patrons_by_id) -> Patron | None:
+    for pid in candidate_patron_ids(person):
+        if pid in patrons_by_id:
+            return patrons_by_id[pid]
+    return None
 ```
 
-For a person who came through the CCB → PCO migration, PCO carries the original CCB ID in `remote_id`, so the lookup returns the CCB ID — matching the existing Libib patron. For a person who joined post-migration (no CCB heritage, no `remote_id`), the lookup returns `person.id`, and any patron we create for them is stored under that PCO id.
+When CREATING a new patron, we always assign the PCO id as the new `patron_id` (the canonical going-forward namespace):
 
-This avoids a one-shot bulk-rewrite of every Libib patron_id (the migration script `migrate_patron_ids.py` exists for the case where someone wants to normalize the namespace later, but is not required for the sync to work correctly). The cost of the dual namespace is one extra `or` in the lookup; the field is opaque to humans.
+```python
+def expected_patron_id(person) -> str:
+    return person.id
+```
+
+This means:
+- Existing Libib patrons keep whatever scheme they were created under (PCO or CCB)
+- New patrons (created by this sync) use PCO ids exclusively
+- Eventually, attrition retires the legacy CCB-id rows naturally; no bulk migration needed
 
 Pre-migration historical context: Libib's `patron_id` values were populated by a prior CCB ↔ Libib sync system that this project replaces. That earlier sync used CCB Person IDs as Libib patron IDs. MVBC has since moved their congregation database from CCB to PCO; PCO carries each migrated person's original CCB ID forward in the `remote_id` field.
 

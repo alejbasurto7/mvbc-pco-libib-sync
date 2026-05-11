@@ -18,17 +18,45 @@ def make_person(**overrides) -> Person:
 
 
 class TestExpectedPatronId:
-    def test_uses_remote_id_when_present(self):
-        p = make_person(id="pco-1", remote_id="ccb-42")
-        assert expected_patron_id(p) == "ccb-42"
+    """expected_patron_id is the patron_id we ASSIGN when creating new patrons.
 
-    def test_falls_back_to_id_when_remote_id_is_none(self):
+    Post-PCO-migration canonical: always person.id.
+    """
+
+    def test_returns_person_id_when_remote_id_present(self):
+        p = make_person(id="pco-1", remote_id="ccb-42")
+        assert expected_patron_id(p) == "pco-1"
+
+    def test_returns_person_id_when_remote_id_none(self):
         p = make_person(id="pco-1", remote_id=None)
         assert expected_patron_id(p) == "pco-1"
 
-    def test_falls_back_to_id_when_remote_id_is_empty_string(self):
+    def test_returns_person_id_when_remote_id_empty(self):
         p = make_person(id="pco-1", remote_id="")
         assert expected_patron_id(p) == "pco-1"
+
+
+class TestCandidatePatronIds:
+    """candidate_patron_ids lists ALL valid patron_ids the person could match.
+
+    Used to look up existing Libib patrons whose patron_id might be either
+    the PCO id (modern) or the CCB remote_id (legacy).
+    """
+
+    def test_no_remote_id_returns_only_pco_id(self):
+        from lib.decide import candidate_patron_ids
+        p = make_person(id="pco-1", remote_id=None)
+        assert candidate_patron_ids(p) == ["pco-1"]
+
+    def test_with_remote_id_returns_both(self):
+        from lib.decide import candidate_patron_ids
+        p = make_person(id="pco-1", remote_id="ccb-42")
+        assert candidate_patron_ids(p) == ["pco-1", "ccb-42"]
+
+    def test_pco_id_first_so_modern_scheme_wins(self):
+        from lib.decide import candidate_patron_ids
+        p = make_person(id="pco-1", remote_id="ccb-42")
+        assert candidate_patron_ids(p)[0] == "pco-1"
 
 
 class TestIsEligible:
@@ -95,15 +123,44 @@ class TestComputeDesiredActions_Create:
         actions = compute_desired_actions([person], [])
         assert actions == []
 
-    def test_create_uses_remote_id_when_present(self):
+    def test_create_uses_pco_id_for_new_patron_even_when_remote_id_present(self):
+        # We always assign PCO id when creating; remote_id is for matching only
         person = make_person(id="pco-1", remote_id="ccb-99")
         actions = compute_desired_actions([person], [])
-        assert actions[0].target["patron_id"] == "ccb-99"
+        assert actions[0].target["patron_id"] == "pco-1"
 
     def test_existing_eligible_patron_no_diff_returns_empty(self):
         person = make_person(id="pco-1", remote_id=None)
         patron = make_patron(patron_id="pco-1")
         actions = compute_desired_actions([person], [patron])
+        assert actions == []
+
+    def test_matches_libib_patron_by_pco_id(self):
+        # Modern Libib state: patron stored under PCO id
+        person = make_person(id="pco-1", remote_id="ccb-42")
+        patron = make_patron(patron_id="pco-1")
+        assert compute_desired_actions([person], [patron]) == []
+
+    def test_matches_libib_patron_by_ccb_remote_id(self):
+        # Legacy Libib state: patron stored under CCB id (the remote_id)
+        person = make_person(id="pco-1", remote_id="ccb-42")
+        patron = make_patron(patron_id="ccb-42")
+        assert compute_desired_actions([person], [patron]) == []
+
+    def test_prefers_pco_id_match_when_both_present(self):
+        # Two Libib patrons exist — one with PCO id, one with CCB id —
+        # for the same person. (Shouldn't happen normally; defensive.) We
+        # match the PCO-id one and leave the CCB-id one as an orphan.
+        person = make_person(id="pco-1", remote_id="ccb-42",
+                             first_name="Ana", last_name="Smith",
+                             email="ana@example.com")
+        modern_patron = make_patron(patron_id="pco-1", email="ana@example.com",
+                                    first_name="Ana", last_name="Smith")
+        legacy_patron = make_patron(patron_id="ccb-42", email="old@example.com",
+                                    first_name="Different", last_name="Person")
+        # Order in input shouldn't matter
+        actions = compute_desired_actions([person], [legacy_patron, modern_patron])
+        # Matched modern_patron (same data) → no update needed
         assert actions == []
 
 
@@ -222,8 +279,19 @@ class TestFindOrphanPatrons:
         result = find_orphan_patrons([person], [orphan])
         assert result == [orphan]
 
-    def test_orphan_detection_uses_expected_patron_id(self):
-        # remote_id should match
+    def test_orphan_detection_accepts_match_via_ccb_remote_id(self):
+        # Legacy Libib state: patron stored under CCB remote_id
         person = make_person(id="pco-1", remote_id="ccb-42")
         patron = make_patron(patron_id="ccb-42")
         assert find_orphan_patrons([person], [patron]) == []
+
+    def test_orphan_detection_accepts_match_via_pco_id(self):
+        # Modern Libib state: patron stored under PCO id
+        person = make_person(id="pco-1", remote_id="ccb-42")
+        patron = make_patron(patron_id="pco-1")
+        assert find_orphan_patrons([person], [patron]) == []
+
+    def test_orphan_only_when_neither_key_matches(self):
+        person = make_person(id="pco-1", remote_id="ccb-42")
+        orphan = make_patron(patron_id="some-other-id")
+        assert find_orphan_patrons([person], [orphan]) == [orphan]
