@@ -1,0 +1,10 @@
+requests>=2.31,<3
+resend>=2.0,<3
+Pillow>=10.0,<12
+qrcode[pil]>=7.4,<9
+python-dotenv>=1.0,<2
+
+# Test dependencies
+pytest>=8.0,<9
+responses>=0.25,<1
+pytest-mock>=3.12,<4
