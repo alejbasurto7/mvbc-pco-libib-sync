@@ -89,6 +89,35 @@ def test_get_patron_returns_patron_on_200(client):
     assert result is not None
     assert result.patron_id == "pco-1"
     assert result.email == "ana@example.com"
+    assert result.tags == ()
+
+
+@responses.activate
+def test_get_patron_parses_single_tag(client):
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/ssm@example.com",
+        json={"patron_id": "1", "first_name": "M", "last_name": "R",
+              "email": "ssm@example.com", "barcode": "BC", "freeze": 0,
+              "tags": "ssm"},
+        status=200,
+    )
+    result = client.get_patron("ssm@example.com")
+    assert result is not None
+    assert result.tags == ("ssm",)
+
+
+@responses.activate
+def test_get_patron_parses_comma_separated_tags(client):
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/staff@example.com",
+        json={"patron_id": "2", "first_name": "S", "last_name": "T",
+              "email": "staff@example.com", "barcode": "BC2", "freeze": 0,
+              "tags": "ssm, staff , vip"},
+        status=200,
+    )
+    result = client.get_patron("staff@example.com")
+    assert result is not None
+    assert result.tags == ("ssm", "staff", "vip")  # whitespace trimmed
 
 
 @responses.activate

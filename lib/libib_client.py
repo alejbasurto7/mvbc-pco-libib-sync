@@ -78,14 +78,7 @@ class LibibClient:
             if not rows:
                 break
             for row in rows:
-                yield Patron(
-                    patron_id=str(row.get("patron_id", "")),
-                    first_name=row.get("first_name") or "",
-                    last_name=row.get("last_name") or "",
-                    email=row.get("email") or "",
-                    barcode=row.get("barcode"),
-                    is_frozen=bool(row.get("freeze", 0)),
-                )
+                yield self._patron_from_dict(row)
             max_per_page = int(payload.get("max_per_page", 50))
             if len(rows) < max_per_page:
                 break  # last (partial) page
@@ -158,6 +151,8 @@ class LibibClient:
 
     @staticmethod
     def _patron_from_dict(row: dict) -> Patron:
+        tags_raw = row.get("tags") or ""
+        tags = tuple(t.strip() for t in tags_raw.split(",") if t.strip())
         return Patron(
             patron_id=str(row.get("patron_id", "")),
             first_name=row.get("first_name") or "",
@@ -165,4 +160,5 @@ class LibibClient:
             email=row.get("email") or "",
             barcode=row.get("barcode"),
             is_frozen=bool(row.get("freeze", 0)),
+            tags=tags,
         )

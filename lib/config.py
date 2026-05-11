@@ -38,6 +38,7 @@ class Config:
     libib_login_url: str
     stability_hours: float
     baseline_mode: bool
+    protected_tags: tuple[str, ...]
 
 
 def _truthy(v: str | None) -> bool:
@@ -52,6 +53,10 @@ def load_config() -> Config:
             f"For local dev, copy .env.example to .env and fill in values."
         )
     gmail_user = os.environ["GMAIL_USER"]
+    protected_tags_raw = os.environ.get("PROTECTED_TAGS", "ssm")
+    protected_tags = tuple(
+        t.strip() for t in protected_tags_raw.split(",") if t.strip()
+    )
     return Config(
         pco_app_id=os.environ["PCO_APP_ID"],
         pco_secret=os.environ["PCO_SECRET"],
@@ -65,4 +70,5 @@ def load_config() -> Config:
         libib_login_url=os.environ["LIBIB_LOGIN_URL"],
         stability_hours=float(os.environ.get("STABILITY_HOURS", "24")),
         baseline_mode=_truthy(os.environ.get("BASELINE_MODE")),
+        protected_tags=protected_tags,
     )

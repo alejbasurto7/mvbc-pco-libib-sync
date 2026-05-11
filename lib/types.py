@@ -35,6 +35,7 @@ class Patron:
     email: str
     barcode: Optional[str]
     is_frozen: bool
+    tags: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

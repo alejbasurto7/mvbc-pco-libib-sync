@@ -70,6 +70,27 @@ def test_missing_gmail_app_password_raises(monkeypatch):
         load_config()
 
 
+def test_protected_tags_default_to_ssm(monkeypatch):
+    _set_required(monkeypatch)
+    monkeypatch.delenv("PROTECTED_TAGS", raising=False)
+    cfg = load_config()
+    assert cfg.protected_tags == ("ssm",)
+
+
+def test_protected_tags_parses_comma_separated(monkeypatch):
+    _set_required(monkeypatch)
+    monkeypatch.setenv("PROTECTED_TAGS", "ssm, staff , vip")
+    cfg = load_config()
+    assert cfg.protected_tags == ("ssm", "staff", "vip")
+
+
+def test_protected_tags_empty_yields_empty_tuple(monkeypatch):
+    _set_required(monkeypatch)
+    monkeypatch.setenv("PROTECTED_TAGS", "")
+    cfg = load_config()
+    assert cfg.protected_tags == ()
+
+
 def _set_required(monkeypatch):
     for k, v in [
         ("PCO_APP_ID", "x"),

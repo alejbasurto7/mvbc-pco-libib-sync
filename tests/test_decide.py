@@ -203,6 +203,43 @@ class TestComputeDesiredActions_Freeze:
         actions = compute_desired_actions([person], [])
         assert actions == []
 
+    def test_protected_tag_skips_freeze(self):
+        """A non-eligible person whose Libib patron is tagged with a protected
+        tag (e.g., `ssm`) should NOT be auto-frozen."""
+        person = make_person(id="pco-1", membership="Non-Member")
+        patron = make_patron(patron_id="pco-1", is_frozen=False, tags=("ssm",))
+        actions = compute_desired_actions(
+            [person], [patron], protected_tags=frozenset({"ssm"}),
+        )
+        assert actions == []
+
+    def test_protected_tag_matches_anywhere_in_list(self):
+        """Patron tagged with multiple values; any match prevents freeze."""
+        person = make_person(membership="Non-Member")
+        patron = make_patron(is_frozen=False, tags=("staff", "ssm", "other"))
+        actions = compute_desired_actions(
+            [person], [patron], protected_tags=frozenset({"ssm"}),
+        )
+        assert actions == []
+
+    def test_unprotected_tag_still_freezes(self):
+        """A non-protected tag offers no protection."""
+        person = make_person(membership="Non-Member")
+        patron = make_patron(is_frozen=False, tags=("random",))
+        actions = compute_desired_actions(
+            [person], [patron], protected_tags=frozenset({"ssm"}),
+        )
+        assert len(actions) == 1
+        assert actions[0].action_type == "FREEZE_PATRON"
+
+    def test_default_no_protected_tags(self):
+        """With no protected_tags kwarg, even ssm-tagged patrons get frozen."""
+        person = make_person(membership="Non-Member")
+        patron = make_patron(is_frozen=False, tags=("ssm",))
+        actions = compute_desired_actions([person], [patron])
+        assert len(actions) == 1
+        assert actions[0].action_type == "FREEZE_PATRON"
+
 
 class TestComputeDesiredActions_Updates:
     def test_first_name_change_emits_update(self):

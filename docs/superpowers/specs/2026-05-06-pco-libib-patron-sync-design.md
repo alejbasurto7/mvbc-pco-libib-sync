@@ -59,7 +59,7 @@ A PCO person should have an active (unfrozen) Libib patron account when **all** 
 2. Person has a primary `email` (Libib uses email as the patron key)
 3. Person has not been destroyed in PCO
 
-If any condition flips false, the patron should be frozen.
+If any condition flips false, the patron should be frozen — **unless the Libib patron is tagged with one of the `PROTECTED_TAGS`** (default: `ssm`). Patrons holding a protected tag are never auto-frozen. This carries forward the case of non-members granted library access through partner relationships (e.g., Sandy Springs Mission staff). Configure via the `PROTECTED_TAGS` env var (comma-separated).
 
 ## 4. Action types
 

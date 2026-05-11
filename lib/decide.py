@@ -50,6 +50,8 @@ def _find_matching_patron(
 def compute_desired_actions(
     pco_people: list[Person],
     libib_patrons: list[Patron],
+    *,
+    protected_tags: frozenset[str] = frozenset(),
 ) -> list[Action]:
     """Compute actions needed to bring Libib in line with PCO.
 
@@ -59,6 +61,11 @@ def compute_desired_actions(
     EITHER the person's PCO id OR (for migrated people) their CCB remote_id.
     This handles Libib's mixed historical state where some patron_ids are
     CCB IDs and others are PCO IDs.
+
+    `protected_tags`: Libib patrons whose tags include any of these strings
+    are never FREEZE_PATRON'd, even if their PCO state would normally trigger
+    it. Used to preserve non-member patrons granted library access by other
+    means (e.g., partner-org staff tagged `ssm`).
     """
     patrons_by_id: dict[str, Patron] = {}
     for patron in libib_patrons:
@@ -114,15 +121,18 @@ def compute_desired_actions(
                     )
         else:
             if existing is not None and not existing.is_frozen:
-                actions.append(
-                    Action(
-                        person_id=person.id,
-                        action_type="FREEZE_PATRON",
-                        # Use the patron's *current* email — Libib's update
-                        # endpoint is keyed by the email it currently knows.
-                        target={"email": existing.email},
+                # Skip freezing patrons with a protected tag (e.g., ssm).
+                # They have library access for reasons outside PCO state.
+                if not (set(existing.tags) & protected_tags):
+                    actions.append(
+                        Action(
+                            person_id=person.id,
+                            action_type="FREEZE_PATRON",
+                            # Use the patron's *current* email — Libib's update
+                            # endpoint is keyed by the email it currently knows.
+                            target={"email": existing.email},
+                        )
                     )
-                )
     return actions
 
 

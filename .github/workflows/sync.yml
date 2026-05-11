@@ -75,6 +75,7 @@ jobs:
           STABILITY_HOURS: "24"
           LIBIB_LOGIN_URL: "https://www.libib.com/u/mvbchurch"
           BASELINE_MODE: ${{ vars.BASELINE_MODE || 'false' }}
+          PROTECTED_TAGS: ${{ vars.PROTECTED_TAGS || 'ssm' }}
         run: python run.py
 
       - name: Commit state changes
