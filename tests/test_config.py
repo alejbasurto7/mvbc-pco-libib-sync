@@ -8,17 +8,27 @@ def test_load_config_from_env(monkeypatch):
     monkeypatch.setenv("PCO_SECRET", "sec1")
     monkeypatch.setenv("LIBIB_API_KEY", "lkey")
     monkeypatch.setenv("LIBIB_API_USER", "luser")
-    monkeypatch.setenv("RESEND_API_KEY", "re_xxx")
-    monkeypatch.setenv("EMAIL_FROM", "MVBC <a@b>")
+    monkeypatch.setenv("GMAIL_USER", "alex@gmail.com")
+    monkeypatch.setenv("GMAIL_APP_PASSWORD", "abcdefghijklmnop")
+    monkeypatch.setenv("EMAIL_FROM", "MVBC Library <alex@gmail.com>")
     monkeypatch.setenv("LIBIB_LOGIN_URL", "https://x")
 
     cfg = load_config()
     assert cfg.pco_app_id == "app1"
     assert cfg.libib_api_key == "lkey"
-    assert cfg.email_from == "MVBC <a@b>"
+    assert cfg.gmail_user == "alex@gmail.com"
+    assert cfg.gmail_app_password == "abcdefghijklmnop"
+    assert cfg.email_from == "MVBC Library <alex@gmail.com>"
     assert cfg.stability_hours == 24.0  # default
     assert cfg.baseline_mode is False  # default
-    assert cfg.email_backend == "resend"  # default
+    assert cfg.email_backend == "gmail"  # default
+
+
+def test_email_from_defaults_to_gmail_user(monkeypatch):
+    _set_required(monkeypatch)
+    monkeypatch.delenv("EMAIL_FROM", raising=False)
+    cfg = load_config()
+    assert cfg.email_from == cfg.gmail_user
 
 
 def test_stability_hours_parses_float(monkeypatch):
@@ -46,7 +56,28 @@ def test_missing_required_env_raises(monkeypatch):
         load_config()
 
 
+def test_missing_gmail_user_raises(monkeypatch):
+    _set_required(monkeypatch)
+    monkeypatch.delenv("GMAIL_USER", raising=False)
+    with pytest.raises(RuntimeError, match="GMAIL_USER"):
+        load_config()
+
+
+def test_missing_gmail_app_password_raises(monkeypatch):
+    _set_required(monkeypatch)
+    monkeypatch.delenv("GMAIL_APP_PASSWORD", raising=False)
+    with pytest.raises(RuntimeError, match="GMAIL_APP_PASSWORD"):
+        load_config()
+
+
 def _set_required(monkeypatch):
-    for k in ["PCO_APP_ID", "PCO_SECRET", "LIBIB_API_KEY", "LIBIB_API_USER",
-              "RESEND_API_KEY", "EMAIL_FROM", "LIBIB_LOGIN_URL"]:
-        monkeypatch.setenv(k, "x")
+    for k, v in [
+        ("PCO_APP_ID", "x"),
+        ("PCO_SECRET", "x"),
+        ("LIBIB_API_KEY", "x"),
+        ("LIBIB_API_USER", "x"),
+        ("GMAIL_USER", "alex@gmail.com"),
+        ("GMAIL_APP_PASSWORD", "abcdefghijklmnop"),
+        ("LIBIB_LOGIN_URL", "x"),
+    ]:
+        monkeypatch.setenv(k, v)

@@ -67,10 +67,11 @@ jobs:
           PCO_SECRET: ${{ secrets.PCO_SECRET }}
           LIBIB_API_KEY: ${{ secrets.LIBIB_API_KEY }}
           LIBIB_API_USER: ${{ secrets.LIBIB_API_USER }}
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
           EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
           EMAIL_REPLY_TO: ${{ secrets.EMAIL_REPLY_TO }}
-          EMAIL_BACKEND: resend
+          EMAIL_BACKEND: gmail
           STABILITY_HOURS: "24"
           LIBIB_LOGIN_URL: "https://www.libib.com/u/mvbchurch"
           BASELINE_MODE: ${{ vars.BASELINE_MODE || 'false' }}

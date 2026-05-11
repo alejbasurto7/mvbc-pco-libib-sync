@@ -1,15 +1,78 @@
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lib.sender import ResendSender
+from lib.sender import GmailSMTPSender, render_welcome_email
 
 
-def test_resend_sender_sends_with_attachment():
-    sender = ResendSender(api_key="re_test", default_from="MVBC <a@b>")
-    with patch("lib.sender.resend") as fake_resend:
-        fake_resend.Emails.send.return_value = {"id": "msg-1"}
+def test_gmail_sender_sends_basic():
+    with patch("lib.sender.smtplib.SMTP") as fake_smtp:
+        fake_smtp_instance = fake_smtp.return_value.__enter__.return_value
+        sender = GmailSMTPSender(
+            gmail_user="alex@gmail.com",
+            gmail_app_password="abcdefghijklmnop",
+        )
         result = sender.send(
+            to="ana@example.com",
+            subject="Welcome",
+            body_html="<p>Hi</p>",
+            body_text="Hi",
+        )
+        fake_smtp_instance.login.assert_called_once_with("alex@gmail.com", "abcdefghijklmnop")
+        fake_smtp_instance.send_message.assert_called_once()
+        msg = fake_smtp_instance.send_message.call_args[0][0]
+        assert msg["To"] == "ana@example.com"
+        assert msg["Subject"] == "Welcome"
+        assert msg["From"] == "alex@gmail.com"  # default_from defaulted to gmail_user
+        assert result == {"to": "ana@example.com", "status": "sent"}
+
+
+def test_gmail_sender_strips_app_password_spaces():
+    with patch("lib.sender.smtplib.SMTP") as fake_smtp:
+        fake_smtp_instance = fake_smtp.return_value.__enter__.return_value
+        sender = GmailSMTPSender(
+            gmail_user="alex@gmail.com",
+            gmail_app_password="abcd efgh ijkl mnop",
+        )
+        sender.send(to="to@example.com", subject="Hi", body_html="<p>Hi</p>", body_text="Hi")
+        fake_smtp_instance.login.assert_called_once_with("alex@gmail.com", "abcdefghijklmnop")
+
+
+def test_gmail_sender_uses_default_from_when_set():
+    with patch("lib.sender.smtplib.SMTP") as fake_smtp:
+        fake_smtp_instance = fake_smtp.return_value.__enter__.return_value
+        sender = GmailSMTPSender(
+            gmail_user="alex@gmail.com",
+            gmail_app_password="abcdefghijklmnop",
+            default_from="MVBC Library <alex@gmail.com>",
+        )
+        sender.send(to="to@example.com", subject="Hi", body_html="<p>Hi</p>", body_text="Hi")
+        msg = fake_smtp_instance.send_message.call_args[0][0]
+        assert msg["From"] == "MVBC Library <alex@gmail.com>"
+
+
+def test_gmail_sender_includes_reply_to_when_set():
+    with patch("lib.sender.smtplib.SMTP") as fake_smtp:
+        fake_smtp_instance = fake_smtp.return_value.__enter__.return_value
+        sender = GmailSMTPSender(
+            gmail_user="alex@gmail.com",
+            gmail_app_password="abcdefghijklmnop",
+            reply_to="library@mvbchurch.org",
+        )
+        sender.send(to="to@example.com", subject="Hi", body_html="<p>Hi</p>", body_text="Hi")
+        msg = fake_smtp_instance.send_message.call_args[0][0]
+        assert msg["Reply-To"] == "library@mvbchurch.org"
+
+
+def test_gmail_sender_with_attachment():
+    with patch("lib.sender.smtplib.SMTP") as fake_smtp:
+        fake_smtp_instance = fake_smtp.return_value.__enter__.return_value
+        sender = GmailSMTPSender(
+            gmail_user="alex@gmail.com",
+            gmail_app_password="abcdefghijklmnop",
+        )
+        sender.send(
             to="ana@example.com",
             subject="Welcome",
             body_html="<p>Hi</p>",
@@ -18,43 +81,17 @@ def test_resend_sender_sends_with_attachment():
             attachment_filename="card.png",
             attachment_content_type="image/png",
         )
-        assert result["id"] == "msg-1"
-        call_kwargs = fake_resend.Emails.send.call_args[0][0]
-        assert call_kwargs["from"] == "MVBC <a@b>"
-        assert call_kwargs["to"] == ["ana@example.com"]
-        assert call_kwargs["subject"] == "Welcome"
-        assert "<p>Hi</p>" in call_kwargs["html"]
-        assert call_kwargs["text"] == "Hi"
-        assert len(call_kwargs["attachments"]) == 1
-        assert call_kwargs["attachments"][0]["filename"] == "card.png"
-
-
-def test_resend_sender_without_attachment():
-    sender = ResendSender(api_key="re_test", default_from="MVBC <a@b>")
-    with patch("lib.sender.resend") as fake_resend:
-        fake_resend.Emails.send.return_value = {"id": "msg-2"}
-        sender.send(
-            to="ana@example.com",
-            subject="Hi",
-            body_html="<p>Hi</p>",
-            body_text="Hi",
-        )
-        call_kwargs = fake_resend.Emails.send.call_args[0][0]
-        assert "attachments" not in call_kwargs or call_kwargs["attachments"] == []
-
-
-def test_resend_sender_includes_reply_to_when_set():
-    sender = ResendSender(api_key="re_test", default_from="MVBC <a@b>", reply_to="alex@church.org")
-    with patch("lib.sender.resend") as fake_resend:
-        fake_resend.Emails.send.return_value = {"id": "x"}
-        sender.send(to="x@y", subject="s", body_html="h", body_text="t")
-        kwargs = fake_resend.Emails.send.call_args[0][0]
-        assert kwargs["reply_to"] == ["alex@church.org"]
-
-
-from pathlib import Path
-
-from lib.sender import render_welcome_email
+        fake_smtp_instance.send_message.assert_called_once()
+        msg = fake_smtp_instance.send_message.call_args[0][0]
+        # Walk the MIME tree to find the attachment part
+        payloads = msg.get_payload()
+        attachment_found = False
+        for part in payloads:
+            cd = part.get("Content-Disposition", "")
+            if "attachment" in cd:
+                assert 'filename="card.png"' in cd
+                attachment_found = True
+        assert attachment_found, "Attachment part not found in message"
 
 
 def test_render_welcome_email_substitutes_placeholders():

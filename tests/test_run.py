@@ -10,7 +10,7 @@ def test_main_creates_pending_for_new_member(tmp_path, monkeypatch):
     for k, v in {
         "PCO_APP_ID": "x", "PCO_SECRET": "x",
         "LIBIB_API_KEY": "x", "LIBIB_API_USER": "x",
-        "RESEND_API_KEY": "x", "EMAIL_FROM": "x",
+        "GMAIL_USER": "alex@gmail.com", "GMAIL_APP_PASSWORD": "abcdefghijklmnop",
         "LIBIB_LOGIN_URL": "https://x",
         "STABILITY_HOURS": "24",
     }.items():
@@ -61,8 +61,9 @@ def test_main_executes_mature_create_with_email(tmp_path, monkeypatch):
     }))
     for k, v in {
         "PCO_APP_ID": "x", "PCO_SECRET": "x", "LIBIB_API_KEY": "x",
-        "LIBIB_API_USER": "x", "RESEND_API_KEY": "re_x",
-        "EMAIL_FROM": "MVBC <a@b>", "LIBIB_LOGIN_URL": "https://x",
+        "LIBIB_API_USER": "x", "GMAIL_USER": "alex@gmail.com",
+        "GMAIL_APP_PASSWORD": "abcdefghijklmnop",
+        "EMAIL_FROM": "MVBC Library <alex@gmail.com>", "LIBIB_LOGIN_URL": "https://x",
         "STABILITY_HOURS": "24",
     }.items():
         monkeypatch.setenv(k, v)
@@ -74,14 +75,14 @@ def test_main_executes_mature_create_with_email(tmp_path, monkeypatch):
     fake_patron = MagicMock(barcode="BC-1", email="ana@example.com",
                             first_name="Ana", last_name="Smith")
     fake_libib.create_patron.return_value = fake_patron
-    fake_sender = MagicMock(); fake_sender.send.return_value = {"id": "x"}
+    fake_sender = MagicMock(); fake_sender.send.return_value = {"status": "sent"}
 
     fixed_now = datetime(2026, 5, 6, 12, tzinfo=timezone.utc)
 
     import run
     with patch.object(run, "PCOClient", return_value=fake_pco), \
          patch.object(run, "LibibClient", return_value=fake_libib), \
-         patch.object(run, "ResendSender", return_value=fake_sender), \
+         patch.object(run, "GmailSMTPSender", return_value=fake_sender), \
          patch.object(run, "_now", return_value=fixed_now):
         run.main(state_dir=tmp_path)
 

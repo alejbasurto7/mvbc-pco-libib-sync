@@ -20,7 +20,7 @@ from lib.execute import execute_action
 from lib.libib_client import LibibClient
 from lib.pco_client import PCOClient
 from lib.reconcile import reconcile
-from lib.sender import ResendSender
+from lib.sender import GmailSMTPSender
 from lib.state import append_log, load_pending, save_pending
 
 
@@ -67,8 +67,9 @@ def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
             print(f"    would execute: {action.action_type} for {action.person_id}")
         return 0
 
-    sender = ResendSender(
-        api_key=cfg.resend_api_key,
+    sender = GmailSMTPSender(
+        gmail_user=cfg.gmail_user,
+        gmail_app_password=cfg.gmail_app_password,
         default_from=cfg.email_from,
         reply_to=cfg.email_reply_to,
     )
