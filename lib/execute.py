@@ -37,7 +37,36 @@ def execute_action(
                 email=pending.target["email"],
                 patron_id=pending.target["patron_id"],
             )
-            return ExecutionResult(success=True, libib_status=201, created_patron=patron)
+            result = ExecutionResult(success=True, libib_status=201, created_patron=patron)
+            # Best-effort welcome email + card. Failure does not roll back the patron.
+            if sender is not None and card_generator is not None:
+                try:
+                    card_bytes = card_generator(
+                        first_name=patron.first_name,
+                        last_name=patron.last_name,
+                        email=patron.email,
+                        barcode=patron.barcode or "",
+                    )
+                    from pathlib import Path as _P
+                    from lib.sender import render_welcome_email
+                    html, text = render_welcome_email(
+                        first_name=patron.first_name,
+                        email=patron.email,
+                        templates_dir=_P("templates"),
+                    )
+                    sender.send(
+                        to=patron.email,
+                        subject="Welcome to the MVBC Library",
+                        body_html=html,
+                        body_text=text,
+                        attachment_bytes=card_bytes,
+                        attachment_filename="library-card.png",
+                        attachment_content_type="image/png",
+                    )
+                    result.email_sent = True
+                except Exception as e:
+                    result.email_error = f"{type(e).__name__}: {e}"[:1000]
+            return result
 
         elif pending.action_type == "FREEZE_PATRON":
             libib.freeze_patron(email=pending.target["email"])

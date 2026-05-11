@@ -76,3 +76,64 @@ def test_libib_failure_returns_failure_result():
     assert result.success is False
     assert result.libib_status == 500
     assert "oops" in (result.libib_error or "")
+
+
+def test_create_patron_sends_welcome_email_with_card():
+    libib = MagicMock()
+    fake_patron = MagicMock(barcode="BC-NEW", email="ana@example.com",
+                            first_name="Ana", last_name="Smith")
+    libib.create_patron.return_value = fake_patron
+
+    sender = MagicMock()
+    sender.send.return_value = {"id": "msg-1"}
+
+    card_gen = MagicMock()
+    card_gen.return_value = b"\x89PNG_FAKE"
+
+    pending = make_pending("CREATE_PATRON", {
+        "first_name": "Ana", "last_name": "Smith",
+        "email": "ana@example.com", "patron_id": "pco-1",
+    })
+    result = execute_action(pending, libib=libib, sender=sender, card_generator=card_gen)
+
+    assert result.success
+    assert result.email_sent is True
+    sender.send.assert_called_once()
+    call_kwargs = sender.send.call_args.kwargs
+    assert call_kwargs["to"] == "ana@example.com"
+    assert call_kwargs["attachment_bytes"] == b"\x89PNG_FAKE"
+    assert call_kwargs["attachment_filename"] == "library-card.png"
+    assert call_kwargs["attachment_content_type"] == "image/png"
+    card_gen.assert_called_once_with(
+        first_name="Ana", last_name="Smith",
+        email="ana@example.com", barcode="BC-NEW",
+    )
+
+
+def test_create_patron_libib_succeeds_email_fails_does_not_rollback():
+    libib = MagicMock()
+    fake_patron = MagicMock(barcode="BC-1", email="ana@x",
+                            first_name="Ana", last_name="S")
+    libib.create_patron.return_value = fake_patron
+
+    sender = MagicMock()
+    sender.send.side_effect = RuntimeError("Resend down")
+
+    pending = make_pending("CREATE_PATRON", {
+        "first_name": "Ana", "last_name": "S", "email": "ana@x", "patron_id": "pco-1",
+    })
+    result = execute_action(pending, libib=libib, sender=sender, card_generator=lambda **k: b"x")
+
+    # Libib was successful; overall result.success is True
+    assert result.success is True
+    assert result.email_sent is False
+    assert "Resend down" in (result.email_error or "")
+
+
+def test_freeze_does_not_send_email():
+    libib = MagicMock()
+    libib.freeze_patron.return_value = MagicMock()
+    sender = MagicMock()
+    pending = make_pending("FREEZE_PATRON", {"email": "ana@x"})
+    execute_action(pending, libib=libib, sender=sender, card_generator=None)
+    sender.send.assert_not_called()
