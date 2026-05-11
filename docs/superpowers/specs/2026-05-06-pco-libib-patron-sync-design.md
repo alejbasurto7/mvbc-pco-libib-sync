@@ -31,7 +31,7 @@ The system runs unattended on a schedule. Every change must clear a 24-hour stab
                               └────────┬───────────────────┬───────────┘
                                        │                   │
                               ┌────────▼─────────┐ ┌───────▼────────┐
-                              │ Libib API        │ │ Resend API     │
+                              │ Libib API        │ │ Gmail SMTP     │
                               │ (create/freeze/  │ │ (welcome email)│
                               │  update)         │ └────────────────┘
                               └──────────────────┘
@@ -189,13 +189,15 @@ Generated as a PNG image and attached to the welcome email. The legacy card desi
 
 ### 7.3 Email backend
 
-**Backend:** Resend API. The email module is a `Sender` protocol with concrete implementations:
-- `ResendSender` — initial implementation; supports attachments
-- `MicrosoftGraphSender` — placeholder for future migration if/when `library@mvbchurch.org` exists
+**Backend:** Gmail SMTP via App Password (Python's stdlib `smtplib`). The email module is a `Sender` protocol with concrete implementations:
+- `GmailSMTPSender` — initial implementation; supports attachments; uses 2FA App Password
+- `MicrosoftGraphSender` — placeholder for future migration when `library@mvbchurch.org` becomes a real mailbox
 
-The active sender is selected via `EMAIL_BACKEND` env var, defaulting to `resend`.
+The active sender is selected via `EMAIL_BACKEND` env var, defaulting to `gmail`.
 
-**Sender domain — open Phase-0 question:** if `mvbchurch.org` DNS records can be added, verify it on Resend and send from `library@mvbchurch.org`. Otherwise verify a temporary sender domain. Decision deferred; the module is pluggable.
+Recipients see Alex's personal Gmail address as the From: address. The `EMAIL_FROM` env var sets a friendly display name (e.g., `"MVBC Library <alejandrobasurto7@gmail.com>"`) but Gmail rewrites the envelope sender to the authenticated account. This is a v1 tradeoff: cleanest sender experience requires `library@mvbchurch.org` via Microsoft Graph, which is the planned next step once the mailbox exists. Gmail SMTP's daily send limit (~500/day) is far above MVBC's volume.
+
+**Prerequisite:** 2-Step Verification must be enabled on the Gmail account; the App Password is generated at https://myaccount.google.com/apppasswords. The 16-character password is stored in `GMAIL_APP_PASSWORD` (whitespace stripped on read).
 
 ### 7.4 Failure handling
 
@@ -218,7 +220,7 @@ pco-libib-sync/
 │   ├── config.py                   # env vars, MEMBER_STATUSES, STABILITY_HOURS
 │   ├── pco_client.py               # PCO People API wrapper (paginated list, primary email)
 │   ├── libib_client.py             # Libib API wrapper (list, create, freeze, update)
-│   ├── sender.py                   # EmailSender protocol + ResendSender
+│   ├── sender.py                   # EmailSender protocol + GmailSMTPSender
 │   ├── card.py                     # Pillow + qrcode card image generator
 │   ├── decide.py                   # PURE: compute_desired_actions(pco, libib) -> list[Action]
 │   ├── reconcile.py                # PURE: reconcile(desired, pending, now) -> (new_pending, mature)
@@ -298,10 +300,11 @@ Local dev: values live in `.env` (gitignored). Production: GitHub Actions reposi
 | `PCO_SECRET` | PCO PAT secret (Basic auth password) | Same screen as above; shown once at creation | yes |
 | `LIBIB_API_KEY` | Sent as `x-api-key` request header | Libib Pro → Settings → API → Generate Key | yes |
 | `LIBIB_API_USER` | Sent as `x-api-user` request header | Same screen as above (the Libib username/email associated with the API key) | yes |
-| `RESEND_API_KEY` | Resend API key for sending welcome emails | resend.com → sign up (free) → Dashboard → API Keys → Create API Key. Value starts with `re_`. Free tier: 3,000 emails/month. | yes |
-| `EMAIL_FROM` | The `From:` address on welcome emails. Format: `"Display Name <address@verified-domain>"` | Address must be on a domain verified in Resend. Best: `library@mvbchurch.org` once `mvbchurch.org` is verified. See §7.3. | yes |
+| `GMAIL_USER` | Gmail address used to authenticate against `smtp.gmail.com` | The account you created the App Password from. | yes |
+| `GMAIL_APP_PASSWORD` | 16-character Gmail App Password | https://myaccount.google.com/apppasswords (requires 2-Step Verification on the Gmail account). Whitespace is stripped on read so the displayed `xxxx xxxx xxxx xxxx` form works as-is. | yes |
+| `EMAIL_FROM` | The `From:` display header on welcome emails. Format: `"Display Name <address@gmail.com>"` | Defaults to `GMAIL_USER` if unset. Display name is overrideable; Gmail rewrites the envelope sender to the authenticated address regardless. | no |
 | `EMAIL_REPLY_TO` | Where replies to the welcome email should go | Optional. Typically Alex's working email. | no |
-| `EMAIL_BACKEND` | Which `Sender` implementation to use | Hardcoded value: `resend` (future option: `graph`) | yes (defaults to `resend`) |
+| `EMAIL_BACKEND` | Which `Sender` implementation to use | Hardcoded value: `gmail` (future option: `graph`) | no (defaults to `gmail`) |
 | `STABILITY_HOURS` | How long a desired change must hold before it executes | Hardcoded value: `24` in production. Set to a small fraction (e.g., `0.05` = 3 minutes) for dev/test. | yes (defaults to `24`) |
 | `LIBIB_LOGIN_URL` | Catalog browse URL embedded in welcome emails | Hardcoded value, currently `https://www.libib.com/u/mvbchurch` | yes |
 | `BASELINE_MODE` | Suppress all execution; only populate pending state | Hardcoded value: `true` on first prod run, then unset / set to `false`. See §11. | no (defaults to `false`) |
@@ -351,7 +354,7 @@ For `card.py`: smoke test that calling the generator returns valid PNG bytes (no
 
 ### 12.2 Integration tests (run manually, not in CI)
 
-The unit tests above never touch PCO, Libib, or Resend. To verify the API client wrappers actually behave correctly, the developer runs **integration tests** locally against a throwaway test patron. These are explicitly *not* part of the CI workflow because:
+The unit tests above never touch PCO, Libib, or Gmail SMTP. To verify the API client wrappers actually behave correctly, the developer runs **integration tests** locally against a throwaway test patron. These are explicitly *not* part of the CI workflow because:
 
 - They require live API credentials in the test environment (more secrets to manage)
 - They mutate real Libib data (create/freeze/delete a sandbox patron), which is messy if a run fails midway
@@ -367,11 +370,11 @@ Run them manually before merging anything that changes `pco_client.py`, `libib_c
 
 | Phase | Goal |
 |---|---|
-| 0 | Verify `UPDATE_EMAIL` round-trips preserve patron_id and history; resolve Resend sender domain; capture sample PCO + Libib payloads as test fixtures |
+| 0 | Verify `UPDATE_EMAIL` round-trips preserve patron_id and history; generate Gmail App Password; capture sample PCO + Libib payloads as test fixtures |
 | 1 | `decide.py` + `reconcile.py` + tests, all passing locally with hand-crafted fixtures |
 | 2 | `pco_client.py` + `libib_client.py`, validated against live APIs in `--dry-run` |
 | 3 | `state.py` + `execute.py`; full pipeline runs locally end-to-end against a Libib sandbox patron |
-| 4 | `sender.py` (Resend) + `card.py` (Pillow + qrcode) + finalized welcome email copy + finalized card design; integrated into `execute.py` |
+| 4 | `sender.py` (Gmail SMTP) + `card.py` (Pillow + qrcode) + finalized welcome email copy + finalized card design; integrated into `execute.py` |
 | 5 | **One-time patron_id migration** (§16). Run the migration script in `--dry-run`, review report, run for real, verify zero failures and zero collisions. |
 | 6 | GitHub Actions workflow + state-branch commit logic; first scheduled run in `BASELINE_MODE=true` |
 | 7 | Production cutover: review baseline, clear pending, set `BASELINE_MODE=false`, monitor a few runs |
@@ -379,8 +382,7 @@ Run them manually before merging anything that changes `pco_client.py`, `libib_c
 
 ## 14. Open items
 
-- **Resend sender domain.** Resolve in Phase 0.
-- **Future: migrate Resend → Microsoft Graph** when `library@mvbchurch.org` mailbox exists. No code change beyond config + new `MicrosoftGraphSender` class.
+- **Future: migrate Gmail SMTP → Microsoft Graph** when `library@mvbchurch.org` mailbox exists. No code change beyond config + new `MicrosoftGraphSender` class. Eliminates the cosmetic oddity of welcome emails coming from Alex's personal Gmail address.
 
 ## 15. Explicitly not building (YAGNI)
 
