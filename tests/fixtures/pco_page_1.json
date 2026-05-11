@@ -1,0 +1,48 @@
+{
+  "data": [
+    {
+      "type": "Person",
+      "id": "100",
+      "attributes": {
+        "first_name": "Ana",
+        "last_name": "Smith",
+        "membership": "Member",
+        "remote_id": "42",
+        "status": "active"
+      },
+      "relationships": {
+        "primary_email": {
+          "data": {"type": "Email", "id": "200"}
+        }
+      }
+    },
+    {
+      "type": "Person",
+      "id": "101",
+      "attributes": {
+        "first_name": "Bob",
+        "last_name": "Jones",
+        "membership": "Visitor",
+        "remote_id": null,
+        "status": "active"
+      },
+      "relationships": {
+        "primary_email": {
+          "data": null
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "Email",
+      "id": "200",
+      "attributes": {"address": "ana@example.com", "primary": true}
+    }
+  ],
+  "links": {
+    "self": "https://api.planningcenteronline.com/people/v2/people?include=emails&per_page=2",
+    "next": "https://api.planningcenteronline.com/people/v2/people?include=emails&per_page=2&offset=2"
+  },
+  "meta": {"total_count": 3, "count": 2, "next": {"offset": 2}}
+}

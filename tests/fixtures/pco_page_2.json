@@ -1,0 +1,31 @@
+{
+  "data": [
+    {
+      "type": "Person",
+      "id": "102",
+      "attributes": {
+        "first_name": "Carol",
+        "last_name": "Davis",
+        "membership": "Associate Member",
+        "remote_id": "55",
+        "status": "active"
+      },
+      "relationships": {
+        "primary_email": {
+          "data": {"type": "Email", "id": "201"}
+        }
+      }
+    }
+  ],
+  "included": [
+    {
+      "type": "Email",
+      "id": "201",
+      "attributes": {"address": "carol@example.com", "primary": true}
+    }
+  ],
+  "links": {
+    "self": "https://api.planningcenteronline.com/people/v2/people?include=emails&per_page=2&offset=2"
+  },
+  "meta": {"total_count": 3, "count": 1}
+}
