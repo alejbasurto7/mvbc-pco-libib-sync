@@ -76,6 +76,42 @@ def test_libib_headers_are_sent(client):
 
 
 @responses.activate
+def test_get_patron_returns_patron_on_200(client):
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/ana@example.com",
+        json={"patron_id": "pco-1", "first_name": "Ana", "last_name": "Smith",
+              "email": "ana@example.com", "barcode": "BC-1", "freeze": 0},
+        status=200,
+    )
+    result = client.get_patron("ana@example.com")
+    assert result is not None
+    assert result.patron_id == "pco-1"
+    assert result.email == "ana@example.com"
+
+
+@responses.activate
+def test_get_patron_returns_none_on_404(client):
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/missing@example.com",
+        status=404,
+    )
+    assert client.get_patron("missing@example.com") is None
+
+
+@responses.activate
+def test_get_patron_returns_none_on_200_with_empty_body(client):
+    """Libib quirk (observed 2026-05-11): returns 200 with null/empty fields
+    when patron is not found, instead of a proper 404. Treat as not-found."""
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/missing@example.com",
+        json={"patron_id": "", "first_name": "", "last_name": "",
+              "email": "", "barcode": None, "freeze": 0},
+        status=200,
+    )
+    assert client.get_patron("missing@example.com") is None
+
+
+@responses.activate
 def test_create_patron_posts_correct_params(client):
     responses.add(
         responses.POST, "https://api.libib.com/patrons",

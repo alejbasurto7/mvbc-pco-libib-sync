@@ -56,6 +56,25 @@ class LibibClient:
                 break
             page += 1
 
+    def get_patron(self, email_or_barcode: str) -> Patron | None:
+        """Fetch a single patron by email or barcode. None if not found.
+
+        Libib's GET /patrons/{id} returns HTTP 200 with empty/null fields
+        when the patron is missing (rather than 404), so we also treat a
+        response with empty patron_id as "not found".
+        """
+        resp = self.session.get(
+            f"{API_BASE}/patrons/{email_or_barcode}",
+            timeout=30,
+        )
+        if resp.status_code == 404:
+            return None
+        resp.raise_for_status()
+        patron = self._patron_from_dict(resp.json())
+        if not patron.patron_id:
+            return None
+        return patron
+
     def create_patron(
         self,
         *,

@@ -92,6 +92,14 @@ Libib's API documents `patron_id` as "Custom ID (non-unique)." Libib does not en
 - When indexing Libib's roster by `patron_id`, detect duplicates and refuse to act on any person whose `patron_id` matches more than one Libib patron. Log the collision and surface it for manual cleanup.
 - The migration script (§16) explicitly checks for `patron_id` collisions before and after migration as a sanity step.
 
+### 4.2a Empirical Libib API quirks (verified Phase 0)
+
+- **Base URL is `https://api.libib.com`** (no `/v1` prefix). The docs example in `support.libib.com/rest-api/patrons.html` confirms this.
+- **`UPDATE_EMAIL` preserves `patron_id`, `barcode`, and history.** Verified end-to-end in Phase 0 with a throwaway test patron.
+- **GET /patrons/{id} returns HTTP 200 with empty/null fields when the patron is missing**, not 404. `LibibClient.get_patron()` treats an empty `patron_id` in the response as "not found" and returns `None`.
+- **Aggressive rate limiting on sequential requests.** Back-to-back create→update calls hit HTTP 429. Tolerable for the live sync (one cycle every 15 minutes; few writes per cycle), but the migration script (§16) and any other bulk operation needs delays or retry-with-backoff. Empirically a 3-second gap between requests avoids 429s.
+- **Create-without-password works.** The patron is created and assigned a barcode automatically; whether Libib auto-sends an onboarding email is moot for MVBC because the workflow is kiosk-based, not web-login-based.
+
 ### 4.3 Orphan detection
 
 The CCB → PCO migration is believed complete: every Libib patron has a matching PCO person. The algorithm therefore treats orphans (Libib patrons whose `patron_id` matches no PCO `person.id` after the §16 migration) as anomalies rather than normal state. On each run the script counts orphans and:
