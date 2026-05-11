@@ -62,4 +62,15 @@ def compute_desired_actions(
                         },
                     )
                 )
+        else:
+            if existing is not None and not existing.is_frozen:
+                actions.append(
+                    Action(
+                        person_id=person.id,
+                        action_type="FREEZE_PATRON",
+                        # Use the patron's *current* email — Libib's update
+                        # endpoint is keyed by the email it currently knows.
+                        target={"email": existing.email},
+                    )
+                )
     return actions

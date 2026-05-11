@@ -105,3 +105,43 @@ class TestComputeDesiredActions_Create:
         patron = make_patron(patron_id="pco-1")
         actions = compute_desired_actions([person], [patron])
         assert actions == []
+
+
+class TestComputeDesiredActions_Freeze:
+    def test_member_to_former_member_freezes(self):
+        person = make_person(id="pco-1", membership="Former Member")
+        patron = make_patron(patron_id="pco-1", is_frozen=False)
+        actions = compute_desired_actions([person], [patron])
+        assert actions == [
+            Action(
+                person_id="pco-1",
+                action_type="FREEZE_PATRON",
+                target={"email": "ana@example.com"},
+            )
+        ]
+
+    def test_already_frozen_no_double_freeze(self):
+        person = make_person(membership="Former Member")
+        patron = make_patron(is_frozen=True)
+        actions = compute_desired_actions([person], [patron])
+        assert actions == []
+
+    def test_destroyed_person_freezes_existing_patron(self):
+        person = make_person(id="pco-1", is_destroyed=True)
+        patron = make_patron(patron_id="pco-1", is_frozen=False)
+        actions = compute_desired_actions([person], [patron])
+        assert actions[0].action_type == "FREEZE_PATRON"
+
+    def test_freeze_target_uses_libib_email(self):
+        # Libib's update endpoint is keyed by current Libib email
+        person = make_person(id="pco-1", email="new@example.com", membership="Visitor")
+        patron = make_patron(patron_id="pco-1", email="old@example.com")
+        actions = compute_desired_actions([person], [patron])
+        assert actions[0].target == {"email": "old@example.com"}
+
+    def test_visitor_with_no_libib_patron_does_nothing(self):
+        # The CREATE branch test covered this for non-eligible+no-patron, but
+        # double-check we don't synthesize a freeze when there's nothing to freeze.
+        person = make_person(membership="Visitor")
+        actions = compute_desired_actions([person], [])
+        assert actions == []
