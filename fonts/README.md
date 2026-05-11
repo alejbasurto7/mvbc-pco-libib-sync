@@ -1,49 +1,46 @@
-# Optional brand fonts
+# Brand fonts for the library card
 
-`lib/card.py` looks for these TTF files in this directory before falling back
-to system fonts. Drop them here to upgrade card rendering fidelity to the MVBC
-brand.
+`lib/card.py` loads fonts from this directory first, then falls back to system
+fonts, then PIL's default.
 
-## Display family (headlines, wordmark)
+## What's installed (auto-detected by the card generator)
 
-The brand calls for **Geometria** (commercial — licensed from MyFonts /
-Fontspring). If you have the license, drop these files in:
+| Family       | Files                                                                  | License       | Committed? |
+|--------------|------------------------------------------------------------------------|---------------|------------|
+| Geometria    | `Geometria-Medium.woff`, `Geometria-Bold.woff`, `Geometria-ExtraBold.woff` | Commercial (MVBC site license) | **No** (gitignored) |
+| Open Sans    | `OpenSans-Regular.ttf`, `OpenSans-SemiBold.ttf`, `OpenSans-Bold.ttf`   | SIL OFL       | Yes        |
 
-- `Geometria-Medium.ttf`
-- `Geometria-Bold.ttf`
-- `Geometria-ExtraBold.ttf`
+## How to refresh
 
-If Geometria isn't licensed, use **Montserrat** as the free substitute (close
-geometric sans, available from Google Fonts):
+```bash
+# Geometria (from mvbchurch.org WordPress theme)
+cd fonts
+curl -o Geometria-Medium.woff    https://mvbchurch.org/wp-content/themes/mvbchurch2025/fonts/Geometria-Medium.woff
+curl -o Geometria-Bold.woff      https://mvbchurch.org/wp-content/themes/mvbchurch2025/fonts/Geometria-Bold.woff
+curl -o Geometria-ExtraBold.woff https://mvbchurch.org/wp-content/themes/mvbchurch2025/fonts/Geometria-ExtraBold.woff
 
-- `Montserrat-Regular.ttf`
-- `Montserrat-Medium.ttf`
-- `Montserrat-Bold.ttf`
-- `Montserrat-ExtraBold.ttf`
+# Open Sans (from Google Fonts, OFL-licensed mirror)
+curl -L -o OpenSans-Regular.ttf  https://raw.githubusercontent.com/googlefonts/opensans/main/fonts/ttf/OpenSans-Regular.ttf
+curl -L -o OpenSans-SemiBold.ttf https://raw.githubusercontent.com/googlefonts/opensans/main/fonts/ttf/OpenSans-SemiBold.ttf
+curl -L -o OpenSans-Bold.ttf     https://raw.githubusercontent.com/googlefonts/opensans/main/fonts/ttf/OpenSans-Bold.ttf
+```
 
-Download Montserrat: https://fonts.google.com/specimen/Montserrat
+## Licensing
 
-## Body family
+- **Open Sans** is SIL Open Font License — safe to commit, redistribute, embed.
+- **Geometria** is commercial. MVBC licenses it for the church website. Use on
+  other MVBC-internal tools (like the library card) is reasonable; do NOT commit
+  the WOFF files to a public repo, and do NOT redistribute outside MVBC. They
+  are gitignored. If the repo is private, you can opt to remove the gitignore
+  entry and commit them.
+- For the GitHub Actions runner (which won't have Geometria), the card
+  generator falls back to Montserrat (if dropped in) → Arial → DejaVuSans.
+  Functional, not exact-brand. Run the workflow with Geometria files only if
+  they're seeded via a private mechanism (e.g., GitHub Actions secret + base64
+  decode + write to disk during the workflow). For v1 the fallback is fine.
 
-The brand uses **Open Sans** (free, Google Fonts):
+## Why these formats
 
-- `OpenSans-Regular.ttf`
-- `OpenSans-SemiBold.ttf`
-- `OpenSans-Bold.ttf`
-
-Download Open Sans: https://fonts.google.com/specimen/Open+Sans
-
-## Why optional
-
-The card generator works without any of these files — it falls back to system
-Arial (Windows/macOS) or DejaVuSans (Linux/Ubuntu, e.g., GitHub Actions). The
-fallback is functional but visually generic. Adding the brand TTFs makes the
-rendered card match the MVBC brand exactly.
-
-## Licensing note
-
-Commit only fonts whose license permits redistribution. Open Sans and Montserrat
-are SIL Open Font License (safe to commit). Geometria is commercial — do **not**
-commit its TTFs to a public GitHub repo; if you want production rendering to
-use Geometria, install it via the GitHub Actions workflow from a private source
-instead.
+- Pillow 9+ loads `.woff` natively (verified on Pillow 11), so no conversion
+  needed for the MVBC-served Geometria.
+- Open Sans is available as `.ttf` from the canonical Google source.

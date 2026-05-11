@@ -57,13 +57,14 @@ def _load_font(
     if display:
         if bold:
             candidates = [
-                "Geometria-Bold.ttf", "Geometria-ExtraBold.ttf",
+                "Geometria-Bold.woff", "Geometria-Bold.ttf",
+                "Geometria-ExtraBold.woff", "Geometria-ExtraBold.ttf",
                 "Montserrat-Bold.ttf", "Montserrat-ExtraBold.ttf",
                 "arialbd.ttf", "Arial Bold.ttf", "DejaVuSans-Bold.ttf",
             ]
         else:
             candidates = [
-                "Geometria-Medium.ttf",
+                "Geometria-Medium.woff", "Geometria-Medium.ttf",
                 "Montserrat-Medium.ttf", "Montserrat-Regular.ttf",
                 "arial.ttf", "Arial.ttf", "DejaVuSans.ttf",
             ]
