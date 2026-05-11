@@ -99,3 +99,16 @@ def compute_desired_actions(
                     )
                 )
     return actions
+
+
+def find_orphan_patrons(
+    pco_people: list[Person],
+    libib_patrons: list[Patron],
+) -> list[Patron]:
+    """Libib patrons whose patron_id matches no PCO person.
+
+    Per spec §4.3, every Libib patron should have a PCO counterpart.
+    Orphans are anomalies worth surfacing but never auto-actioned.
+    """
+    expected_ids = {expected_patron_id(p) for p in pco_people}
+    return [pat for pat in libib_patrons if pat.patron_id not in expected_ids]

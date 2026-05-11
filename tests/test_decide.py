@@ -205,3 +205,25 @@ class TestComputeDesiredActions_Updates:
         actions = compute_desired_actions([person], [patron])
         # Not eligible AND already frozen → nothing
         assert actions == []
+
+
+from lib.decide import find_orphan_patrons
+
+
+class TestFindOrphanPatrons:
+    def test_no_orphans_when_all_match(self):
+        person = make_person(id="pco-1", remote_id=None)
+        patron = make_patron(patron_id="pco-1")
+        assert find_orphan_patrons([person], [patron]) == []
+
+    def test_libib_patron_with_unknown_id_is_orphan(self):
+        person = make_person(id="pco-1")
+        orphan = make_patron(patron_id="unknown-99")
+        result = find_orphan_patrons([person], [orphan])
+        assert result == [orphan]
+
+    def test_orphan_detection_uses_expected_patron_id(self):
+        # remote_id should match
+        person = make_person(id="pco-1", remote_id="ccb-42")
+        patron = make_patron(patron_id="ccb-42")
+        assert find_orphan_patrons([person], [patron]) == []
