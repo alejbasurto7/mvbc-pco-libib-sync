@@ -36,23 +36,49 @@ class PCOClient:
             resp.raise_for_status()
             payload = resp.json()
 
-            email_by_id = {
-                inc["id"]: inc["attributes"]["address"]
-                for inc in payload.get("included", [])
-                if inc.get("type") == "Email"
-            }
+            # Build a lookup of Email resources by id, capturing both the
+            # address and whether it's the primary one for that person.
+            email_by_id: dict[str, tuple[str, bool]] = {}
+            for inc in payload.get("included", []):
+                if inc.get("type") != "Email":
+                    continue
+                attrs_e = inc.get("attributes", {})
+                email_by_id[inc["id"]] = (
+                    attrs_e.get("address") or "",
+                    bool(attrs_e.get("primary", False)),
+                )
 
             for item in payload["data"]:
                 if item.get("type") != "Person":
                     continue
                 attrs = item["attributes"]
                 rels = item.get("relationships", {})
-                primary_rel = rels.get("primary_email", {}).get("data")
-                email = email_by_id.get(primary_rel["id"]) if primary_rel else None
+                # PCO's People API exposes emails as a relationship array
+                # named `emails`. Pick the one marked primary; fall back to
+                # the first if none are flagged primary.
+                email_refs = rels.get("emails", {}).get("data") or []
+                email = None
+                first_addr = None
+                for ref in email_refs:
+                    addr, is_primary = email_by_id.get(ref.get("id"), (None, False))
+                    if not addr:
+                        continue
+                    if first_addr is None:
+                        first_addr = addr
+                    if is_primary:
+                        email = addr
+                        break
+                if email is None:
+                    email = first_addr
+
+                # remote_id comes back as an int in some PCO responses;
+                # normalize to str for comparison with Libib patron_id (str).
+                rid_raw = attrs.get("remote_id")
+                remote_id = str(rid_raw) if rid_raw is not None else None
 
                 yield Person(
-                    id=item["id"],
-                    remote_id=attrs.get("remote_id"),
+                    id=str(item["id"]),
+                    remote_id=remote_id,
                     first_name=attrs.get("first_name") or "",
                     last_name=attrs.get("last_name") or "",
                     email=email,

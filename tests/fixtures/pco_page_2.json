@@ -7,12 +7,14 @@
         "first_name": "Carol",
         "last_name": "Davis",
         "membership": "Associate Member",
-        "remote_id": "55",
+        "remote_id": 55,
         "status": "active"
       },
       "relationships": {
-        "primary_email": {
-          "data": {"type": "Email", "id": "201"}
+        "emails": {
+          "data": [
+            {"type": "Email", "id": "201"}
+          ]
         }
       }
     }
@@ -21,7 +23,7 @@
     {
       "type": "Email",
       "id": "201",
-      "attributes": {"address": "carol@example.com", "primary": true}
+      "attributes": {"address": "carol@example.com", "primary": true, "location": "Home"}
     }
   ],
   "links": {
