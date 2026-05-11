@@ -47,9 +47,8 @@ def compute_desired_actions(
         expected_id = expected_patron_id(person)
         existing = patrons_by_id.get(expected_id)
         if is_eligible(person):
+            assert person.email is not None
             if existing is None:
-                # CREATE: type narrowing — is_eligible guarantees email
-                assert person.email is not None
                 actions.append(
                     Action(
                         person_id=person.id,
@@ -62,6 +61,32 @@ def compute_desired_actions(
                         },
                     )
                 )
+            else:
+                # Use existing.email to key Libib API calls (Libib looks up by current email)
+                if person.first_name != existing.first_name:
+                    actions.append(
+                        Action(
+                            person_id=person.id,
+                            action_type="UPDATE_FIRST_NAME",
+                            target={"first_name": person.first_name, "email": existing.email},
+                        )
+                    )
+                if person.last_name != existing.last_name:
+                    actions.append(
+                        Action(
+                            person_id=person.id,
+                            action_type="UPDATE_LAST_NAME",
+                            target={"last_name": person.last_name, "email": existing.email},
+                        )
+                    )
+                if person.email != existing.email:
+                    actions.append(
+                        Action(
+                            person_id=person.id,
+                            action_type="UPDATE_EMAIL",
+                            target={"old_email": existing.email, "email": person.email},
+                        )
+                    )
         else:
             if existing is not None and not existing.is_frozen:
                 actions.append(

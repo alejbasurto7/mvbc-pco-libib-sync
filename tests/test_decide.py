@@ -145,3 +145,63 @@ class TestComputeDesiredActions_Freeze:
         person = make_person(membership="Visitor")
         actions = compute_desired_actions([person], [])
         assert actions == []
+
+
+class TestComputeDesiredActions_Updates:
+    def test_first_name_change_emits_update(self):
+        person = make_person(id="pco-1", first_name="Anna")
+        patron = make_patron(patron_id="pco-1", first_name="Ana")
+        actions = compute_desired_actions([person], [patron])
+        assert actions == [
+            Action(
+                person_id="pco-1",
+                action_type="UPDATE_FIRST_NAME",
+                target={"first_name": "Anna", "email": "ana@example.com"},
+            )
+        ]
+
+    def test_last_name_change_emits_update(self):
+        person = make_person(id="pco-1", last_name="Smyth")
+        patron = make_patron(patron_id="pco-1", last_name="Smith")
+        actions = compute_desired_actions([person], [patron])
+        assert actions == [
+            Action(
+                person_id="pco-1",
+                action_type="UPDATE_LAST_NAME",
+                target={"last_name": "Smyth", "email": "ana@example.com"},
+            )
+        ]
+
+    def test_email_change_emits_update(self):
+        person = make_person(id="pco-1", email="new@example.com")
+        patron = make_patron(patron_id="pco-1", email="old@example.com")
+        actions = compute_desired_actions([person], [patron])
+        assert actions == [
+            Action(
+                person_id="pco-1",
+                action_type="UPDATE_EMAIL",
+                # Update keyed by *old* email; new email is the target value
+                target={"old_email": "old@example.com", "email": "new@example.com"},
+            )
+        ]
+
+    def test_first_and_last_name_change_emits_two(self):
+        person = make_person(id="pco-1", first_name="Anna", last_name="Smyth")
+        patron = make_patron(patron_id="pco-1", first_name="Ana", last_name="Smith")
+        actions = compute_desired_actions([person], [patron])
+        types = [a.action_type for a in actions]
+        assert types == ["UPDATE_FIRST_NAME", "UPDATE_LAST_NAME"]
+
+    def test_no_diffs_no_actions(self):
+        person = make_person(id="pco-1", first_name="Ana", last_name="Smith", email="ana@example.com")
+        patron = make_patron(patron_id="pco-1", first_name="Ana", last_name="Smith", email="ana@example.com")
+        assert compute_desired_actions([person], [patron]) == []
+
+    def test_updates_skip_when_patron_already_frozen(self):
+        # If the patron is frozen we shouldn't push name/email updates while frozen
+        # — they'll un-freeze when the person becomes eligible again.
+        person = make_person(id="pco-1", first_name="Anna", membership="Former Member")
+        patron = make_patron(patron_id="pco-1", first_name="Ana", is_frozen=True)
+        actions = compute_desired_actions([person], [patron])
+        # Not eligible AND already frozen → nothing
+        assert actions == []
