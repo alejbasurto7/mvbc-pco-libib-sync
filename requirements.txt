@@ -2,6 +2,7 @@ requests>=2.31,<3
 Pillow>=10.0,<12
 qrcode[pil]>=7.4,<9
 python-dotenv>=1.0,<2
+truststore>=0.10,<1
 
 # Test dependencies
 pytest>=8.0,<9

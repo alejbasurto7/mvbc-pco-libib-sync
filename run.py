@@ -6,6 +6,12 @@ writes back state.
 """
 from __future__ import annotations
 
+# Use the OS native trust store (Windows cert store, macOS keychain, Linux
+# system OpenSSL) instead of just Python's bundled certifi. Required on
+# corporate networks that do TLS interception with an in-house root CA.
+import truststore
+truststore.inject_into_ssl()
+
 import argparse
 import json
 import sys

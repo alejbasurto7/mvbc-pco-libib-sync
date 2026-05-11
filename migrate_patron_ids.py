@@ -10,6 +10,9 @@ Usage:
 """
 from __future__ import annotations
 
+import truststore
+truststore.inject_into_ssl()
+
 import argparse
 import json
 import sys
