@@ -1,0 +1,21 @@
+{first_name},
+
+Your MVBC Library account is ready. Come and browse our titles and try our self-checkout kiosk:
+
+  1. On the iPad, scan the barcode of every book you want to checkout.
+     (The camera is on the back side of the iPad.)
+  2. Tap the 'Checkout' button.
+  3. Enter your email address ({email}) or, scan your library card (attached) and tap 'OK'.
+
+Once you checkout your books, you have 3 weeks to return them. For return, just drop them into one of the boxes found by the kiosk.
+
+The full catalog of our titles is available at https://www.libib.com/u/mvbchurch . Every book has been tagged in the system to tell you what section to find it at. You can use that same website for self-renewal — see instructions at https://mvbchurch.org/files/Checkout%20Renewal.pdf .
+
+Our library is located next to the Fellowship Hall and contains 1500+ titles.
+
+Let me know if you have any questions.
+
+Regards,
+
+Alex Basurto
+MVBC Library Coordinator

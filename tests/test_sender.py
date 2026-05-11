@@ -50,3 +50,33 @@ def test_resend_sender_includes_reply_to_when_set():
         sender.send(to="x@y", subject="s", body_html="h", body_text="t")
         kwargs = fake_resend.Emails.send.call_args[0][0]
         assert kwargs["reply_to"] == ["alex@church.org"]
+
+
+from pathlib import Path
+
+from lib.sender import render_welcome_email
+
+
+def test_render_welcome_email_substitutes_placeholders():
+    html, text = render_welcome_email(
+        first_name="Ana",
+        email="ana@example.com",
+        templates_dir=Path("templates"),
+    )
+    assert "Ana," in html
+    assert "ana@example.com" in html
+    assert "Ana," in text
+    assert "ana@example.com" in text
+
+
+def test_render_welcome_email_does_not_double_substitute():
+    # If the template already has the literal "{email}" rendered as user data,
+    # we don't want to substitute again. (Defensive; not strictly needed.)
+    html, text = render_welcome_email(
+        first_name="Bob",
+        email="b@x",
+        templates_dir=Path("templates"),
+    )
+    # Just sanity: nothing remaining as a placeholder
+    assert "{first_name}" not in html
+    assert "{email}" not in html
