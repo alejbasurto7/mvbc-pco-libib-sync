@@ -1,25 +1,106 @@
-<div style="width: 80%; font-family: Arial, Helvetica, sans-serif; margin-right: 10%; margin-left: 10%;">
+<!--
+  MVBC Library welcome email.
+  Inline styles only (email clients ignore stylesheets).
+  Brand: Mount Vernon Baptist Church Navy / Bronze / Cream palette.
+  Placeholders are substituted at render time via Python str.format.
+-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #F3F0EB; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;">
+  <tr>
+    <td align="center" style="padding: 24px 12px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; width: 100%; background-color: #F3F0EB; border-collapse: collapse;">
 
-	<p>{first_name},</p>
-	<p>This email is to inform you that <strong>your MVBC Library account is ready</strong>. Come and browse our titles and give our <em>self-checkout kiosk</em> a try:</p>
-	<p>
-	<ol>
-		<li>On the iPad, scan the barcode of every book you want to checkout. (The camera is on the back side of the iPad)</li>
-		<li>Tap the <em>'Checkout'</em> button.</li>
-		<li>Enter your email address ({email}) or, scan your library card (attached) and tap <em>'OK'</em>.</li>
-	</ol>
-	<p></p>
-	<p>Once you checkout your books, you have 3 weeks to return them. For return, just drop them into one of the boxes found by the kiosk.</p>
-	<p>Also, the full catalog of our titles is available <a href="https://www.libib.com/u/mvbchurch" target="_blank">here on Libib</a>. Every book has been tagged in the system to tell you what section to find it at. You can use that same website for self-renewal in case you need extra time to read a book (see the instructions <a href="https://mvbchurch.org/files/Checkout%20Renewal.pdf">here</a>).</p>
-	<p>Lastly, remember that our library is located next to the Fellowship Hall and it now contains 1500+ titles.</p>
-	<p>Let me know if you have any questions.</p>
-	<p>Regards,</p>
-	<table width="100%" border="0" cellspacing="0">
-		<tbody>
-			<tr>
-				<td width="50"><img width="40" height="40" alt="" src="https://www.bricksafe.com/files/abasurto/img/ImageLoader.jpg"></td>
-				<td>Alex Basurto<br>MVBC Library Coordinator</td>
-			</tr>
-		</tbody>
-	</table>
-</div>
+        <!-- Header banner: Navy bar with white wordmark, Bronze rule beneath -->
+        <tr>
+          <td style="background-color: #113355; padding: 24px 32px; text-align: left;">
+            <div style="font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: 900; font-size: 22px; color: #FFFFFF; letter-spacing: 0.04em; text-transform: uppercase;">
+              Mount Vernon Baptist Church
+            </div>
+            <div style="font-family: Arial, Helvetica, sans-serif; font-weight: normal; font-size: 12px; color: #C3AA7C; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px;">
+              Library
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color: #C3AA7C; height: 4px; line-height: 4px; font-size: 0;">&nbsp;</td>
+        </tr>
+
+        <!-- Body content -->
+        <tr>
+          <td style="background-color: #F3F0EB; padding: 36px 32px 24px 32px; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.6; color: #2C2A2B;">
+
+            <p style="margin: 0 0 18px 0; font-size: 18px; color: #113355;">{first_name},</p>
+
+            <p style="margin: 0 0 16px 0;">
+              Your <strong style="color: #113355;">MVBC Library account is ready</strong>. Come browse our titles and give the self-checkout kiosk a try.
+            </p>
+
+            <!-- Section heading -->
+            <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
+              How to check out a book
+            </p>
+
+            <ol style="margin: 0 0 20px 24px; padding: 0; color: #2C2A2B;">
+              <li style="margin-bottom: 10px;">On the iPad, scan the barcode of each book you'd like to check out. (The camera is on the back of the iPad.)</li>
+              <li style="margin-bottom: 10px;">Tap the <em>Checkout</em> button.</li>
+              <li style="margin-bottom: 10px;">Enter your email (<span style="color: #113355; font-weight: bold;">{email}</span>) or scan your library card (attached), then tap <em>OK</em>.</li>
+            </ol>
+
+            <p style="margin: 0 0 16px 0;">
+              You have <strong>3 weeks</strong> to return each book. Drop returns into one of the boxes by the kiosk.
+            </p>
+
+            <!-- Catalog CTA -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+              <tr>
+                <td style="background-color: #C3AA7C; border-radius: 6px;">
+                  <a href="https://www.libib.com/u/mvbchurch" target="_blank" style="display: inline-block; padding: 14px 28px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #FFFFFF; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;">
+                    Browse the Catalog
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin: 0 0 16px 0;">
+              Every book is tagged with its shelf section. You can also use the catalog to self-renew if you need more time —
+              <a href="https://mvbchurch.org/files/Checkout%20Renewal.pdf" style="color: #113355; text-decoration: underline;">see the renewal instructions here</a>.
+            </p>
+
+            <p style="margin: 0 0 24px 0;">
+              The library is located next to the Fellowship Hall and now holds 1,500+ titles.
+            </p>
+
+            <p style="margin: 0 0 8px 0;">Questions? Just reply.</p>
+
+            <!-- Signature -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px; border-top: 1px solid #C3AA7C; padding-top: 20px; width: 100%;">
+              <tr>
+                <td style="padding-right: 16px; vertical-align: middle;">
+                  <img width="48" height="48" alt="Alex Basurto" src="https://www.bricksafe.com/files/abasurto/img/ImageLoader.jpg" style="border-radius: 24px; display: block;">
+                </td>
+                <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; color: #2C2A2B;">
+                  <div style="font-weight: bold; font-size: 15px; color: #113355;">Alex Basurto</div>
+                  <div style="font-size: 13px; color: #767676; letter-spacing: 0.04em; text-transform: uppercase;">MVBC Library Coordinator</div>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+
+        <!-- Footer: Navy bar -->
+        <tr>
+          <td style="background-color: #113355; padding: 20px 32px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #FFFFFF; line-height: 1.5;">
+            <div style="font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px;">Mount Vernon Baptist Church</div>
+            <div style="color: #C3AA7C;">850 Mt. Vernon Hwy NW · Sandy Springs, GA 30327</div>
+            <div style="color: #FFFFFF; margin-top: 4px;">
+              <a href="https://www.mvbchurch.org" style="color: #FFFFFF; text-decoration: none;">mvbchurch.org</a>
+              &nbsp;·&nbsp;
+              <a href="mailto:info@mvbchurch.org" style="color: #FFFFFF; text-decoration: none;">info@mvbchurch.org</a>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
