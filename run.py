@@ -69,8 +69,25 @@ def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
 
     if dry_run:
         print("  --dry-run: skipping execution")
-        for action in mature:
-            print(f"    would execute: {action.action_type} for {action.person_id}")
+        # Breakdown of desired actions by type
+        from collections import Counter
+        by_type = Counter(a.action_type for a in desired)
+        if by_type:
+            print("  desired action breakdown:")
+            for action_type in sorted(by_type):
+                print(f"    {action_type}: {by_type[action_type]}")
+            # Show up to 5 examples of each type with target detail
+            actions_by_type: dict[str, list] = {}
+            for a in desired:
+                actions_by_type.setdefault(a.action_type, []).append(a)
+            for action_type in sorted(actions_by_type):
+                print(f"  {action_type} examples (first 5):")
+                for a in actions_by_type[action_type][:5]:
+                    print(f"    person_id={a.person_id}  target={a.target}")
+        if mature:
+            print(f"  would execute now ({len(mature)} mature):")
+            for action in mature:
+                print(f"    {action.action_type} for {action.person_id}: {action.target}")
         return 0
 
     sender = GmailSMTPSender(
