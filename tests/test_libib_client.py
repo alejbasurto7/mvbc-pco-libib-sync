@@ -1,7 +1,9 @@
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
+import requests
 import responses
 
 from lib.libib_client import LibibClient
@@ -185,3 +187,65 @@ def test_update_patron_patron_id(client):
     result = client.update_patron(email="ana@example.com", patron_id="pco-NEW")
     assert result.patron_id == "pco-NEW"
     assert "patron_id=pco-NEW" in responses.calls[0].request.url
+
+
+# ---------------------------------------------------------------------------
+# Retry / 429 tests
+# ---------------------------------------------------------------------------
+
+@responses.activate
+def test_retries_on_429_until_success(client):
+    """Libib often 429s; we retry with backoff."""
+    # First two responses are 429, third succeeds
+    responses.add(responses.GET, "https://api.libib.com/patrons/ana@x", status=429)
+    responses.add(responses.GET, "https://api.libib.com/patrons/ana@x", status=429)
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/ana@x",
+        json={"patron_id": "1", "first_name": "Ana", "last_name": "S",
+              "email": "ana@x", "barcode": "BC-1", "freeze": 0},
+        status=200,
+    )
+    # Patch time.sleep so the test runs instantly
+    with patch("lib.libib_client.time.sleep") as fake_sleep:
+        result = client.get_patron("ana@x")
+    assert result is not None
+    assert result.patron_id == "1"
+    # Should have slept twice (between attempts 1→2 and 2→3)
+    assert fake_sleep.call_count == 2
+
+
+@responses.activate
+def test_429_honors_retry_after_header(client):
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/ana@x",
+        status=429, headers={"Retry-After": "7"},
+    )
+    responses.add(
+        responses.GET, "https://api.libib.com/patrons/ana@x",
+        json={"patron_id": "1", "first_name": "Ana", "last_name": "S",
+              "email": "ana@x", "barcode": "BC-1", "freeze": 0},
+        status=200,
+    )
+    with patch("lib.libib_client.time.sleep") as fake_sleep:
+        client.get_patron("ana@x")
+    fake_sleep.assert_called_once_with(7.0)
+
+
+@responses.activate
+def test_429_gives_up_after_max_attempts(client):
+    """After 5 attempts of 429, raise."""
+    for _ in range(5):
+        responses.add(responses.GET, "https://api.libib.com/patrons/ana@x", status=429)
+    with patch("lib.libib_client.time.sleep"):
+        with pytest.raises(requests.HTTPError):
+            client.get_patron("ana@x")
+
+
+@responses.activate
+def test_non_429_errors_do_not_retry(client):
+    """400, 404, 500 etc. should NOT be retried — they're not transient."""
+    responses.add(responses.GET, "https://api.libib.com/patrons/ana@x", status=500)
+    with patch("lib.libib_client.time.sleep") as fake_sleep:
+        with pytest.raises(requests.HTTPError):
+            client.get_patron("ana@x")
+    fake_sleep.assert_not_called()

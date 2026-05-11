@@ -2,6 +2,7 @@
 
 Authenticates via x-api-key and x-api-user headers.
 """
+import time
 from typing import Iterator
 
 import requests
@@ -9,6 +10,9 @@ import requests
 from lib.types import Patron
 
 API_BASE = "https://api.libib.com"
+
+_MAX_ATTEMPTS = 5
+_BASE_DELAY = 1.0  # seconds
 
 
 class LibibClient:
@@ -26,14 +30,41 @@ class LibibClient:
             "x-api-user": api_user,
         })
 
+    def _request(self, method: str, url: str, **kwargs) -> requests.Response:
+        """Send an HTTP request, retrying on 429 with exponential backoff.
+
+        Retries up to _MAX_ATTEMPTS times total. Honors the Retry-After
+        response header when present. All other error statuses propagate
+        immediately (caller is responsible for raise_for_status).
+        """
+        kwargs.setdefault("timeout", 30)
+        resp = None
+        for attempt in range(_MAX_ATTEMPTS):
+            resp = self.session.request(method, url, **kwargs)
+            if resp.status_code != 429:
+                return resp
+            # 429 — decide how long to wait before the next attempt
+            retry_after = resp.headers.get("Retry-After")
+            if retry_after:
+                try:
+                    delay = float(retry_after)
+                except ValueError:
+                    delay = _BASE_DELAY * (2 ** attempt)
+            else:
+                delay = _BASE_DELAY * (2 ** attempt)
+            time.sleep(delay)
+        # Exhausted all attempts — raise the final 429
+        resp.raise_for_status()
+        return resp  # unreachable
+
     def list_all_patrons(self) -> Iterator[Patron]:
         page = 1
         fetched = 0
         while True:
-            resp = self.session.get(
+            resp = self._request(
+                "GET",
                 f"{API_BASE}/patrons",
                 params={"page": page},
-                timeout=30,
             )
             resp.raise_for_status()
             payload = resp.json()
@@ -63,10 +94,7 @@ class LibibClient:
         when the patron is missing (rather than 404), so we also treat a
         response with empty patron_id as "not found".
         """
-        resp = self.session.get(
-            f"{API_BASE}/patrons/{email_or_barcode}",
-            timeout=30,
-        )
+        resp = self._request("GET", f"{API_BASE}/patrons/{email_or_barcode}")
         if resp.status_code == 404:
             return None
         resp.raise_for_status()
@@ -89,20 +117,12 @@ class LibibClient:
             "email": email,
             "patron_id": patron_id,
         }
-        resp = self.session.post(
-            f"{API_BASE}/patrons",
-            params=params,
-            timeout=30,
-        )
+        resp = self._request("POST", f"{API_BASE}/patrons", params=params)
         resp.raise_for_status()
         return self._patron_from_dict(resp.json())
 
     def freeze_patron(self, *, email: str) -> Patron:
-        resp = self.session.post(
-            f"{API_BASE}/patrons/{email}",
-            params={"freeze": 1},
-            timeout=30,
-        )
+        resp = self._request("POST", f"{API_BASE}/patrons/{email}", params={"freeze": 1})
         resp.raise_for_status()
         return self._patron_from_dict(resp.json())
 
@@ -128,11 +148,7 @@ class LibibClient:
         if not params:
             raise ValueError("update_patron requires at least one field")
 
-        resp = self.session.post(
-            f"{API_BASE}/patrons/{email}",
-            params=params,
-            timeout=30,
-        )
+        resp = self._request("POST", f"{API_BASE}/patrons/{email}", params=params)
         resp.raise_for_status()
         return self._patron_from_dict(resp.json())
 
