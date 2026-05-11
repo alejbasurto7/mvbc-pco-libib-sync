@@ -23,11 +23,11 @@ def client():
 @responses.activate
 def test_list_all_patrons_walks_pagination(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_1.json"), status=200,
     )
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_2.json"), status=200,
     )
     patrons = list(client.list_all_patrons())
@@ -37,11 +37,11 @@ def test_list_all_patrons_walks_pagination(client):
 @responses.activate
 def test_list_all_patrons_normalizes_freeze_to_bool(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_1.json"), status=200,
     )
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json={"patrons": [], "page": 2, "max_per_page": 50, "total_count": 2}, status=200,
     )
     by_id = {p.patron_id: p for p in client.list_all_patrons()}
@@ -52,11 +52,11 @@ def test_list_all_patrons_normalizes_freeze_to_bool(client):
 @responses.activate
 def test_list_all_patrons_returns_patron_dataclasses(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_1.json"), status=200,
     )
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json={"patrons": [], "page": 2, "max_per_page": 50, "total_count": 2}, status=200,
     )
     patrons = list(client.list_all_patrons())
@@ -66,7 +66,7 @@ def test_list_all_patrons_returns_patron_dataclasses(client):
 @responses.activate
 def test_libib_headers_are_sent(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json={"patrons": [], "page": 1, "max_per_page": 50, "total_count": 0}, status=200,
     )
     list(client.list_all_patrons())
@@ -78,7 +78,7 @@ def test_libib_headers_are_sent(client):
 @responses.activate
 def test_create_patron_posts_correct_params(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons",
+        responses.POST, "https://api.libib.com/patrons",
         json={"patron_id": "pco-1", "barcode": "BC-NEW", "first_name": "Ana",
               "last_name": "Smith", "email": "ana@example.com", "freeze": 0},
         status=201,
@@ -101,7 +101,7 @@ def test_create_patron_posts_correct_params(client):
 @responses.activate
 def test_freeze_patron_uses_email_as_id(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/ana@example.com",
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
         json={"patron_id": "pco-1", "email": "ana@example.com", "freeze": 1,
               "first_name": "Ana", "last_name": "Smith", "barcode": "BC-1"},
         status=200,
@@ -114,7 +114,7 @@ def test_freeze_patron_uses_email_as_id(client):
 @responses.activate
 def test_update_patron_first_name(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/ana@example.com",
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
         json={"patron_id": "pco-1", "email": "ana@example.com", "first_name": "Anna",
               "last_name": "Smith", "barcode": "BC-1", "freeze": 0},
         status=200,
@@ -127,7 +127,7 @@ def test_update_patron_first_name(client):
 @responses.activate
 def test_update_patron_email_changes_email(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/old@example.com",
+        responses.POST, "https://api.libib.com/patrons/old@example.com",
         json={"patron_id": "pco-1", "email": "new@example.com", "first_name": "Ana",
               "last_name": "Smith", "barcode": "BC-1", "freeze": 0},
         status=200,
@@ -141,7 +141,7 @@ def test_update_patron_email_changes_email(client):
 def test_update_patron_patron_id(client):
     """Used by the migration script."""
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/ana@example.com",
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
         json={"patron_id": "pco-NEW", "email": "ana@example.com", "first_name": "Ana",
               "last_name": "Smith", "barcode": "BC-1", "freeze": 0},
         status=200,

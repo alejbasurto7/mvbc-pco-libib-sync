@@ -8,7 +8,7 @@ import requests
 
 from lib.types import Patron
 
-API_BASE = "https://api.libib.com/v1"
+API_BASE = "https://api.libib.com"
 
 
 class LibibClient:

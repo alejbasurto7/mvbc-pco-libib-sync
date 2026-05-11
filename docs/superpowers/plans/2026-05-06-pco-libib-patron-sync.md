@@ -41,8 +41,8 @@ These are setup tasks that don't produce code but unblock the rest of the plan. 
 The spec assumes that calling `POST /patrons/{old_email}?email={new_email}` updates a patron's email while preserving `patron_id` and loan history. Confirm this manually before designing around it.
 
 - [ ] In a Libib test/sandbox account, create a test patron with email `test-pre@example.com` and patron_id `test-001`. Note the patron_id Libib stores.
-- [ ] Update the email: `curl -X POST -H 'x-api-key: ...' -H 'x-api-user: ...' 'https://api.libib.com/v1/patrons/test-pre@example.com?email=test-post@example.com'`
-- [ ] Fetch by new email: `curl -H 'x-api-key: ...' -H 'x-api-user: ...' 'https://api.libib.com/v1/patrons/test-post@example.com'`
+- [ ] Update the email: `curl -X POST -H 'x-api-key: ...' -H 'x-api-user: ...' 'https://api.libib.com/patrons/test-pre@example.com?email=test-post@example.com'`
+- [ ] Fetch by new email: `curl -H 'x-api-key: ...' -H 'x-api-user: ...' 'https://api.libib.com/patrons/test-post@example.com'`
 - [ ] Confirm the response shows `patron_id: test-001` and any loan history is intact.
 - [ ] If the round-trip works as expected: record success in your notes and proceed.
 - [ ] If the round-trip fails (creates a new patron, loses patron_id, drops history): pause and consult; the design needs adjustment.
@@ -51,7 +51,7 @@ The spec assumes that calling `POST /patrons/{old_email}?email={new_email}` upda
 
 The spec says CREATE_PATRON sends no password. Confirm what Libib does (sends its own onboarding email? leaves the patron passwordless? requires password reset?).
 
-- [ ] Create a test patron via API with no `password` field: `curl -X POST -H 'x-api-key: ...' -H 'x-api-user: ...' 'https://api.libib.com/v1/patrons?first_name=Test&last_name=NoPwd&email=test-nopwd@example.com&patron_id=test-002'`
+- [ ] Create a test patron via API with no `password` field: `curl -X POST -H 'x-api-key: ...' -H 'x-api-user: ...' 'https://api.libib.com/patrons?first_name=Test&last_name=NoPwd&email=test-nopwd@example.com&patron_id=test-002'`
 - [ ] Check the email inbox for `test-nopwd@example.com` (use a real address you can read). Does Libib send a welcome/onboarding email automatically?
 - [ ] Record the answer in your notes. If Libib does NOT send its own email: our welcome email is the patron's only signal; consider including "use forgot-password if you want to log in to the catalog" in the copy. If Libib DOES send one: ours and theirs both arrive; design the copy to be complementary.
 
@@ -61,7 +61,7 @@ We'll need realistic payloads for unit tests in Phase 1. Capture them now while 
 
 - [ ] Run: `curl -u "${PCO_APP_ID}:${PCO_SECRET}" 'https://api.planningcenteronline.com/people/v2/people?include=emails&per_page=5' > pco_sample.json`
 - [ ] Inspect `pco_sample.json` and confirm it shows: `id`, `attributes.first_name`, `attributes.last_name`, `attributes.membership`, `attributes.remote_id`, and `included` array with email records linked via relationships. If the payload structure differs from what the spec assumes, flag it before writing client code.
-- [ ] Run: `curl -H "x-api-key: ${LIBIB_API_KEY}" -H "x-api-user: ${LIBIB_API_USER}" 'https://api.libib.com/v1/patrons?page=1' > libib_sample.json`
+- [ ] Run: `curl -H "x-api-key: ${LIBIB_API_KEY}" -H "x-api-user: ${LIBIB_API_USER}" 'https://api.libib.com/patrons?page=1' > libib_sample.json`
 - [ ] Inspect `libib_sample.json` and confirm it shows: `patron_id`, `first_name`, `last_name`, `email`, `barcode`, `freeze` for each patron. Confirm `max_per_page=50` per spec.
 - [ ] Save both files somewhere safe (NOT yet committed — these contain real congregant data and barcodes; we'll redact them and turn them into fixtures in Phase 1).
 
@@ -1579,11 +1579,11 @@ def client():
 @responses.activate
 def test_list_all_patrons_walks_pagination(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_1.json"), status=200,
     )
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_2.json"), status=200,
     )
     patrons = list(client.list_all_patrons())
@@ -1593,11 +1593,11 @@ def test_list_all_patrons_walks_pagination(client):
 @responses.activate
 def test_list_all_patrons_normalizes_freeze_to_bool(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_1.json"), status=200,
     )
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json={"patrons": [], "page": 2, "max_per_page": 50, "total_count": 2}, status=200,
     )
     by_id = {p.patron_id: p for p in client.list_all_patrons()}
@@ -1608,11 +1608,11 @@ def test_list_all_patrons_normalizes_freeze_to_bool(client):
 @responses.activate
 def test_list_all_patrons_returns_patron_dataclasses(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json=load_fixture("libib_page_1.json"), status=200,
     )
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json={"patrons": [], "page": 2, "max_per_page": 50, "total_count": 2}, status=200,
     )
     patrons = list(client.list_all_patrons())
@@ -1622,7 +1622,7 @@ def test_list_all_patrons_returns_patron_dataclasses(client):
 @responses.activate
 def test_libib_headers_are_sent(client):
     responses.add(
-        responses.GET, "https://api.libib.com/v1/patrons",
+        responses.GET, "https://api.libib.com/patrons",
         json={"patrons": [], "page": 1, "max_per_page": 50, "total_count": 0}, status=200,
     )
     list(client.list_all_patrons())
@@ -1649,7 +1649,7 @@ import requests
 
 from lib.types import Patron
 
-API_BASE = "https://api.libib.com/v1"
+API_BASE = "https://api.libib.com"
 
 
 class LibibClient:
@@ -1669,6 +1669,7 @@ class LibibClient:
 
     def list_all_patrons(self) -> Iterator[Patron]:
         page = 1
+        fetched = 0
         while True:
             resp = self.session.get(
                 f"{API_BASE}/patrons",
@@ -1689,8 +1690,10 @@ class LibibClient:
                     barcode=row.get("barcode"),
                     is_frozen=bool(row.get("freeze", 0)),
                 )
-            # Stop when we got fewer than max_per_page
-            if len(rows) < int(payload.get("max_per_page", 50)):
+            fetched += len(rows)
+            total_count = int(payload.get("total_count", 0))
+            # Stop when we've fetched all records (or total_count is 0)
+            if total_count == 0 or fetched >= total_count:
                 break
             page += 1
 ```
@@ -1715,7 +1718,7 @@ git commit -m "feat(libib_client): list_all_patrons with pagination"
 @responses.activate
 def test_create_patron_posts_correct_params(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons",
+        responses.POST, "https://api.libib.com/patrons",
         json={"patron_id": "pco-1", "barcode": "BC-NEW", "first_name": "Ana",
               "last_name": "Smith", "email": "ana@example.com", "freeze": 0},
         status=201,
@@ -1738,7 +1741,7 @@ def test_create_patron_posts_correct_params(client):
 @responses.activate
 def test_freeze_patron_uses_email_as_id(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/ana@example.com",
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
         json={"patron_id": "pco-1", "email": "ana@example.com", "freeze": 1,
               "first_name": "Ana", "last_name": "Smith", "barcode": "BC-1"},
         status=200,
@@ -1751,7 +1754,7 @@ def test_freeze_patron_uses_email_as_id(client):
 @responses.activate
 def test_update_patron_first_name(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/ana@example.com",
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
         json={"patron_id": "pco-1", "email": "ana@example.com", "first_name": "Anna",
               "last_name": "Smith", "barcode": "BC-1", "freeze": 0},
         status=200,
@@ -1764,7 +1767,7 @@ def test_update_patron_first_name(client):
 @responses.activate
 def test_update_patron_email_changes_email(client):
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/old@example.com",
+        responses.POST, "https://api.libib.com/patrons/old@example.com",
         json={"patron_id": "pco-1", "email": "new@example.com", "first_name": "Ana",
               "last_name": "Smith", "barcode": "BC-1", "freeze": 0},
         status=200,
@@ -1778,7 +1781,7 @@ def test_update_patron_email_changes_email(client):
 def test_update_patron_patron_id(client):
     """Used by the migration script."""
     responses.add(
-        responses.POST, "https://api.libib.com/v1/patrons/ana@example.com",
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
         json={"patron_id": "pco-NEW", "email": "ana@example.com", "first_name": "Ana",
               "last_name": "Smith", "barcode": "BC-1", "freeze": 0},
         status=200,
