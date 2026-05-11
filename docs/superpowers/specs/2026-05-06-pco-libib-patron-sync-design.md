@@ -63,13 +63,18 @@ If any condition flips false, the patron should be frozen.
 
 ## 4. Action types
 
-**Patron correspondence** is established by `patron_id`, never by email. After the one-time migration described in §16, every Libib patron's `patron_id` equals the PCO person's `id`. The canonical lookup is then trivially:
+**Patron correspondence** is established by `patron_id`, never by email. We accept a dual-namespace state in Libib: patrons created during the CCB era retain their CCB-derived `patron_id`, while patrons created after the PCO migration (by this sync, going forward) get their PCO `person.id`. The canonical lookup spans both:
 
 ```python
-patron_id = pco_person.id
+def expected_patron_id(pco_person) -> str:
+    return pco_person.remote_id or pco_person.id
 ```
 
-Pre-migration historical context: Libib's `patron_id` values were populated by a prior CCB ↔ Libib sync system that this project replaces. That earlier sync used CCB Person IDs as Libib patron IDs. MVBC has since moved their congregation database from CCB to PCO; PCO carries each migrated person's original CCB ID forward in the `remote_id` field. The §16 migration script rewrites every Libib `patron_id` from its CCB value to the corresponding PCO `id`, eliminating the dual-namespace situation. The sync code is written assuming the migration has completed; running sync against an unmigrated Libib roster is unsupported.
+For a person who came through the CCB → PCO migration, PCO carries the original CCB ID in `remote_id`, so the lookup returns the CCB ID — matching the existing Libib patron. For a person who joined post-migration (no CCB heritage, no `remote_id`), the lookup returns `person.id`, and any patron we create for them is stored under that PCO id.
+
+This avoids a one-shot bulk-rewrite of every Libib patron_id (the migration script `migrate_patron_ids.py` exists for the case where someone wants to normalize the namespace later, but is not required for the sync to work correctly). The cost of the dual namespace is one extra `or` in the lookup; the field is opaque to humans.
+
+Pre-migration historical context: Libib's `patron_id` values were populated by a prior CCB ↔ Libib sync system that this project replaces. That earlier sync used CCB Person IDs as Libib patron IDs. MVBC has since moved their congregation database from CCB to PCO; PCO carries each migrated person's original CCB ID forward in the `remote_id` field.
 
 Email is a synced attribute, not a key. This is what makes `UPDATE_EMAIL` safe — without it, an email change in PCO would look like "person disappeared, new person appeared" and we'd duplicate-create.
 
@@ -404,9 +409,13 @@ Run them manually before merging anything that changes `pco_client.py`, `libib_c
 - Hard-deleting Libib patrons on PCO destroy
 - Slack/Teams notifications, SMS notifications, monthly digests (post-v1 if desired)
 
-## 16. One-time patron_id migration
+## 16. One-time patron_id migration (NOT used in v1)
 
-The Libib roster was created during the CCB era, so every existing patron has `patron_id == CCB Person ID`. PCO carries the same value forward in `remote_id`. We rewrite every Libib `patron_id` to the corresponding PCO `person.id`, after which the sync code can assume the simple key `patron_id == person.id`.
+**Status: not running for v1.** The sync handles the dual namespace natively via `expected_patron_id = remote_id or id` (see §4). This section is preserved as a record of the option and for the script that implements it (`migrate_patron_ids.py`) — kept in the repo for future use if MVBC ever wants to normalize the Libib patron_id namespace.
+
+---
+
+If invoked, the migration rewrites every Libib `patron_id` from its CCB value to the corresponding PCO `person.id`, after which the sync code could be simplified to `patron_id == person.id` (one fewer `or`). Doing so would also require updating `expected_patron_id` in `lib/decide.py` immediately after migration completes.
 
 ### Why a script, not gradual migration in the live sync
 
