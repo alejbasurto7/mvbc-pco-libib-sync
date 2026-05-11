@@ -58,8 +58,14 @@ class LibibClient:
         return resp  # unreachable
 
     def list_all_patrons(self) -> Iterator[Patron]:
+        """Yield every Libib patron, paginating via the `page` query param.
+
+        Stop condition: when a response returns fewer rows than the page's
+        `max_per_page`, it's the last page. Real Libib responses don't
+        appear to include a reliable grand-total field, so we don't trust
+        `total_count` for termination.
+        """
         page = 1
-        fetched = 0
         while True:
             resp = self._request(
                 "GET",
@@ -80,11 +86,9 @@ class LibibClient:
                     barcode=row.get("barcode"),
                     is_frozen=bool(row.get("freeze", 0)),
                 )
-            fetched += len(rows)
-            total_count = int(payload.get("total_count", 0))
-            # Stop when we've fetched all records; total_count=0 means stop too
-            if total_count == 0 or fetched >= total_count:
-                break
+            max_per_page = int(payload.get("max_per_page", 50))
+            if len(rows) < max_per_page:
+                break  # last (partial) page
             page += 1
 
     def get_patron(self, email_or_barcode: str) -> Patron | None:

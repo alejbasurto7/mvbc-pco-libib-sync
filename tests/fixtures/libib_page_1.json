@@ -18,6 +18,6 @@
     }
   ],
   "page": 1,
-  "max_per_page": 50,
+  "max_per_page": 2,
   "total_count": 3
 }
