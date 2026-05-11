@@ -123,6 +123,18 @@ Libib's API documents `patron_id` as "Custom ID (non-unique)." Libib does not en
 - **Aggressive rate limiting on sequential requests.** Back-to-back create→update calls hit HTTP 429. Tolerable for the live sync (one cycle every 15 minutes; few writes per cycle), but the migration script (§16) and any other bulk operation needs delays or retry-with-backoff. Empirically a 3-second gap between requests avoids 429s.
 - **Create-without-password works.** The patron is created and assigned a barcode automatically; whether Libib auto-sends an onboarding email is moot for MVBC because the workflow is kiosk-based, not web-login-based.
 
+### 4.2b Shared-email skip
+
+Libib enforces email uniqueness across patrons; PCO doesn't. Spouses (and parents/children) at MVBC commonly share a primary email in PCO. A naive `CREATE_PATRON` for a second person at that email would fail with a Libib error.
+
+After `compute_desired_actions`, `filter_email_conflicts(actions, libib_patrons)` separates the action list into `(kept, skipped)`:
+
+- A `CREATE_PATRON` whose target email is already used by any Libib patron → skipped
+- An `UPDATE_EMAIL` whose new email is used by another Libib patron → skipped (case-insensitive match)
+- Skipped entries are logged to `sync_log/YYYY-MM.jsonl` with `action=SKIPPED`, `reason=shared_email`, plus `conflicts_with_patron_id` so the operator can investigate
+
+Skipping is silent at the API layer (we don't attempt the call) but loud in the audit trail. The patron in question continues to share Libib access via their spouse's account at the kiosk; the operator can manually create a separate patron with a different email if desired.
+
 ### 4.3 Orphan detection
 
 The CCB → PCO migration is believed complete: every Libib patron has a matching PCO person. The algorithm therefore treats orphans (Libib patrons whose `patron_id` matches no PCO `person.id` after the §16 migration) as anomalies rather than normal state. On each run the script counts orphans and:

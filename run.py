@@ -21,7 +21,7 @@ from pathlib import Path
 
 from lib.card import generate_card_png
 from lib.config import load_config
-from lib.decide import compute_desired_actions, find_orphan_patrons
+from lib.decide import compute_desired_actions, filter_email_conflicts, find_orphan_patrons
 from lib.execute import execute_action
 from lib.libib_client import LibibClient
 from lib.pco_client import PCOClient
@@ -47,7 +47,15 @@ def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
     patrons = list(libib.list_all_patrons())
     print(f"  fetched: {len(people)} PCO people, {len(patrons)} Libib patrons")
 
-    desired = compute_desired_actions(people, patrons)
+    desired_all = compute_desired_actions(
+        people, patrons,
+        protected_tags=frozenset(cfg.protected_tags),
+    )
+    desired, email_skipped = filter_email_conflicts(desired_all, patrons)
+    for skip in email_skipped:
+        append_log(state_dir, now, {"action": "SKIPPED", **skip})
+    if email_skipped:
+        print(f"  email_conflicts_skipped={len(email_skipped)} (logged)")
     pending = load_pending(state_dir)
     new_pending, mature = reconcile(
         desired, pending,
@@ -88,6 +96,14 @@ def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
             print(f"  would execute now ({len(mature)} mature):")
             for action in mature:
                 print(f"    {action.action_type} for {action.person_id}: {action.target}")
+        if email_skipped:
+            print(f"  email_conflicts_skipped examples (first 10):")
+            for skip in email_skipped[:10]:
+                print(
+                    f"    {skip['action_type']} for {skip['person_id']} "
+                    f"intended={skip['intended_email']} "
+                    f"conflicts_with=patron_id={skip['conflicts_with_patron_id']} ({skip['conflicts_with_name']})"
+                )
         return 0
 
     sender = GmailSMTPSender(

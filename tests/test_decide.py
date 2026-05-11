@@ -301,7 +301,81 @@ class TestComputeDesiredActions_Updates:
         assert actions == []
 
 
-from lib.decide import find_orphan_patrons
+from lib.decide import filter_email_conflicts, find_orphan_patrons
+
+
+class TestFilterEmailConflicts:
+    def test_create_without_conflict_is_kept(self):
+        action = Action(
+            person_id="pco-1", action_type="CREATE_PATRON",
+            target={"first_name": "Ana", "last_name": "Smith",
+                    "email": "ana@example.com", "patron_id": "pco-1"},
+        )
+        kept, skipped = filter_email_conflicts([action], [])
+        assert kept == [action]
+        assert skipped == []
+
+    def test_create_with_email_used_by_another_patron_is_skipped(self):
+        action = Action(
+            person_id="pco-jane", action_type="CREATE_PATRON",
+            target={"first_name": "Jane", "last_name": "Payne",
+                    "email": "shared@example.com", "patron_id": "pco-jane"},
+        )
+        existing = make_patron(patron_id="pco-william", email="shared@example.com",
+                               first_name="William", last_name="Payne")
+        kept, skipped = filter_email_conflicts([action], [existing])
+        assert kept == []
+        assert len(skipped) == 1
+        assert skipped[0]["reason"] == "shared_email"
+        assert skipped[0]["person_id"] == "pco-jane"
+        assert skipped[0]["intended_email"] == "shared@example.com"
+        assert skipped[0]["conflicts_with_patron_id"] == "pco-william"
+        assert "William Payne" in skipped[0]["conflicts_with_name"]
+
+    def test_email_comparison_is_case_insensitive(self):
+        action = Action(
+            person_id="pco-1", action_type="CREATE_PATRON",
+            target={"first_name": "X", "last_name": "Y",
+                    "email": "SHARED@Example.Com", "patron_id": "pco-1"},
+        )
+        existing = make_patron(email="shared@example.com")
+        kept, skipped = filter_email_conflicts([action], [existing])
+        assert len(skipped) == 1
+
+    def test_update_email_to_already_used_address_is_skipped(self):
+        action = Action(
+            person_id="pco-jane", action_type="UPDATE_EMAIL",
+            target={"old_email": "jane@example.com", "email": "shared@example.com"},
+        )
+        existing = make_patron(patron_id="pco-william", email="shared@example.com",
+                               first_name="William", last_name="P")
+        kept, skipped = filter_email_conflicts([action], [existing])
+        assert kept == []
+        assert len(skipped) == 1
+        assert skipped[0]["action_type"] == "UPDATE_EMAIL"
+
+    def test_update_email_to_unused_address_is_kept(self):
+        action = Action(
+            person_id="pco-1", action_type="UPDATE_EMAIL",
+            target={"old_email": "old@example.com", "email": "new@example.com"},
+        )
+        existing = make_patron(email="someone-else@example.com")
+        kept, skipped = filter_email_conflicts([action], [existing])
+        assert kept == [action]
+        assert skipped == []
+
+    def test_freeze_and_other_updates_unaffected(self):
+        actions = [
+            Action(person_id="1", action_type="FREEZE_PATRON",
+                   target={"email": "frozen@example.com"}),
+            Action(person_id="2", action_type="UPDATE_LAST_NAME",
+                   target={"last_name": "New", "email": "stable@example.com"}),
+        ]
+        # An existing patron with a matching email shouldn't block these
+        existing = make_patron(email="frozen@example.com")
+        kept, skipped = filter_email_conflicts(actions, [existing])
+        assert kept == actions
+        assert skipped == []
 
 
 class TestFindOrphanPatrons:

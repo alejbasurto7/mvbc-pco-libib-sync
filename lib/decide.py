@@ -136,6 +136,62 @@ def compute_desired_actions(
     return actions
 
 
+def filter_email_conflicts(
+    actions: list[Action],
+    libib_patrons: list[Patron],
+) -> tuple[list[Action], list[dict]]:
+    """Separate actions into (keep, skip) based on email conflicts.
+
+    Libib enforces email uniqueness; PCO doesn't. Spouses sharing one email
+    are common in PCO. We can't blindly CREATE_PATRON for them — Libib will
+    reject the second one. Same for UPDATE_EMAIL if the target email already
+    belongs to another patron.
+
+    Returns (kept_actions, skipped_info_dicts). Each skip dict has
+    `action_type`, `person_id`, `intended_email`, `reason`, and
+    `conflicts_with_patron_id` / `conflicts_with_name` so the operator can
+    see who's blocking who.
+    """
+    patrons_by_email: dict[str, Patron] = {}
+    for p in libib_patrons:
+        if p.email:
+            key = p.email.lower()
+            patrons_by_email.setdefault(key, p)
+
+    kept: list[Action] = []
+    skipped: list[dict] = []
+
+    def _skip_record(action: Action, conflict: Patron, intended: str) -> dict:
+        return {
+            "action_type": action.action_type,
+            "person_id": action.person_id,
+            "intended_email": intended,
+            "reason": "shared_email",
+            "conflicts_with_patron_id": conflict.patron_id,
+            "conflicts_with_name": f"{conflict.first_name} {conflict.last_name}".strip(),
+        }
+
+    for action in actions:
+        if action.action_type == "CREATE_PATRON":
+            email = action.target.get("email") or ""
+            conflict = patrons_by_email.get(email.lower())
+            if conflict is not None:
+                skipped.append(_skip_record(action, conflict, email))
+                continue
+        elif action.action_type == "UPDATE_EMAIL":
+            new_email = action.target.get("email") or ""
+            # The patron we're updating has current email == target.old_email,
+            # so patrons_by_email[new_email] (if present) is necessarily a
+            # different patron.
+            conflict = patrons_by_email.get(new_email.lower())
+            if conflict is not None:
+                skipped.append(_skip_record(action, conflict, new_email))
+                continue
+        kept.append(action)
+
+    return kept, skipped
+
+
 def find_orphan_patrons(
     pco_people: list[Person],
     libib_patrons: list[Patron],
