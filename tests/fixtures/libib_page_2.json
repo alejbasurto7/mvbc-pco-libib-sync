@@ -1,0 +1,15 @@
+{
+  "patrons": [
+    {
+      "patron_id": "300",
+      "first_name": "Carol",
+      "last_name": "Davis",
+      "email": "carol@example.com",
+      "barcode": "BC-300",
+      "freeze": 0
+    }
+  ],
+  "page": 2,
+  "max_per_page": 50,
+  "total_count": 3
+}
