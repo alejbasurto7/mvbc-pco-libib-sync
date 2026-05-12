@@ -105,3 +105,25 @@ jobs:
             git commit -m "[skip ci] sync state $(date -u +%FT%TZ)"
             git push origin state
           fi
+
+      - name: Open issue on failure
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd state-checkout
+          # Count failed rows in the latest pending.json
+          FAILED=$(python3 -c "import json; d=json.load(open('state/pending.json')); print(sum(1 for r in d['rows'] if r.get('status')=='failed'))")
+          # Count orphans logged this month (dedup below prevents repeat issues)
+          MONTH=$(date -u +%Y-%m)
+          ORPHANS=$(grep -c '"action": "ORPHAN_DETECTED"' "state/sync_log/${MONTH}.jsonl" 2>/dev/null || echo 0)
+          if [ "$FAILED" -gt 0 ] || [ "$ORPHANS" -gt 0 ]; then
+            TITLE="sync: $FAILED failed action(s), $ORPHANS orphan(s)"
+            BODY="Auto-generated alert from sync workflow. See [the run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) and the state branch's pending.json + sync_log."
+            EXISTING=$(gh issue list --state open --label sync-alert --json number --jq '.[0].number // empty')
+            if [ -z "$EXISTING" ]; then
+              gh issue create --title "$TITLE" --body "$BODY" --label sync-alert
+            else
+              gh issue comment "$EXISTING" --body "Re-alert: $TITLE — $(date -u +%FT%TZ)"
+            fi
+          fi
