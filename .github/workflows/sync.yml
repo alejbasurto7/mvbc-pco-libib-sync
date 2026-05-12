@@ -68,6 +68,11 @@ jobs:
         working-directory: code
         run: pip install -r requirements.txt
 
+      - name: Capture pre-sync state HEAD
+        id: pre_state
+        working-directory: state-checkout
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Move state into code dir
         run: |
           rm -rf code/state
@@ -105,6 +110,82 @@ jobs:
             git commit -m "[skip ci] sync state $(date -u +%FT%TZ)"
             git push origin state
           fi
+
+      - name: Notify on action executions
+        if: always()
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          PRE_SYNC_SHA: ${{ steps.pre_state.outputs.sha }}
+          GH_REPO: ${{ github.repository }}
+          GH_RUN_ID: ${{ github.run_id }}
+          GH_SERVER: ${{ github.server_url }}
+        working-directory: state-checkout
+        run: |
+          python3 - <<'PY'
+          import json, os, smtplib, ssl, subprocess, sys
+          from email.mime.text import MIMEText
+
+          pre = os.environ.get("PRE_SYNC_SHA", "").strip()
+          post = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode().strip()
+          if not pre or pre == post:
+              print("No state commit this run; nothing to notify.")
+              sys.exit(0)
+
+          try:
+              prev = json.loads(subprocess.check_output(
+                  ["git", "show", f"{pre}:state/pending.json"]).decode())
+          except subprocess.CalledProcessError:
+              prev = {"rows": []}
+          curr = json.load(open("state/pending.json"))
+
+          prev_idx = {(r["person_id"], r["action_type"]): r for r in prev["rows"]}
+          curr_idx = {(r["person_id"], r["action_type"]): r for r in curr["rows"]}
+
+          changes = []
+          # Status flips on rows still present
+          for key, r in curr_idx.items():
+              old = prev_idx.get(key, {})
+              if old.get("status") == "pending" and r["status"] in ("succeeded", "failed"):
+                  changes.append({**r, "_outcome": r["status"]})
+          # Rows that were pending and are now gone (succeeded + cleared)
+          for key, r in prev_idx.items():
+              if r.get("status") == "pending" and key not in curr_idx:
+                  changes.append({**r, "_outcome": "succeeded (cleared)"})
+
+          if not changes:
+              print("State commit happened but no pending-status flips; not notifying.")
+              sys.exit(0)
+
+          lines = []
+          for c in changes:
+              tgt = c.get("target", {}) or {}
+              name = (tgt.get("first_name", "") + " " + tgt.get("last_name", "")).strip() or "?"
+              email_addr = tgt.get("email", "")
+              lines.append(f"  - {c['action_type']:<18} | {c['_outcome']:<22} | {name} <{email_addr}>")
+
+          run_url = f"{os.environ['GH_SERVER']}/{os.environ['GH_REPO']}/actions/runs/{os.environ['GH_RUN_ID']}"
+          n = len(changes)
+          n_failed = sum(1 for c in changes if c["_outcome"] == "failed")
+          subject = f"[Libib sync] {n} action(s) executed" + (f" ({n_failed} failed)" if n_failed else "")
+          body = (
+              f"PCO->Libib sync executed {n} action(s) this run.\n\n"
+              + "\n".join(lines)
+              + f"\n\nRun: {run_url}\n"
+          )
+
+          gmail_user = os.environ["GMAIL_USER"]
+          msg = MIMEText(body)
+          msg["Subject"] = subject
+          msg["From"] = gmail_user
+          msg["To"] = gmail_user
+
+          with smtplib.SMTP("smtp.gmail.com", 587) as s:
+              s.starttls(context=ssl.create_default_context())
+              s.login(gmail_user, os.environ["GMAIL_APP_PASSWORD"].replace(" ", ""))
+              s.sendmail(gmail_user, [gmail_user], msg.as_string())
+          print(f"Sent: {subject}")
+          PY
 
       - name: Open issue on failure
         if: always()
