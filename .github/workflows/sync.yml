@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write   # to commit state changes back to the state branch
+      issues: write     # to open/comment the sync-alert issue on failed actions or orphans
     steps:
       - name: Checkout main (for code)
         uses: actions/checkout@v4
@@ -187,7 +188,7 @@ jobs:
           print(f"Sent: {subject}")
           PY
 
-      - name: Open issue on failure
+      - name: Alert via GitHub issue if failed actions or orphans
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -195,16 +196,21 @@ jobs:
           cd state-checkout
           # Count failed rows in the latest pending.json
           FAILED=$(python3 -c "import json; d=json.load(open('state/pending.json')); print(sum(1 for r in d['rows'] if r.get('status')=='failed'))")
-          # Count orphans logged this month (dedup below prevents repeat issues)
+          # Count orphans logged this month
           MONTH=$(date -u +%Y-%m)
-          ORPHANS=$(grep -c '"action": "ORPHAN_DETECTED"' "state/sync_log/${MONTH}.jsonl" 2>/dev/null || echo 0)
+          ORPHANS=$(grep -c '"action": "ORPHAN_DETECTED"' "state/sync_log/${MONTH}.jsonl" 2>/dev/null) || ORPHANS=0
           if [ "$FAILED" -gt 0 ] || [ "$ORPHANS" -gt 0 ]; then
             TITLE="sync: $FAILED failed action(s), $ORPHANS orphan(s)"
             BODY="Auto-generated alert from sync workflow. See [the run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) and the state branch's pending.json + sync_log."
-            EXISTING=$(gh issue list --state open --label sync-alert --json number --jq '.[0].number // empty')
+            EXISTING=$(gh issue list --state open --label sync-alert --json number,title --jq '.[0] | "\(.number)\t\(.title)"')
             if [ -z "$EXISTING" ]; then
               gh issue create --title "$TITLE" --body "$BODY" --label sync-alert
             else
-              gh issue comment "$EXISTING" --body "Re-alert: $TITLE — $(date -u +%FT%TZ)"
+              EXISTING_NUM=$(echo "$EXISTING" | cut -f1)
+              EXISTING_TITLE=$(echo "$EXISTING" | cut -f2-)
+              # Only re-comment when counts changed, to avoid spamming every 15 min
+              if [ "$TITLE" != "$EXISTING_TITLE" ]; then
+                gh issue comment "$EXISTING_NUM" --body "Update: $TITLE — $(date -u +%FT%TZ)"
+              fi
             fi
           fi
