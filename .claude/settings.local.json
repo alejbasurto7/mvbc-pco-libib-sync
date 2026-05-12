@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:/Users/T0226129/Claude/Projects/MVBC PCO-Libib Sync\" add .github/workflows/sync.yml)",
+      "Bash(git -C \"c:/Users/T0226129/Claude/Projects/MVBC PCO-Libib Sync\" commit -m \"ci: open issue on sync failures or orphans\")"
+    ]
+  }
+}

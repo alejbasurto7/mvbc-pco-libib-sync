@@ -1,4 +1,4 @@
-# PCO ↔ Libib Sync
+# PCO → Libib Sync
 
 Automated sync of MVBC's Planning Center People (PCO) membership data to Libib patrons. Runs every 15 minutes as a GitHub Actions cron in `alejbasurto7/mvbc-pco-libib-sync`.
 
