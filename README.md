@@ -21,3 +21,7 @@ python run.py --dry-run    # check action plan against live APIs without writing
 ## Production
 
 Runs as a GitHub Actions cron every 15 minutes. See `.github/workflows/sync.yml`.
+
+### Notifications
+
+The workflow emails a summary to `GMAIL_USER` every time a sync run executes one or more actions (silent when nothing changes). To turn this off, delete the `Notify on action executions` step from `.github/workflows/sync.yml` and push.
