@@ -18,7 +18,7 @@ jobs:
       issues: write     # to open/comment the sync-alert issue on failed actions or orphans
     steps:
       - name: Checkout main (for code)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: main
           path: code
@@ -38,7 +38,7 @@ jobs:
 
       - name: Checkout existing state branch
         if: steps.state_probe.outputs.exists == 'true'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: state
           path: state-checkout
@@ -60,7 +60,7 @@ jobs:
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git push -u origin state
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
           cache: pip
