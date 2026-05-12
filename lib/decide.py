@@ -94,6 +94,16 @@ def compute_desired_actions(
                     )
                 )
             else:
+                # Returning member case: their existing patron is frozen but
+                # they're now eligible again. Re-activate before any field updates.
+                if existing.is_frozen:
+                    actions.append(
+                        Action(
+                            person_id=person.id,
+                            action_type="UNFREEZE_PATRON",
+                            target={"email": existing.email},
+                        )
+                    )
                 # Use existing.email to key Libib API calls (Libib looks up by current email)
                 if person.first_name != existing.first_name:
                     actions.append(

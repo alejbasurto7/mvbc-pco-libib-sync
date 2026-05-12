@@ -100,6 +100,7 @@ Email is a synced attribute, not a key. This is what makes `UPDATE_EMAIL` safe �
 |---|---|---|
 | `CREATE_PATRON` | Eligible AND no Libib patron with `patron_id == person.id` | `POST /patrons` with first_name, last_name, email, `patron_id=person.id` (no password sent — Libib handles patron-side credential setup) |
 | `FREEZE_PATRON` | Matching Libib patron exists AND not eligible AND not already frozen | `POST /patrons/{email}?freeze=1` |
+| `UNFREEZE_PATRON` | Matching Libib patron exists AND eligible AND currently frozen | `POST /patrons/{email}?freeze=0`. Returning-member case: someone who left member status and came back. Emitted alongside any field updates needed in the same run. |
 | `UPDATE_FIRST_NAME` | Eligible matching Libib patron exists AND `first_name` differs | `POST /patrons/{email}?first_name=...` |
 | `UPDATE_LAST_NAME` | Eligible matching Libib patron exists AND `last_name` differs | `POST /patrons/{email}?last_name=...` |
 | `UPDATE_EMAIL` | Eligible matching Libib patron exists AND `email` differs | See §4.1 |

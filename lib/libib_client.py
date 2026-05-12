@@ -123,6 +123,11 @@ class LibibClient:
         resp.raise_for_status()
         return self._patron_from_dict(resp.json())
 
+    def unfreeze_patron(self, *, email: str) -> Patron:
+        resp = self._request("POST", f"{API_BASE}/patrons/{email}", params={"freeze": 0})
+        resp.raise_for_status()
+        return self._patron_from_dict(resp.json())
+
     def update_patron(
         self,
         *,

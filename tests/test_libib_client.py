@@ -179,6 +179,19 @@ def test_freeze_patron_uses_email_as_id(client):
 
 
 @responses.activate
+def test_unfreeze_patron_sends_freeze_zero(client):
+    responses.add(
+        responses.POST, "https://api.libib.com/patrons/ana@example.com",
+        json={"patron_id": "pco-1", "email": "ana@example.com", "freeze": 0,
+              "first_name": "Ana", "last_name": "Smith", "barcode": "BC-1"},
+        status=200,
+    )
+    result = client.unfreeze_patron(email="ana@example.com")
+    assert result.is_frozen is False
+    assert "freeze=0" in responses.calls[0].request.url
+
+
+@responses.activate
 def test_update_patron_first_name(client):
     responses.add(
         responses.POST, "https://api.libib.com/patrons/ana@example.com",

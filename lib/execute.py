@@ -72,6 +72,10 @@ def execute_action(
             libib.freeze_patron(email=pending.target["email"])
             return ExecutionResult(success=True, libib_status=200)
 
+        elif pending.action_type == "UNFREEZE_PATRON":
+            libib.unfreeze_patron(email=pending.target["email"])
+            return ExecutionResult(success=True, libib_status=200)
+
         elif pending.action_type == "UPDATE_FIRST_NAME":
             libib.update_patron(
                 email=pending.target["email"],

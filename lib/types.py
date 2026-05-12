@@ -6,6 +6,7 @@ from typing import Any, Literal, Optional
 ActionType = Literal[
     "CREATE_PATRON",
     "FREEZE_PATRON",
+    "UNFREEZE_PATRON",
     "UPDATE_FIRST_NAME",
     "UPDATE_LAST_NAME",
     "UPDATE_EMAIL",

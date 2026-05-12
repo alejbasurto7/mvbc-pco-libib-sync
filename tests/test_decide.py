@@ -241,6 +241,47 @@ class TestComputeDesiredActions_Freeze:
         assert actions[0].action_type == "FREEZE_PATRON"
 
 
+class TestComputeDesiredActions_Unfreeze:
+    """Returning-member case: an eligible person whose Libib patron is frozen."""
+
+    def test_eligible_with_frozen_patron_emits_unfreeze(self):
+        person = make_person(id="pco-1", membership="Member", first_name="Ana", last_name="S",
+                             email="ana@x")
+        patron = make_patron(patron_id="pco-1", is_frozen=True,
+                             first_name="Ana", last_name="S", email="ana@x")
+        actions = compute_desired_actions([person], [patron])
+        assert actions == [
+            Action(
+                person_id="pco-1",
+                action_type="UNFREEZE_PATRON",
+                target={"email": "ana@x"},
+            )
+        ]
+
+    def test_eligible_with_unfrozen_patron_does_not_unfreeze(self):
+        person = make_person(id="pco-1", first_name="Ana", last_name="S", email="ana@x")
+        patron = make_patron(patron_id="pco-1", is_frozen=False,
+                             first_name="Ana", last_name="S", email="ana@x")
+        actions = compute_desired_actions([person], [patron])
+        assert actions == []
+
+    def test_unfreeze_emitted_alongside_field_updates(self):
+        """Returning member whose name also changed in PCO: both actions emit."""
+        person = make_person(id="pco-1", first_name="Anna", last_name="Smith", email="ana@x")
+        patron = make_patron(patron_id="pco-1", is_frozen=True,
+                             first_name="Ana", last_name="Smith", email="ana@x")
+        actions = compute_desired_actions([person], [patron])
+        types = [a.action_type for a in actions]
+        assert types == ["UNFREEZE_PATRON", "UPDATE_FIRST_NAME"]
+
+    def test_unfreeze_target_uses_existing_email(self):
+        """Libib lookup keyed by current patron email."""
+        person = make_person(id="pco-1", email="ana@x")
+        patron = make_patron(patron_id="pco-1", is_frozen=True, email="ana@x")
+        actions = compute_desired_actions([person], [patron])
+        assert actions[0].target == {"email": "ana@x"}
+
+
 class TestComputeDesiredActions_Updates:
     def test_first_name_change_emits_update(self):
         person = make_person(id="pco-1", first_name="Anna")

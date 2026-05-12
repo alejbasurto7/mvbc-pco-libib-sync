@@ -48,6 +48,15 @@ def test_freeze_patron_calls_libib_freeze():
     assert result.success
 
 
+def test_unfreeze_patron_calls_libib_unfreeze():
+    libib = MagicMock()
+    libib.unfreeze_patron.return_value = MagicMock()
+    pending = make_pending("UNFREEZE_PATRON", {"email": "ana@example.com"})
+    result = execute_action(pending, libib=libib, sender=None, card_generator=None)
+    libib.unfreeze_patron.assert_called_once_with(email="ana@example.com")
+    assert result.success
+
+
 def test_update_first_name_calls_libib_update():
     libib = MagicMock()
     libib.update_patron.return_value = MagicMock()
