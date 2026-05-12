@@ -22,29 +22,42 @@ jobs:
           ref: main
           path: code
 
-      - name: Checkout state branch
+      - name: Probe state branch existence
+        id: state_probe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git ls-remote --exit-code --heads \
+              "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" \
+              state >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout existing state branch
+        if: steps.state_probe.outputs.exists == 'true'
         uses: actions/checkout@v4
         with:
           ref: state
           path: state-checkout
-        continue-on-error: true   # branch may not exist on first run
 
       - name: Initialize state branch on first run
+        if: steps.state_probe.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if [ ! -d "state-checkout/.git" ]; then
-            mkdir -p state-checkout
-            cd state-checkout
-            git init -b state
-            git config user.email "actions@users.noreply.github.com"
-            git config user.name "github-actions[bot]"
-            mkdir -p state state/sync_log
-            echo '{"version": 1, "updated_at": null, "rows": []}' > state/pending.json
-            touch state/sync_log/.gitkeep
-            git add .
-            git commit -m "chore: initialize state branch"
-            git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-            git push -u origin state
-          fi
+          mkdir -p state-checkout/state/sync_log
+          cd state-checkout
+          git init -b state
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          echo '{"version": 1, "updated_at": null, "rows": []}' > state/pending.json
+          touch state/sync_log/.gitkeep
+          git add .
+          git commit -m "chore: initialize state branch"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git push -u origin state
 
       - uses: actions/setup-python@v5
         with:
