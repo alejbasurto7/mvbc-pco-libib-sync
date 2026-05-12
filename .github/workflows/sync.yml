@@ -202,7 +202,7 @@ jobs:
           if [ "$FAILED" -gt 0 ] || [ "$ORPHANS" -gt 0 ]; then
             TITLE="sync: $FAILED failed action(s), $ORPHANS orphan(s)"
             BODY="Auto-generated alert from sync workflow. See [the run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) and the state branch's pending.json + sync_log."
-            EXISTING=$(gh issue list --state open --label sync-alert --json number,title --jq '.[0] | "\(.number)\t\(.title)"')
+            EXISTING=$(gh issue list --state open --label sync-alert --json number,title --jq '.[0] | select(.) | "\(.number)\t\(.title)"')
             if [ -z "$EXISTING" ]; then
               gh issue create --title "$TITLE" --body "$BODY" --label sync-alert
             else
