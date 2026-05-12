@@ -22,6 +22,22 @@ Eligible for Libib: PCO membership = `Member` or `Associate Member`, has an emai
 - **`run.py`** — entry point. Calls `truststore.inject_into_ssl()` so corporate networks with TLS interception work.
 - **`lib/`** — decision logic (`decide.py`), Libib + PCO clients with retry/backoff (`libib_client.py`, `pco_client.py`), executor, email sender, library-card generator.
 
+### Why a separate `state` branch?
+
+The sync runs every 15 minutes and needs to remember things between runs:
+
+- **`state/pending.json`** — every action ever detected, its `detected_at` timestamp, the number of attempts, and its current status (`pending`, `succeeded`, `failed`). This is what enforces the 24-hour stability gate: a row must sit here unchanged for 24h before it's allowed to execute.
+- **`state/sync_log/YYYY-MM.jsonl`** — append-only audit log. One line per notable event: `ORPHAN_DETECTED` (a Libib patron with no matching PCO person), `SKIPPED` (e.g., `reason=shared_email`), and execution outcomes. Useful when investigating "what happened on day X".
+
+Keeping that state on a separate branch (rather than `main`) means:
+
+- The workflow can commit state every 15 min with `[skip ci]` without polluting `main`'s commit history or re-triggering CI.
+- The audit trail is free and built-in — `git log` on the `state` branch is the history of every run.
+- No external database or storage service to manage, secrets to rotate, or bills to pay.
+- Code review on `main` stays signal — diffs are real code changes, not state churn.
+
+The first workflow run after a fresh deploy bootstraps the `state` branch automatically (see the "Initialize state branch on first run" step in the workflow). After that, the branch is rewritten by the bot on every successful sync.
+
 ### Key behaviors worth remembering
 
 - **Dual-namespace patron lookup.** Libib patrons may be keyed by either the legacy CCB ID or the new PCO ID. The decider tries both `person.id` and `person.remote_id` before concluding a patron is missing.
