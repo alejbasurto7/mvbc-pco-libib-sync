@@ -1,7 +1,19 @@
 {
   "version": 1,
-  "updated_at": "2026-05-14T23:47:36.522709+00:00",
+  "updated_at": "2026-05-15T02:15:27.173159+00:00",
   "rows": [
+    {
+      "person_id": "180060098",
+      "action_type": "UPDATE_FIRST_NAME",
+      "target": {
+        "first_name": "Tricia",
+        "email": "justclaus2002@yahoo.com"
+      },
+      "detected_at": "2026-05-15T02:15:27.173159+00:00",
+      "attempts": 0,
+      "last_attempt_at": null,
+      "status": "pending"
+    },
     {
       "person_id": "180066130",
       "action_type": "UPDATE_EMAIL",
