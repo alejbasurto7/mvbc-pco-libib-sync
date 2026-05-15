@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-05-15T21:18:07.696706+00:00",
+  "updated_at": "2026-05-15T22:28:46.038394+00:00",
   "rows": [
     {
       "person_id": "180060098",
@@ -10,18 +10,6 @@
         "email": "justclaus2002@yahoo.com"
       },
       "detected_at": "2026-05-15T02:15:27.173159+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending"
-    },
-    {
-      "person_id": "180066130",
-      "action_type": "UPDATE_EMAIL",
-      "target": {
-        "old_email": "sebastianparra8@gmail.com",
-        "email": "sebastianparra8@pm.me"
-      },
-      "detected_at": "2026-05-14T21:50:12.599522+00:00",
       "attempts": 0,
       "last_attempt_at": null,
       "status": "pending"
