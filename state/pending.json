@@ -1,18 +1,5 @@
 {
   "version": 1,
-  "updated_at": "2026-05-17T15:35:27.141652+00:00",
-  "rows": [
-    {
-      "person_id": "180056596",
-      "action_type": "UPDATE_EMAIL",
-      "target": {
-        "old_email": "english.sunshine@gmail.com",
-        "email": "englishsunshine@gmail.com"
-      },
-      "detected_at": "2026-05-16T16:10:13.695402+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending"
-    }
-  ]
+  "updated_at": "2026-05-17T16:37:44.880577+00:00",
+  "rows": []
 }
