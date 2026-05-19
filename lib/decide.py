@@ -101,7 +101,11 @@ def compute_desired_actions(
                         Action(
                             person_id=person.id,
                             action_type="UNFREEZE_PATRON",
-                            target={"email": existing.email},
+                            target={
+                                "first_name": existing.first_name,
+                                "last_name": existing.last_name,
+                                "email": existing.email,
+                            },
                         )
                     )
                 # Use existing.email to key Libib API calls (Libib looks up by current email)
@@ -110,7 +114,12 @@ def compute_desired_actions(
                         Action(
                             person_id=person.id,
                             action_type="UPDATE_FIRST_NAME",
-                            target={"first_name": person.first_name, "email": existing.email},
+                            target={
+                                "first_name": person.first_name,
+                                "old_first_name": existing.first_name,
+                                "last_name": existing.last_name,
+                                "email": existing.email,
+                            },
                         )
                     )
                 if person.last_name != existing.last_name:
@@ -118,7 +127,12 @@ def compute_desired_actions(
                         Action(
                             person_id=person.id,
                             action_type="UPDATE_LAST_NAME",
-                            target={"last_name": person.last_name, "email": existing.email},
+                            target={
+                                "first_name": existing.first_name,
+                                "last_name": person.last_name,
+                                "old_last_name": existing.last_name,
+                                "email": existing.email,
+                            },
                         )
                     )
                 if person.email != existing.email:
@@ -126,7 +140,12 @@ def compute_desired_actions(
                         Action(
                             person_id=person.id,
                             action_type="UPDATE_EMAIL",
-                            target={"old_email": existing.email, "email": person.email},
+                            target={
+                                "first_name": existing.first_name,
+                                "last_name": existing.last_name,
+                                "old_email": existing.email,
+                                "email": person.email,
+                            },
                         )
                     )
         else:
@@ -140,7 +159,11 @@ def compute_desired_actions(
                             action_type="FREEZE_PATRON",
                             # Use the patron's *current* email — Libib's update
                             # endpoint is keyed by the email it currently knows.
-                            target={"email": existing.email},
+                            target={
+                                "first_name": existing.first_name,
+                                "last_name": existing.last_name,
+                                "email": existing.email,
+                            },
                         )
                     )
     return actions

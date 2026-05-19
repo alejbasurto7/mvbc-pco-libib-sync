@@ -173,7 +173,11 @@ class TestComputeDesiredActions_Freeze:
             Action(
                 person_id="pco-1",
                 action_type="FREEZE_PATRON",
-                target={"email": "ana@example.com"},
+                target={
+                    "first_name": "Ana",
+                    "last_name": "Smith",
+                    "email": "ana@example.com",
+                },
             )
         ]
 
@@ -194,7 +198,11 @@ class TestComputeDesiredActions_Freeze:
         person = make_person(id="pco-1", email="new@example.com", membership="Visitor")
         patron = make_patron(patron_id="pco-1", email="old@example.com")
         actions = compute_desired_actions([person], [patron])
-        assert actions[0].target == {"email": "old@example.com"}
+        assert actions[0].target == {
+            "first_name": "Ana",
+            "last_name": "Smith",
+            "email": "old@example.com",
+        }
 
     def test_visitor_with_no_libib_patron_does_nothing(self):
         # The CREATE branch test covered this for non-eligible+no-patron, but
@@ -254,7 +262,7 @@ class TestComputeDesiredActions_Unfreeze:
             Action(
                 person_id="pco-1",
                 action_type="UNFREEZE_PATRON",
-                target={"email": "ana@x"},
+                target={"first_name": "Ana", "last_name": "S", "email": "ana@x"},
             )
         ]
 
@@ -279,7 +287,11 @@ class TestComputeDesiredActions_Unfreeze:
         person = make_person(id="pco-1", email="ana@x")
         patron = make_patron(patron_id="pco-1", is_frozen=True, email="ana@x")
         actions = compute_desired_actions([person], [patron])
-        assert actions[0].target == {"email": "ana@x"}
+        assert actions[0].target == {
+            "first_name": "Ana",
+            "last_name": "Smith",
+            "email": "ana@x",
+        }
 
 
 class TestComputeDesiredActions_Updates:
@@ -291,7 +303,12 @@ class TestComputeDesiredActions_Updates:
             Action(
                 person_id="pco-1",
                 action_type="UPDATE_FIRST_NAME",
-                target={"first_name": "Anna", "email": "ana@example.com"},
+                target={
+                    "first_name": "Anna",
+                    "old_first_name": "Ana",
+                    "last_name": "Smith",
+                    "email": "ana@example.com",
+                },
             )
         ]
 
@@ -303,7 +320,12 @@ class TestComputeDesiredActions_Updates:
             Action(
                 person_id="pco-1",
                 action_type="UPDATE_LAST_NAME",
-                target={"last_name": "Smyth", "email": "ana@example.com"},
+                target={
+                    "first_name": "Ana",
+                    "last_name": "Smyth",
+                    "old_last_name": "Smith",
+                    "email": "ana@example.com",
+                },
             )
         ]
 
@@ -316,7 +338,12 @@ class TestComputeDesiredActions_Updates:
                 person_id="pco-1",
                 action_type="UPDATE_EMAIL",
                 # Update keyed by *old* email; new email is the target value
-                target={"old_email": "old@example.com", "email": "new@example.com"},
+                target={
+                    "first_name": "Ana",
+                    "last_name": "Smith",
+                    "old_email": "old@example.com",
+                    "email": "new@example.com",
+                },
             )
         ]
 

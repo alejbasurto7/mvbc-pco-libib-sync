@@ -158,12 +158,33 @@ jobs:
               print("State commit happened but no pending-status flips; not notifying.")
               sys.exit(0)
 
+          def _describe(action_type, tgt):
+              first = (tgt.get("first_name") or "").strip()
+              last = (tgt.get("last_name") or "").strip()
+              name = (first + " " + last).strip() or "?"
+              email_addr = tgt.get("email") or ""
+              if action_type == "CREATE_PATRON":
+                  return f"{name} <{email_addr}> (welcome email + card sent)"
+              if action_type == "FREEZE_PATRON":
+                  return f"{name} <{email_addr}> (membership ended — patron frozen)"
+              if action_type == "UNFREEZE_PATRON":
+                  return f"{name} <{email_addr}> (returning member — patron reactivated)"
+              if action_type == "UPDATE_FIRST_NAME":
+                  old_first = (tgt.get("old_first_name") or "?").strip() or "?"
+                  return f"first name: {old_first} -> {first or '?'} (now {name} <{email_addr}>)"
+              if action_type == "UPDATE_LAST_NAME":
+                  old_last = (tgt.get("old_last_name") or "?").strip() or "?"
+                  return f"last name: {old_last} -> {last or '?'} (now {name} <{email_addr}>)"
+              if action_type == "UPDATE_EMAIL":
+                  old_email = tgt.get("old_email") or "?"
+                  return f"{name}: <{old_email}> -> <{email_addr}>"
+              return f"{name} <{email_addr}>"
+
           lines = []
           for c in changes:
               tgt = c.get("target", {}) or {}
-              name = (tgt.get("first_name", "") + " " + tgt.get("last_name", "")).strip() or "?"
-              email_addr = tgt.get("email", "")
-              lines.append(f"  - {c['action_type']:<18} | {c['_outcome']:<22} | {name} <{email_addr}>")
+              detail = _describe(c["action_type"], tgt)
+              lines.append(f"  - {c['action_type']:<18} | {c['_outcome']:<22} | {detail}")
 
           run_url = f"{os.environ['GH_SERVER']}/{os.environ['GH_REPO']}/actions/runs/{os.environ['GH_RUN_ID']}"
           n = len(changes)
