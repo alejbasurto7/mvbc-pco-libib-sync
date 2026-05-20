@@ -85,6 +85,28 @@ def test_list_all_people_membership_and_remote_id(client):
 
 
 @responses.activate
+def test_list_all_people_retries_on_429(client, mocker):
+    sleep = mocker.patch("lib.pco_client.time.sleep")
+    responses.add(
+        responses.GET,
+        "https://api.planningcenteronline.com/people/v2/people",
+        status=429,
+        headers={"Retry-After": "2"},
+    )
+    responses.add(
+        responses.GET,
+        "https://api.planningcenteronline.com/people/v2/people",
+        json=load_fixture("pco_page_2.json"),
+        status=200,
+    )
+
+    people = list(client.list_all_people())
+
+    assert len(people) == 1
+    sleep.assert_called_once_with(2.0)
+
+
+@responses.activate
 def test_basic_auth_header_used(client):
     responses.add(
         responses.GET,

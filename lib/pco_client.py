@@ -3,6 +3,7 @@
 Authenticates with a Personal Access Token (App ID + Secret) via HTTP Basic.
 Yields normalized Person objects, handling pagination and email lookup.
 """
+import time
 from typing import Iterator
 
 import requests
@@ -11,12 +12,38 @@ from lib.types import Person
 
 API_BASE = "https://api.planningcenteronline.com/people/v2"
 
+_MAX_ATTEMPTS = 5
+_BASE_DELAY = 1.0  # seconds
+
 
 class PCOClient:
     def __init__(self, app_id: str, secret: str, session: requests.Session | None = None):
         self.app_id = app_id
         self.secret = secret
         self.session = session or requests.Session()
+
+    def _get(self, url: str, **kwargs) -> requests.Response:
+        """GET with retry on 429, honoring Retry-After when present.
+
+        PCO documents a limit of 100 requests / 20s per app; a transient 429
+        on the first request of a run should not take the whole sync down.
+        """
+        kwargs.setdefault("timeout", 30)
+        resp = None
+        for attempt in range(_MAX_ATTEMPTS):
+            resp = self.session.get(url, auth=(self.app_id, self.secret), **kwargs)
+            if resp.status_code != 429:
+                return resp
+            retry_after = resp.headers.get("Retry-After")
+            if retry_after:
+                try:
+                    delay = float(retry_after)
+                except ValueError:
+                    delay = _BASE_DELAY * (2 ** attempt)
+            else:
+                delay = _BASE_DELAY * (2 ** attempt)
+            time.sleep(delay)
+        return resp  # final 429; caller raises_for_status
 
     def list_all_people(self, per_page: int = 100) -> Iterator[Person]:
         """Yield every PCO person, walking pagination.
@@ -27,11 +54,9 @@ class PCOClient:
         params = {"include": "emails", "per_page": per_page}
 
         while url:
-            resp = self.session.get(
+            resp = self._get(
                 url,
                 params=params if "offset" not in url else None,
-                auth=(self.app_id, self.secret),
-                timeout=30,
             )
             resp.raise_for_status()
             payload = resp.json()

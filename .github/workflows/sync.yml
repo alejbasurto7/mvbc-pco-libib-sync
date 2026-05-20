@@ -98,9 +98,16 @@ jobs:
         run: python run.py
 
       - name: Commit state changes
+        # Always restore state-checkout/state from code/state, even when the
+        # sync step fails — otherwise the always() notify/alert steps below
+        # see no pending.json (since this step is what moves it back).
+        if: always()
         run: |
-          # Move state back, commit and push if anything changed
-          mv code/state state-checkout/state
+          # If sync crashed before moving state, there is nothing to put back.
+          if [ -d code/state ]; then
+            rm -rf state-checkout/state
+            mv code/state state-checkout/state
+          fi
           cd state-checkout
           git add state/
           if git diff --staged --quiet; then
@@ -215,6 +222,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd state-checkout
+          if [ ! -f state/pending.json ]; then
+            echo "No state/pending.json (sync likely crashed before state was written); skipping alert."
+            exit 0
+          fi
           # Count failed rows in the latest pending.json
           FAILED=$(python3 -c "import json; d=json.load(open('state/pending.json')); print(sum(1 for r in d['rows'] if r.get('status')=='failed'))")
           # Count orphans logged this month
