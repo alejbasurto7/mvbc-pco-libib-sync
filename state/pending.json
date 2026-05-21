@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-05-21T19:44:12.904942+00:00",
+  "updated_at": "2026-05-21T21:18:05.442328+00:00",
   "rows": [
     {
       "person_id": "136701574",
@@ -12,34 +12,6 @@
         "email": "matthewctillman@gmail.com"
       },
       "detected_at": "2026-05-21T12:14:39.890468+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending"
-    },
-    {
-      "person_id": "180056851",
-      "action_type": "UPDATE_FIRST_NAME",
-      "target": {
-        "first_name": "John",
-        "old_first_name": "John E",
-        "last_name": "Hall III",
-        "email": "johnehall3@outlook.com"
-      },
-      "detected_at": "2026-05-20T20:29:52.776442+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending"
-    },
-    {
-      "person_id": "180056851",
-      "action_type": "UPDATE_LAST_NAME",
-      "target": {
-        "first_name": "John E",
-        "last_name": "Hall",
-        "old_last_name": "Hall III",
-        "email": "johnehall3@outlook.com"
-      },
-      "detected_at": "2026-05-20T20:29:52.776442+00:00",
       "attempts": 0,
       "last_attempt_at": null,
       "status": "pending"
