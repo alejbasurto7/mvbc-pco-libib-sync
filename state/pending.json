@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updated_at": "2026-05-22T20:50:33.825514+00:00",
+  "updated_at": "2026-05-22T21:59:39.108727+00:00",
   "rows": [
     {
       "person_id": "180066130",
@@ -14,7 +14,8 @@
       "detected_at": "2026-05-22T20:50:33.825514+00:00",
       "attempts": 0,
       "last_attempt_at": null,
-      "status": "pending"
+      "status": "pending",
+      "card_token": null
     },
     {
       "person_id": "180066138",
@@ -28,7 +29,8 @@
       "detected_at": "2026-05-22T20:50:33.825514+00:00",
       "attempts": 0,
       "last_attempt_at": null,
-      "status": "pending"
+      "status": "pending",
+      "card_token": null
     }
   ]
 }
