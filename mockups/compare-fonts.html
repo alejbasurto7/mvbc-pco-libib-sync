@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVBC Library Card — Font Comparison (Geometria vs Montserrat)</title>
+<style>
+  
+  @font-face {
+    font-family: 'Geometria';
+    src: url('../fonts/Geometria-Medium.woff') format('woff');
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geometria';
+    src: url('../fonts/Geometria-Bold.woff') format('woff');
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geometria';
+    src: url('../fonts/Geometria-ExtraBold.woff') format('woff');
+    font-weight: 800; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-SemiBold.ttf') format('truetype');
+    font-weight: 600; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Bold.ttf') format('truetype');
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    background: #ECE6DA;
+    color: #113355;
+    padding: 32px 16px;
+  }
+  h1 {
+    font-family: 'Geometria', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    color: #113355;
+    margin-bottom: 8px;
+  }
+  .lede {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 32px;
+    font-size: 14px;
+    color: #2C2A2B;
+    opacity: 0.78;
+    line-height: 1.5;
+  }
+  .lede strong { color: #113355; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .tile {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(17,51,85,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .tile header {
+    padding: 16px 20px;
+    background: #113355;
+    color: #F3F0EB;
+  }
+  .tile header .letter {
+    font-family: 'Geometria', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: #C3AA7C;
+  }
+  .tile header .label {
+    font-family: 'Geometria', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 2px;
+  }
+  .tile header .note {
+    font-size: 12px;
+    opacity: 0.78;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .tile iframe {
+    width: 100%;
+    height: 680px;
+    border: 0;
+    background: #E7E2D6;
+  }
+  .tile footer {
+    padding: 12px 20px;
+    border-top: 1px solid #eee;
+    font-size: 13px;
+  }
+  .tile footer a {
+    color: #113355;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tile footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <h1>Mockup C — Geometria vs Montserrat</h1>
+  <p class="lede">
+    Same card, two display fonts. <strong>Geometria</strong> is the commercial brand font already used on the printed PNG and the church website; it can't be committed to a public gh-pages branch. <strong>Montserrat</strong> is the closest free OFL substitute available on Google Fonts. Compare the wordmark on the navy stripe and the patron's name — those are the most visible places the choice shows up.
+  </p>
+  <div class="grid">
+    <div class="tile">
+      <header><div class="letter">A</div><div class="label">Geometria</div><div class="note">The locally-hosted commercial font. Slightly more geometric — sharper "M", subtle "rounded square" feel on uppercase letters. Used by the printed PNG card and mvbchurch.org.</div></header>
+      <iframe src="mockup-c-badge-v2.html" title="Mockup C with Geometria"></iframe>
+      <footer><a href="mockup-c-badge-v2.html" target="_blank">Open standalone →</a></footer>
+    </div>
+    <div class="tile">
+      <header><div class="letter">B</div><div class="label">Montserrat (Google Fonts)</div><div class="note">Free, OFL-licensed, served from Google's CDN. Slightly more rounded — softer "M", a touch more humanist. Closest free substitute and the safe choice for the public gh-pages site.</div></header>
+      <iframe src="mockup-c-montserrat.html" title="Mockup C with Montserrat"></iframe>
+      <footer><a href="mockup-c-montserrat.html" target="_blank">Open standalone →</a></footer>
+    </div>
+  </div>
+</body>
+</html>

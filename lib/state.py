@@ -74,4 +74,5 @@ def _pending_from_dict(d: dict) -> PendingChange:
             else None
         ),
         status=d.get("status", "pending"),
+        card_token=d.get("card_token"),
     )

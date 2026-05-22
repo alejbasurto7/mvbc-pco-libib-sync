@@ -8,6 +8,7 @@ from dataclasses import replace
 from datetime import datetime, timedelta
 
 from lib.types import Action, PendingChange, PendingStatus
+from lib.web_card import new_card_token
 
 
 def _key(item) -> tuple[str, str]:
@@ -49,6 +50,9 @@ def reconcile(
                     attempts=0,
                     last_attempt_at=None,
                     status=status,
+                    card_token=(
+                        new_card_token() if action.action_type == "CREATE_PATRON" else None
+                    ),
                 )
             )
         else:

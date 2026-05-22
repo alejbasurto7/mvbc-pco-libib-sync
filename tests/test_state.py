@@ -79,6 +79,44 @@ def test_save_then_load_round_trip(tmp_state_dir):
     assert rows_out == rows_in
 
 
+def test_save_then_load_round_trips_card_token(tmp_state_dir):
+    rows_in = [
+        PendingChange(
+            person_id="pco-1",
+            action_type="CREATE_PATRON",
+            target={"email": "a@b"},
+            detected_at=datetime(2026, 5, 6, 14, 0, tzinfo=timezone.utc),
+            attempts=0,
+            last_attempt_at=None,
+            status="pending",
+            card_token="cd" * 16,
+        ),
+    ]
+    save_pending(tmp_state_dir, rows_in, now=datetime(2026, 5, 6, 18, 0, tzinfo=timezone.utc))
+    rows_out = load_pending(tmp_state_dir)
+    assert rows_out[0].card_token == "cd" * 16
+
+
+def test_load_pending_legacy_rows_without_card_token_default_to_none(tmp_state_dir):
+    # Pre-existing production rows in pending.json predate the card_token field.
+    # They must keep loading; missing field becomes None.
+    (tmp_state_dir / "pending.json").write_text(json.dumps({
+        "version": 1,
+        "updated_at": "2026-05-06T18:30:00+00:00",
+        "rows": [{
+            "person_id": "pco-1",
+            "action_type": "CREATE_PATRON",
+            "target": {"email": "x@y", "first_name": "A", "last_name": "B", "patron_id": "1"},
+            "detected_at": "2026-05-06T14:00:00+00:00",
+            "attempts": 0,
+            "last_attempt_at": None,
+            "status": "pending",
+        }],
+    }))
+    rows = load_pending(tmp_state_dir)
+    assert rows[0].card_token is None
+
+
 from lib.state import append_log
 
 

@@ -7,7 +7,7 @@ from lib.execute import ExecutionResult, execute_action
 from lib.types import PendingChange
 
 
-def make_pending(action_type, target, status="pending", attempts=0):
+def make_pending(action_type, target, status="pending", attempts=0, card_token=None):
     return PendingChange(
         person_id="pco-1",
         action_type=action_type,
@@ -16,6 +16,7 @@ def make_pending(action_type, target, status="pending", attempts=0):
         attempts=attempts,
         last_attempt_at=None,
         status=status,
+        card_token=card_token,
     )
 
 
@@ -146,3 +147,108 @@ def test_freeze_does_not_send_email():
     pending = make_pending("FREEZE_PATRON", {"email": "ana@x"})
     execute_action(pending, libib=libib, sender=sender, card_generator=None)
     sender.send.assert_not_called()
+
+
+# --- web card publishing -----------------------------------------------------
+
+
+def _new_create_pending(token="aa" * 16):
+    return make_pending(
+        "CREATE_PATRON",
+        {
+            "first_name": "Ana", "last_name": "Smith",
+            "email": "ana@example.com", "patron_id": "pco-1",
+        },
+        card_token=token,
+    )
+
+
+def _new_libib_with_patron():
+    libib = MagicMock()
+    fake_patron = MagicMock(
+        barcode="BC-NEW", email="ana@example.com",
+        first_name="Ana", last_name="Smith", patron_id="pco-1",
+    )
+    libib.create_patron.return_value = fake_patron
+    return libib
+
+
+def test_create_patron_publishes_web_card_and_passes_url_to_email_render():
+    libib = _new_libib_with_patron()
+    sender = MagicMock()
+    publisher = MagicMock(return_value="https://example/cards/aaaaaaaa.html")
+
+    pending = _new_create_pending()
+    # Capture the rendered HTML to confirm the URL was injected. render_welcome_email
+    # is called inside execute_action — we mock the sender, then inspect body_html.
+    result = execute_action(
+        pending,
+        libib=libib, sender=sender,
+        card_generator=lambda **k: b"PNG",
+        web_card_publisher=publisher,
+    )
+
+    publisher.assert_called_once_with(
+        first_name="Ana", last_name="Smith",
+        patron_id="pco-1", token=pending.card_token,
+    )
+    assert result.web_card_published is True
+    assert result.web_card_url == "https://example/cards/aaaaaaaa.html"
+    # The published URL must appear in the email body so the patron can install.
+    body_html = sender.send.call_args.kwargs["body_html"]
+    body_text = sender.send.call_args.kwargs["body_text"]
+    assert "https://example/cards/aaaaaaaa.html" in body_html
+    assert "https://example/cards/aaaaaaaa.html" in body_text
+
+
+def test_create_patron_without_publisher_omits_card_section():
+    libib = _new_libib_with_patron()
+    sender = MagicMock()
+    result = execute_action(
+        _new_create_pending(),
+        libib=libib, sender=sender,
+        card_generator=lambda **k: b"PNG",
+        web_card_publisher=None,
+    )
+    assert result.web_card_published is False
+    body_html = sender.send.call_args.kwargs["body_html"]
+    # No card section ⇒ no install instructions in the email
+    assert "Add to Home Screen" not in body_html
+
+
+def test_create_patron_without_card_token_skips_publisher_even_if_provided():
+    libib = _new_libib_with_patron()
+    publisher = MagicMock()
+    pending = make_pending(
+        "CREATE_PATRON",
+        {"first_name": "A", "last_name": "B", "email": "x@y", "patron_id": "pco-1"},
+        card_token=None,  # legacy row pre-token
+    )
+    execute_action(
+        pending,
+        libib=libib, sender=MagicMock(),
+        card_generator=lambda **k: b"PNG",
+        web_card_publisher=publisher,
+    )
+    publisher.assert_not_called()
+
+
+def test_create_patron_publisher_failure_is_non_fatal_email_still_ships():
+    libib = _new_libib_with_patron()
+    sender = MagicMock()
+    publisher = MagicMock(side_effect=RuntimeError("pages branch missing"))
+
+    result = execute_action(
+        _new_create_pending(),
+        libib=libib, sender=sender,
+        card_generator=lambda **k: b"PNG",
+        web_card_publisher=publisher,
+    )
+
+    # Patron created, email sent (without card section), publisher error captured
+    assert result.success is True
+    assert result.email_sent is True
+    assert result.web_card_published is False
+    assert "pages branch missing" in (result.web_card_error or "")
+    body_html = sender.send.call_args.kwargs["body_html"]
+    assert "Add to Home Screen" not in body_html

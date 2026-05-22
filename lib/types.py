@@ -57,3 +57,7 @@ class PendingChange:
     attempts: int = 0
     last_attempt_at: Optional[datetime] = None
     status: PendingStatus = "pending"
+    # Opaque 32-char hex UUID4 minted at CREATE_PATRON enqueue time.
+    # Used as the URL slug for the patron's hosted PWA card page.
+    # None for non-CREATE actions and for legacy rows written before this field existed.
+    card_token: Optional[str] = None

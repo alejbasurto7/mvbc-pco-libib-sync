@@ -1,0 +1,16 @@
+YOUR DIGITAL LIBRARY CARD
+  In addition to the attached printed-style card, you can keep a digital copy
+  in your pocket:
+
+    {card_url}
+
+  Save it to your home screen — one tap forever after:
+    - iPhone: Open the link in Safari (not Gmail's in-app browser).
+      Tap the Share button (square with an up-arrow), scroll the share sheet
+      down, and tap "Add to Home Screen".
+    - Android: Open the link in Chrome. Tap the ⋮ menu (top-right) and
+      tap "Add to Home screen" (or "Install app").
+
+  Tip: if you tapped this link from inside the Gmail app on iPhone, choose
+  "Open in Safari" first — Gmail's built-in browser hides the Share menu.
+

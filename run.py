@@ -34,6 +34,35 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _make_web_card_publisher(cfg):
+    """Return a callable that writes per-patron card HTML + manifest and yields the URL.
+
+    Returns None when either env var is unset — callers treat None as "skip".
+    """
+    if not cfg.card_base_url or not cfg.web_cards_output_dir:
+        return None
+
+    from lib.web_card import build_card_html, build_card_manifest, card_url
+
+    output_dir = Path(cfg.web_cards_output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    base_url = cfg.card_base_url
+
+    def publish(*, first_name, last_name, patron_id, token):
+        html = build_card_html(
+            first_name=first_name, last_name=last_name,
+            patron_id=patron_id, token=token,
+        )
+        manifest = build_card_manifest(
+            first_name=first_name, last_name=last_name, token=token,
+        )
+        (output_dir / f"{token}.html").write_text(html, encoding="utf-8")
+        (output_dir / f"{token}.webmanifest").write_text(manifest, encoding="utf-8")
+        return card_url(base_url=base_url, token=token)
+
+    return publish
+
+
 def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
     cfg = load_config()
     now = _now()
@@ -114,11 +143,21 @@ def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
     )
     card_generator = generate_card_png
 
+    web_card_publisher = _make_web_card_publisher(cfg)
+    if web_card_publisher is None:
+        print("  web card publishing disabled (CARD_BASE_URL or WEB_CARDS_OUTPUT_DIR unset)")
+
     # Execute mature actions
     final_pending: list = []
     for row in new_pending:
         if row in mature:
-            result = execute_action(row, libib=libib, sender=sender, card_generator=card_generator)
+            result = execute_action(
+                row,
+                libib=libib,
+                sender=sender,
+                card_generator=card_generator,
+                web_card_publisher=web_card_publisher,
+            )
             append_log(state_dir, now, {
                 "person_id": row.person_id,
                 "action": row.action_type,

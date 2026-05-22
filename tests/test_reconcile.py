@@ -91,3 +91,51 @@ class TestReconcile:
         new_pending, mature = reconcile([action], [], now=now(), stability_hours=24.0, baseline_mode=True)
         assert new_pending[0].status == "baseline"
         assert mature == []
+
+    def test_new_create_patron_gets_card_token(self):
+        action = make_action(action_type="CREATE_PATRON")
+        new_pending, _ = reconcile([action], [], now=now(), stability_hours=24.0)
+        token = new_pending[0].card_token
+        assert token is not None
+        assert len(token) == 32
+        # Must not leak the patron_id into the URL slug
+        assert token != action.target.get("patron_id")
+
+    def test_freeze_patron_does_not_get_card_token(self):
+        action = make_action(action_type="FREEZE_PATRON")
+        new_pending, _ = reconcile([action], [], now=now(), stability_hours=24.0)
+        assert new_pending[0].card_token is None
+
+    def test_existing_token_preserved_when_target_unchanged(self):
+        existing = make_pending(detected_offset_hours=10)
+        # Hand-set a token to simulate one that was minted on a prior run
+        existing = PendingChange(
+            person_id=existing.person_id,
+            action_type=existing.action_type,
+            target=existing.target,
+            detected_at=existing.detected_at,
+            attempts=existing.attempts,
+            last_attempt_at=existing.last_attempt_at,
+            status=existing.status,
+            card_token="aa" * 16,
+        )
+        action = make_action()  # same target
+        new_pending, _ = reconcile([action], [existing], now=now(), stability_hours=24.0)
+        assert new_pending[0].card_token == "aa" * 16
+
+    def test_existing_token_preserved_when_target_shifts(self):
+        existing = PendingChange(
+            person_id="pco-1",
+            action_type="CREATE_PATRON",
+            target={"email": "old@x"},
+            detected_at=now() - timedelta(hours=10),
+            attempts=0,
+            last_attempt_at=None,
+            status="pending",
+            card_token="bb" * 16,
+        )
+        action = make_action(target={"email": "new@x"})  # same key, different target
+        new_pending, _ = reconcile([action], [existing], now=now(), stability_hours=24.0)
+        # detected_at resets but token sticks with the patron
+        assert new_pending[0].detected_at == now()
+        assert new_pending[0].card_token == "bb" * 16

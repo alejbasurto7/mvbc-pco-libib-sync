@@ -14,6 +14,7 @@ HOW TO CHECK OUT A BOOK
 
 You have 3 weeks to return each book. Drop returns into one of the boxes by the kiosk.
 
+{card_section}
 Browse the catalog:
   https://www.libib.com/u/mvbchurch
 

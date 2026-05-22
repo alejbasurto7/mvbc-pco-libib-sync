@@ -101,21 +101,34 @@ def render_welcome_email(
     first_name: str,
     email: str,
     templates_dir: Path,
+    card_url: Optional[str] = None,
 ) -> tuple[str, str]:
     """Read templates/welcome.html and welcome.txt and substitute placeholders.
 
-    Returns (html, text). Uses str.format() with the only placeholders
-    being {first_name} and {email}. Any other braces in the templates
-    must be doubled to escape (e.g. CSS `{{ ... }}` if used) — but the
-    current welcome.html has no such conflicts.
+    Returns (html, text). Uses str.format() with placeholders {first_name},
+    {email}, and {card_section}. When `card_url` is provided, the per-format
+    snippet in templates/welcome_card_section.{html,txt} is rendered and
+    spliced in; otherwise {card_section} is replaced with an empty string.
     """
-    html_path = Path(templates_dir) / "welcome.html"
-    text_path = Path(templates_dir) / "welcome.txt"
+    tdir = Path(templates_dir)
+    html_main = (tdir / "welcome.html").read_text(encoding="utf-8")
+    text_main = (tdir / "welcome.txt").read_text(encoding="utf-8")
 
-    html = html_path.read_text(encoding="utf-8").format(
-        first_name=first_name, email=email,
+    if card_url:
+        html_snippet = (tdir / "welcome_card_section.html").read_text(encoding="utf-8").format(
+            card_url=card_url,
+        )
+        text_snippet = (tdir / "welcome_card_section.txt").read_text(encoding="utf-8").format(
+            card_url=card_url,
+        )
+    else:
+        html_snippet = ""
+        text_snippet = ""
+
+    html = html_main.format(
+        first_name=first_name, email=email, card_section=html_snippet,
     )
-    text = text_path.read_text(encoding="utf-8").format(
-        first_name=first_name, email=email,
+    text = text_main.format(
+        first_name=first_name, email=email, card_section=text_snippet,
     )
     return html, text

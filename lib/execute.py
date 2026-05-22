@@ -20,14 +20,18 @@ class ExecutionResult:
     created_patron: Optional[Any] = None  # the Patron returned by create
     email_sent: bool = False
     email_error: Optional[str] = None
+    web_card_published: bool = False
+    web_card_url: Optional[str] = None
+    web_card_error: Optional[str] = None
 
 
 def execute_action(
     pending: PendingChange,
     *,
-    libib,           # LibibClient — typed loose so tests can MagicMock
-    sender,          # EmailSender or None (Phase 4)
-    card_generator,  # CardGenerator or None (Phase 4)
+    libib,                  # LibibClient — typed loose so tests can MagicMock
+    sender,                 # EmailSender or None
+    card_generator,         # CardGenerator (PNG) or None
+    web_card_publisher=None,  # Callable returning the card URL, or None
 ) -> ExecutionResult:
     try:
         if pending.action_type == "CREATE_PATRON":
@@ -38,6 +42,23 @@ def execute_action(
                 patron_id=pending.target["patron_id"],
             )
             result = ExecutionResult(success=True, libib_status=201, created_patron=patron)
+
+            # Publish the PWA card page first so its URL can be included in the
+            # welcome email. Failure here is non-fatal: the PNG email still ships.
+            card_url_value: Optional[str] = None
+            if web_card_publisher is not None and pending.card_token:
+                try:
+                    card_url_value = web_card_publisher(
+                        first_name=patron.first_name,
+                        last_name=patron.last_name,
+                        patron_id=patron.patron_id,
+                        token=pending.card_token,
+                    )
+                    result.web_card_published = True
+                    result.web_card_url = card_url_value
+                except Exception as e:
+                    result.web_card_error = f"{type(e).__name__}: {e}"[:1000]
+
             # Best-effort welcome email + card. Failure does not roll back the patron.
             if sender is not None and card_generator is not None:
                 try:
@@ -53,6 +74,7 @@ def execute_action(
                         first_name=patron.first_name,
                         email=patron.email,
                         templates_dir=_P("templates"),
+                        card_url=card_url_value,
                     )
                     sender.send(
                         to=patron.email,

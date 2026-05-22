@@ -39,6 +39,11 @@ class Config:
     stability_hours: float
     baseline_mode: bool
     protected_tags: tuple[str, ...]
+    # PWA card delivery. Both are optional; if either is unset, the
+    # CREATE_PATRON flow simply skips publishing the digital card (the PNG
+    # attachment + welcome email still go out as before).
+    card_base_url: str | None
+    web_cards_output_dir: str | None
 
 
 def _truthy(v: str | None) -> bool:
@@ -71,4 +76,6 @@ def load_config() -> Config:
         stability_hours=float(os.environ.get("STABILITY_HOURS", "24")),
         baseline_mode=_truthy(os.environ.get("BASELINE_MODE")),
         protected_tags=protected_tags,
+        card_base_url=os.environ.get("CARD_BASE_URL") or None,
+        web_cards_output_dir=os.environ.get("WEB_CARDS_OUTPUT_DIR") or None,
     )

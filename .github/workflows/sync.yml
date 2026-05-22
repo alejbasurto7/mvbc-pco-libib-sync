@@ -14,8 +14,9 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # to commit state changes back to the state branch
+      contents: write   # to commit state changes back to the state and gh-pages branches
       issues: write     # to open/comment the sync-alert issue on failed actions or orphans
+      pages: write      # for the gh-pages branch we publish per-patron PWA cards to
     steps:
       - name: Checkout main (for code)
         uses: actions/checkout@v6
@@ -60,6 +61,46 @@ jobs:
           git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git push -u origin state
 
+      - name: Probe gh-pages branch existence
+        id: pages_probe
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git ls-remote --exit-code --heads \
+              "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" \
+              gh-pages >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout existing gh-pages branch
+        if: steps.pages_probe.outputs.exists == 'true'
+        uses: actions/checkout@v6
+        with:
+          ref: gh-pages
+          path: pages-checkout
+
+      - name: Initialize gh-pages branch on first run
+        if: steps.pages_probe.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p pages-checkout
+          cp -r code/web/. pages-checkout/
+          # _build_icons.py is a one-off generator that doesn't belong on the live site
+          rm -f pages-checkout/_build_icons.py
+          mkdir -p pages-checkout/cards
+          touch pages-checkout/cards/.gitkeep
+          cd pages-checkout
+          git init -b gh-pages
+          git config user.email "actions@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add .
+          git commit -m "chore: initialize gh-pages branch (PWA card site)"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git push -u origin gh-pages
+
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
@@ -95,6 +136,11 @@ jobs:
           LIBIB_LOGIN_URL: "https://www.libib.com/u/mvbchurch"
           BASELINE_MODE: ${{ vars.BASELINE_MODE || 'false' }}
           PROTECTED_TAGS: ${{ vars.PROTECTED_TAGS || 'ssm' }}
+          # Absolute path to the gh-pages worktree's cards/ dir. lib/execute.py
+          # writes per-patron PWA card HTML here at CREATE_PATRON time; the
+          # post-sync step below commits + pushes anything new.
+          WEB_CARDS_OUTPUT_DIR: ${{ github.workspace }}/pages-checkout/cards
+          CARD_BASE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/cards
         run: python run.py
 
       - name: Commit state changes
@@ -117,6 +163,26 @@ jobs:
             git config user.name "github-actions[bot]"
             git commit -m "[skip ci] sync state $(date -u +%FT%TZ)"
             git push origin state
+          fi
+
+      - name: Commit new PWA card pages to gh-pages
+        # New per-patron HTML written by lib/execute.py at CREATE_PATRON time
+        # lands in pages-checkout/cards/. Only push if something changed.
+        if: always()
+        run: |
+          if [ ! -d pages-checkout ]; then
+            echo "No pages-checkout dir (gh-pages branch not yet initialized); skipping."
+            exit 0
+          fi
+          cd pages-checkout
+          git add cards/
+          if git diff --staged --quiet; then
+            echo "No new card pages this run; skipping commit."
+          else
+            git config user.email "actions@users.noreply.github.com"
+            git config user.name "github-actions[bot]"
+            git commit -m "[skip ci] publish card pages $(date -u +%FT%TZ)"
+            git push origin gh-pages
           fi
 
       - name: Notify on action executions

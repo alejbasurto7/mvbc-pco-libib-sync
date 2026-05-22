@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MVBC Library Card — Design Prototypes</title>
+<style>
+  
+  @font-face {
+    font-family: 'Geometria';
+    src: url('../fonts/Geometria-Medium.woff') format('woff');
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geometria';
+    src: url('../fonts/Geometria-Bold.woff') format('woff');
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Geometria';
+    src: url('../fonts/Geometria-ExtraBold.woff') format('woff');
+    font-weight: 800; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Regular.ttf') format('truetype');
+    font-weight: 400; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-SemiBold.ttf') format('truetype');
+    font-weight: 600; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: 'Open Sans';
+    src: url('../fonts/OpenSans-Bold.ttf') format('truetype');
+    font-weight: 700; font-style: normal; font-display: swap;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Open Sans', system-ui, sans-serif;
+    background: #ECE6DA;
+    color: #113355;
+    padding: 32px 16px;
+  }
+  h1 {
+    font-family: 'Geometria', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 24px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    color: #113355;
+    margin-bottom: 8px;
+  }
+  .lede {
+    text-align: center;
+    max-width: 640px;
+    margin: 0 auto 32px;
+    font-size: 14px;
+    color: #2C2A2B;
+    opacity: 0.75;
+    line-height: 1.5;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  @media (max-width: 760px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  .tile {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(17,51,85,0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .tile header {
+    padding: 16px 20px;
+    background: #113355;
+    color: #F3F0EB;
+  }
+  .tile header .letter {
+    font-family: 'Geometria', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 4px;
+    color: #C3AA7C;
+  }
+  .tile header .label {
+    font-family: 'Geometria', system-ui, sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-top: 2px;
+  }
+  .tile header .note {
+    font-size: 12px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+  .tile iframe {
+    width: 100%;
+    height: 680px;
+    border: 0;
+    background: #F3F0EB;
+  }
+  .tile footer {
+    padding: 12px 20px;
+    border-top: 1px solid #eee;
+    font-size: 13px;
+  }
+  .tile footer a {
+    color: #113355;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .tile footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <h1>MVBC Library Card — Design Prototypes</h1>
+  <p class="lede">
+    Each tile shows the card as it would render on a patron's phone after they tap “Add to Home Screen” and launch the icon. Pick the direction you like best (or mix elements) and reply with your choice.
+  </p>
+  <div class="grid">
+    <div class="tile">
+      <header><div class="letter">B</div><div class="label">The Membership Card</div><div class="note">Reads as a keepsake. The Playfair serif on the patron's name elevates it like an engraved diploma or museum membership — the card honors the person, not just the function. Centered layout, bronze-framed QR, warmer and more personal. Choose this if you want patrons to feel they belong.</div></header>
+      <iframe src="mockup-b-editorial-v3.html" title="Mockup B"></iframe>
+      <footer><a href="mockup-b-editorial-v3.html" target="_blank">Open standalone →</a></footer>
+    </div>
+    <div class="tile">
+      <header><div class="letter">C</div><div class="label">The Credential</div><div class="note">Reads as a utility. The full-bleed navy stripe is an unmistakable institutional signal — like a conference badge or staff ID. The 280px QR (the largest of the two) is more reliable at the kiosk, and the sans-serif name keeps the focus on function. Choose this if you want patrons to feel it's official and frictionless.</div></header>
+      <iframe src="mockup-c-badge-v2.html" title="Mockup C"></iframe>
+      <footer><a href="mockup-c-badge-v2.html" target="_blank">Open standalone →</a></footer>
+    </div>
+  </div>
+</body>
+</html>

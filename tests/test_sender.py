@@ -117,3 +117,34 @@ def test_render_welcome_email_does_not_double_substitute():
     # Just sanity: nothing remaining as a placeholder
     assert "{first_name}" not in html
     assert "{email}" not in html
+    assert "{card_section}" not in html
+    assert "{card_section}" not in text
+
+
+def test_render_welcome_email_includes_card_section_when_url_provided():
+    url = "https://example.github.io/repo/cards/abc123.html"
+    html, text = render_welcome_email(
+        first_name="Ana",
+        email="ana@x",
+        templates_dir=Path("templates"),
+        card_url=url,
+    )
+    # The URL appears, the install instructions appear, the placeholders are gone.
+    assert url in html
+    assert url in text
+    assert "Add to Home Screen" in html
+    assert "Add to Home Screen" in text
+    assert "Safari" in html and "Chrome" in html
+    assert "{card_url}" not in html
+
+
+def test_render_welcome_email_omits_card_section_when_no_url():
+    html, text = render_welcome_email(
+        first_name="Ana",
+        email="ana@x",
+        templates_dir=Path("templates"),
+    )
+    # No leftover marker, no install instructions.
+    assert "{card_section}" not in html
+    assert "Add to Home Screen" not in html
+    assert "Add to Home Screen" not in text

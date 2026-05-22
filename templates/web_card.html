@@ -1,0 +1,292 @@
+<!doctype html>
+<!--
+  Per-patron PWA library card.
+
+  Rendered by lib/web_card.build_card_html with string.Template (dollar-prefixed
+  placeholders) so CSS braces don't need escaping. Each card is self-contained:
+  emblem and QR are inlined as base64. The shared service worker (../sw.js)
+  caches the page for offline kiosk use.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#113355">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MVBC Library">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="$manifest_filename">
+<link rel="apple-touch-icon" href="../icons/touch-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<title>$title</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background: #E7E2D6;
+    color: #113355;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Centered column wrapping the badge and the install help below it. */
+  .stack {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: auto 0;
+  }
+
+  /* --- Badge (Mockup C — The Credential) --- */
+  .badge {
+    width: 100%;
+    background: #F3F0EB;
+    border-radius: 16px;
+    border: 1px solid rgba(17,51,85,0.12);
+    box-shadow: 0 12px 32px rgba(17,51,85,0.22);
+    padding: 0 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .badge-stripe {
+    background: #113355;
+    color: #F3F0EB;
+    text-align: center;
+    padding: 22px 32px 20px;
+    margin: 0 -32px 36px;
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .badge-stripe::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 3px;
+    background: #C3AA7C;
+  }
+  .stripe-emblem {
+    width: 36px;
+    height: auto;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1) sepia(0.1) hue-rotate(180deg);
+  }
+  .stripe-text { text-align: left; }
+  .org {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .role {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    color: #C3AA7C;
+    white-space: nowrap;
+  }
+  .rule {
+    width: 40px;
+    height: 2px;
+    background: #C3AA7C;
+    margin: 12px auto 28px;
+    border-radius: 1px;
+  }
+  .name {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #113355;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .id {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #2C2A2B;
+    opacity: 0.6;
+    margin-bottom: 32px;
+  }
+  .qr-wrap {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 0 auto;
+    width: 280px;
+    height: 280px;
+  }
+  .qr-wrap img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .scan-hint {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #2C2A2B;
+    opacity: 0.5;
+    margin-top: 20px;
+  }
+
+  /* --- Install help (hidden once the PWA is installed) --- */
+  .install {
+    background: #F3F0EB;
+    border-radius: 16px;
+    border: 1px solid rgba(17,51,85,0.12);
+    padding: 18px 22px;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    color: #2C2A2B;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .install h2 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #113355;
+    margin-bottom: 10px;
+  }
+  .install details {
+    border-top: 1px solid rgba(17,51,85,0.12);
+    padding: 10px 0;
+  }
+  .install details:first-of-type { border-top: 0; padding-top: 4px; }
+  .install summary {
+    font-weight: 700;
+    color: #113355;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  .install summary::-webkit-details-marker { display: none; }
+  .install summary::after {
+    content: "+";
+    font-weight: 700;
+    color: #C3AA7C;
+    font-size: 18px;
+    line-height: 1;
+    margin-left: 12px;
+  }
+  .install details[open] summary::after { content: "−"; }
+  .install ol { margin: 8px 0 4px 20px; padding: 0; }
+  .install li { margin-bottom: 4px; }
+  .install .tip {
+    margin-top: 8px;
+    font-size: 12px;
+    font-style: italic;
+    color: #767676;
+  }
+
+  /* Gmail-in-app-browser banner — shown only when UA sniff matches. */
+  .open-in-browser {
+    display: none;
+    background: #113355;
+    color: #F3F0EB;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .open-in-browser b { color: #C3AA7C; }
+  body.in-app-browser .open-in-browser { display: block; }
+
+  /* Once installed (display-mode: standalone), drop the install help —
+     the patron is already past that step. */
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    .install, .open-in-browser { display: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="open-in-browser">
+      Looks like you tapped this link from inside the Gmail app. To save your
+      card to your home screen, tap the <b>&middot;&middot;&middot;</b> menu and
+      choose <b>Open in Safari</b> (iPhone) or <b>Open in Chrome</b> (Android)
+      first.
+    </div>
+
+    <article class="badge">
+      <div class="badge-stripe">
+        <img class="stripe-emblem" src="$emblem_data_uri" alt="MVBC emblem">
+        <div class="stripe-text">
+          <div class="org">Mount Vernon Baptist Church</div>
+          <div class="role">Library</div>
+        </div>
+      </div>
+      <div class="rule"></div>
+      <div class="name">$full_name</div>
+      <div class="id">$member_id</div>
+      <div class="qr-wrap"><img src="$qr_data_uri" alt="QR code for user $member_id"></div>
+      <div class="scan-hint">Scan at kiosk</div>
+    </article>
+
+    <section class="install" aria-label="Save to home screen">
+      <h2>Save to your home screen</h2>
+      <details>
+        <summary>iPhone &amp; iPad</summary>
+        <ol>
+          <li>Open this link in <strong>Safari</strong> (not the Gmail app).</li>
+          <li>Tap the Share button (square with an up-arrow) at the bottom.</li>
+          <li>Scroll the share sheet down and tap <strong>Add to Home Screen</strong>.</li>
+          <li>Confirm the name and tap <strong>Add</strong>.</li>
+        </ol>
+        <div class="tip">Tip: the MVBC Library icon will appear on your home screen — tap it to open your card full-screen, even with no signal.</div>
+      </details>
+      <details>
+        <summary>Android</summary>
+        <ol>
+          <li>Open this link in <strong>Chrome</strong>.</li>
+          <li>Tap the <strong>&#x22EE;</strong> menu (top-right).</li>
+          <li>Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).</li>
+          <li>Confirm the name and tap <strong>Add</strong> or <strong>Install</strong>.</li>
+        </ol>
+      </details>
+    </section>
+  </div>
+
+<script>
+  // Register the shared service worker so the page works offline at the kiosk.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('../sw.js').catch(function () { /* silent */ });
+    });
+  }
+
+  // Detect Gmail's in-app browser (iOS + Android) and show the "open in real
+  // browser" banner. The Gmail iOS app's UA contains "GSA"; the Android app
+  // routes through Chrome Custom Tabs but its UA includes "GoogleApp".
+  (function () {
+    var ua = navigator.userAgent || '';
+    var isGmailInApp = /GSA\//.test(ua) || /GoogleApp\//.test(ua);
+    if (isGmailInApp) {
+      document.body.classList.add('in-app-browser');
+    }
+  })();
+</script>
+</body>
+</html>
