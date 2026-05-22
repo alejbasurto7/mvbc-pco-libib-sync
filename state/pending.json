@@ -1,20 +1,5 @@
 {
   "version": 1,
-  "updated_at": "2026-05-22T10:00:35.752094+00:00",
-  "rows": [
-    {
-      "person_id": "136701574",
-      "action_type": "UPDATE_FIRST_NAME",
-      "target": {
-        "first_name": "Matt",
-        "old_first_name": "Matthew",
-        "last_name": "Tillman",
-        "email": "matthewctillman@gmail.com"
-      },
-      "detected_at": "2026-05-21T12:14:39.890468+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending"
-    }
-  ]
+  "updated_at": "2026-05-22T12:34:31.552362+00:00",
+  "rows": []
 }
