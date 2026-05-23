@@ -1,36 +1,5 @@
 {
   "version": 1,
-  "updated_at": "2026-05-23T20:39:23.447367+00:00",
-  "rows": [
-    {
-      "person_id": "180066130",
-      "action_type": "UPDATE_LAST_NAME",
-      "target": {
-        "first_name": "Sebastian",
-        "last_name": "Parra",
-        "old_last_name": "Parra-Diaz",
-        "email": "sebastianparra8@pm.me"
-      },
-      "detected_at": "2026-05-22T20:50:33.825514+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending",
-      "card_token": null
-    },
-    {
-      "person_id": "180066138",
-      "action_type": "UPDATE_LAST_NAME",
-      "target": {
-        "first_name": "Hellen",
-        "last_name": "Parra",
-        "old_last_name": "Parra-Diaz",
-        "email": "hellendiazfrias@gmail.com"
-      },
-      "detected_at": "2026-05-22T20:50:33.825514+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending",
-      "card_token": null
-    }
-  ]
+  "updated_at": "2026-05-23T21:36:45.983364+00:00",
+  "rows": []
 }
