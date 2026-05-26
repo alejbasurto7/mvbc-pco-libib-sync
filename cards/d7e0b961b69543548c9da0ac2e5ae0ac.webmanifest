@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Library \u2014 Alex Basurto",
+  "short_name": "MVBC Library",
+  "description": "Alex Basurto's MVBC Library card.",
+  "start_url": "d7e0b961b69543548c9da0ac2e5ae0ac.html",
+  "scope": "d7e0b961b69543548c9da0ac2e5ae0ac.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
