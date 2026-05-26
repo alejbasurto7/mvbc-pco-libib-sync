@@ -1,21 +1,5 @@
 {
   "version": 1,
-  "updated_at": "2026-05-26T15:12:23.053280+00:00",
-  "rows": [
-    {
-      "person_id": "180057626",
-      "action_type": "UPDATE_EMAIL",
-      "target": {
-        "first_name": "Debra",
-        "last_name": "Swann",
-        "old_email": "dswann@trinityatl.org",
-        "email": "dswann97@outlook.com"
-      },
-      "detected_at": "2026-05-25T15:34:33.277493+00:00",
-      "attempts": 0,
-      "last_attempt_at": null,
-      "status": "pending",
-      "card_token": null
-    }
-  ]
+  "updated_at": "2026-05-26T16:25:37.659510+00:00",
+  "rows": []
 }
