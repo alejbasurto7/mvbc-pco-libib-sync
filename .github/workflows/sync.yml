@@ -165,23 +165,35 @@ jobs:
             git push origin state
           fi
 
-      - name: Commit new PWA card pages to gh-pages
-        # New per-patron HTML written by lib/execute.py at CREATE_PATRON time
-        # lands in pages-checkout/cards/. Only push if something changed.
+      - name: Publish web/ + new card pages to gh-pages
+        # Two kinds of content live on gh-pages:
+        #   1. Static site content from code/web/ (index, renewal guide, icons,
+        #      manifest, sw.js) — source of truth is main.
+        #   2. Per-patron PWA card HTML written by lib/execute.py at
+        #      CREATE_PATRON time into pages-checkout/cards/ — generated, lives
+        #      only on gh-pages.
+        # Mirror (1) into pages-checkout/ each run while preserving (2) via
+        # rsync --exclude=cards/. Then commit + push if anything changed.
         if: always()
         run: |
           if [ ! -d pages-checkout ]; then
             echo "No pages-checkout dir (gh-pages branch not yet initialized); skipping."
             exit 0
           fi
+          # Mirror static web/ content. Exclude cards/ (generated) and any
+          # _build_*.py helpers (one-off generators that don't belong live).
+          rsync -a --delete \
+            --exclude='cards/' \
+            --exclude='_build_*.py' \
+            code/web/ pages-checkout/
           cd pages-checkout
-          git add cards/
+          git add -A
           if git diff --staged --quiet; then
-            echo "No new card pages this run; skipping commit."
+            echo "No gh-pages changes this run; skipping commit."
           else
             git config user.email "actions@users.noreply.github.com"
             git config user.name "github-actions[bot]"
-            git commit -m "[skip ci] publish card pages $(date -u +%FT%TZ)"
+            git commit -m "[skip ci] publish gh-pages $(date -u +%FT%TZ)"
             git push origin gh-pages
           fi
 

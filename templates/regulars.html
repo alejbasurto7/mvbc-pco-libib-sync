@@ -1,5 +1,6 @@
 <!--
-  MVBC Library welcome email.
+  MVBC Library "here's your card" email for active patrons who already check
+  out books regularly but don't yet have a physical/digital library card.
   Inline styles only (email clients ignore stylesheets).
   Brand: Mount Vernon Baptist Church Navy / Bronze / Cream palette.
   Placeholders are substituted at render time via Python str.format.
@@ -31,29 +32,24 @@
             <p style="margin: 0 0 18px 0; font-size: 18px; color: #113355;">{first_name},</p>
 
             <p style="margin: 0 0 16px 0;">
-              Welcome to the <strong style="color: #113355;">MVBC Library</strong> — we're glad to have you.
-            </p>
-
-            <p style="margin: 0 0 16px 0;">
-              Your account is ready. Come browse our titles and give the self-checkout kiosk a try.
-            </p>
-
-            <!-- Section heading -->
-            <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
-              How to check out a book
-            </p>
-
-            <ol style="margin: 0 0 20px 24px; padding: 0; color: #2C2A2B;">
-              <li style="margin-bottom: 10px;">On the iPad, scan the barcode of each book you'd like to check out. (The camera is on the back of the iPad.)</li>
-              <li style="margin-bottom: 10px;">Tap the <em>Checkout</em> button.</li>
-              <li style="margin-bottom: 10px;">Enter your email (<span style="color: #113355; font-weight: bold;">{email}</span>) or scan your library card, then tap <em>OK</em>.</li>
-            </ol>
-
-            <p style="margin: 0 0 16px 0;">
-              You have <strong>3 weeks</strong> to return each book. Drop returns into one of the boxes by the kiosk.
+              You've borrowed from the <strong style="color: #113355;">MVBC Library</strong> before — thanks for being part of the community. We've <strong>redesigned the library card</strong> and added a <strong>digital version</strong> you can install on your phone. Whether this is your first card or a replacement for one you've misplaced, here it is.
             </p>
 
             {card_section}
+
+            <!-- Section heading -->
+            <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
+              How to use your new card
+            </p>
+
+            <p style="margin: 0 0 16px 0;">
+              You already know the drill — scan your books at the kiosk and tap <em>Checkout</em>. The only change is at the final step:
+            </p>
+
+            <ul style="margin: 0 0 20px 24px; padding: 0; color: #2C2A2B;">
+              <li style="margin-bottom: 10px;">Instead of typing your email (<span style="color: #113355; font-weight: bold;">{email}</span>), just <strong>scan your library card</strong> with the iPad camera and tap <em>OK</em>.</li>
+              <li style="margin-bottom: 10px;">Your email still works as a backup if you don't have your card on you.</li>
+            </ul>
 
             <!-- Section heading -->
             <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
@@ -89,11 +85,11 @@
             </table>
 
             <p style="margin: 0 0 24px 0;">
-              Every book is tagged with its shelf section. You can also self-renew through the catalog (sign in &rarr; <strong>Active</strong> &rarr; <strong>Renew</strong>) &mdash; first time?
-              <a href="https://alejbasurto7.github.io/mvbc-pco-libib-sync/renew/" style="color: #113355; text-decoration: underline;">Full walkthrough with screenshots</a>.
+              Same as always: 3 weeks per book, drop returns in the boxes by the kiosk, and self-renew through the catalog (sign in &rarr; <strong>Active</strong> &rarr; <strong>Renew</strong>) if you need more time &mdash;
+              <a href="https://alejbasurto7.github.io/mvbc-pco-libib-sync/renew/" style="color: #113355; text-decoration: underline;">walkthrough here</a>.
             </p>
 
-            <p style="margin: 0 0 8px 0;">Questions? Just reply.</p>
+            <p style="margin: 0 0 8px 0;">Thanks again for being such a great part of the library. Questions? Just reply.</p>
 
             <!-- Signature -->
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px; border-top: 1px solid #C3AA7C; padding-top: 20px; width: 100%;">

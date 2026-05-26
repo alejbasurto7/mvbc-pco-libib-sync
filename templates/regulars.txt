@@ -3,19 +3,22 @@ MOUNT VERNON BAPTIST CHURCH · LIBRARY
 
 {first_name},
 
-Welcome to the MVBC Library — we're glad to have you.
-
-Your account is ready. Come browse our titles and give the self-checkout kiosk a try.
-
-HOW TO CHECK OUT A BOOK
-  1. On the iPad, scan the barcode of each book you'd like to check out.
-     (The camera is on the back of the iPad.)
-  2. Tap the 'Checkout' button.
-  3. Enter your email ({email}) or scan your library card, then tap 'OK'.
-
-You have 3 weeks to return each book. Drop returns into one of the boxes by the kiosk.
+You've borrowed from the MVBC Library before — thanks for being part
+of the community. We've redesigned the library card and added a digital
+version you can install on your phone. Whether this is your first card
+or a replacement for one you've misplaced, here it is.
 
 {card_section}
+HOW TO USE YOUR NEW CARD
+
+You already know the drill — scan your books at the kiosk and tap
+'Checkout'. The only change is at the final step:
+
+  - Instead of typing your email ({email}), just scan your library
+    card with the iPad camera and tap 'OK'.
+  - Your email still works as a backup if you don't have your card
+    on you.
+
 OUR LIBRARIES
 Both libraries share the same room, right next to the Fellowship Hall.
 
@@ -28,11 +31,12 @@ Both libraries share the same room, right next to the Fellowship Hall.
     and chapter books for kids.
     https://www.libib.com/u/mvbchurch/l/471546
 
-Every book is tagged with its shelf section. You can also self-renew
-through the catalog (sign in -> Active -> Renew) — first time? Full
-walkthrough with screenshots:
+Same as always: 3 weeks per book, drop returns in the boxes by the
+kiosk, and self-renew through the catalog (sign in -> Active -> Renew)
+if you need more time — walkthrough:
   https://alejbasurto7.github.io/mvbc-pco-libib-sync/renew/
 
+Thanks again for being such a great part of the library.
 Questions? Just reply.
 
 —
