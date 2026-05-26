@@ -1,6 +1,6 @@
 {
   "name": "MVBC Library Card",
-  "short_name": "MVBC Library",
+  "short_name": "MVBC Card",
   "description": "Your Mount Vernon Baptist Church Library card.",
   "start_url": ".",
   "scope": "./",

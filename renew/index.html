@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#113355">
+  <title>Managing Your Libib Account — MVBC Library</title>
+  <style>
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        Helvetica, Arial, sans-serif;
+      background: #F3F0EB;
+      color: #2C2A2B;
+      line-height: 1.55;
+      padding: 32px 16px 64px;
+    }
+    main { max-width: 720px; margin: 0 auto; }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #C3AA7C;
+      margin: 0 0 8px;
+      text-align: center;
+    }
+    h1 {
+      font-size: 28px;
+      color: #113355;
+      margin: 0 0 6px;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+    .subtitle {
+      text-align: center;
+      color: #6B6766;
+      margin: 0 0 20px;
+      font-style: italic;
+    }
+    .rule {
+      width: 64px; height: 3px; background: #C3AA7C;
+      margin: 20px auto 28px;
+    }
+    h2 {
+      font-size: 20px;
+      color: #113355;
+      margin: 36px 0 4px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    h2 .num {
+      color: #C3AA7C;
+      margin-right: 8px;
+    }
+    h2 + .section-rule {
+      width: 100%; height: 1px; background: #C3AA7C;
+      opacity: 0.4;
+      margin: 0 0 18px;
+    }
+    p { margin: 0 0 14px; }
+    ol { padding-left: 22px; margin: 0 0 18px; }
+    ol > li { margin-bottom: 16px; }
+    a {
+      color: #113355;
+      text-decoration: underline;
+    }
+    strong { color: #113355; }
+    code {
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.92em;
+      background: #EBE6DC;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* TOC */
+    .toc {
+      background: #FFFFFF;
+      border: 1px solid #E5DFD3;
+      border-radius: 8px;
+      padding: 14px 20px;
+      margin: 0 0 32px;
+    }
+    .toc-title {
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #C3AA7C;
+      margin: 0 0 6px;
+    }
+    .toc ul { list-style: none; padding: 0; margin: 0; }
+    .toc li { margin: 4px 0; }
+
+    /* Framed screenshot — dark Libib UI inside light brand page */
+    figure.screenshot {
+      margin: 14px 0 22px;
+      background: #1B1F26;
+      border: 1px solid rgba(195, 170, 124, 0.35);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 4px 16px rgba(17, 51, 85, 0.12);
+    }
+    figure.screenshot img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    figure.screenshot figcaption {
+      color: #C3AA7C;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 10px 4px 2px;
+    }
+
+    /* "Tip" callout for self-renew shortcut */
+    .tip {
+      background: #FFFFFF;
+      border-left: 3px solid #C3AA7C;
+      padding: 12px 16px;
+      border-radius: 4px;
+      margin: 16px 0 24px;
+      font-size: 15px;
+    }
+    .tip strong { color: #113355; }
+
+    footer {
+      margin-top: 48px;
+      padding-top: 20px;
+      border-top: 1px solid #C3AA7C;
+      text-align: center;
+      color: #6B6766;
+      font-size: 14px;
+    }
+    footer .signoff {
+      margin-top: 12px;
+      font-size: 11px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: #113355;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 20px 12px 48px; }
+      h1 { font-size: 24px; }
+      h2 { font-size: 17px; }
+      figure.screenshot { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">Mount Vernon Baptist Church</p>
+    <h1>Managing Your Libib Account</h1>
+    <p class="subtitle">A guide to your MVBC Library account</p>
+    <div class="rule"></div>
+
+    <nav class="toc" aria-label="On this page">
+      <p class="toc-title">On this page</p>
+      <ul>
+        <li><a href="#create">I. Create a Libib account</a></li>
+        <li><a href="#renew">II. Renew a checkout</a></li>
+        <li><a href="#password">III. Update your password</a></li>
+      </ul>
+    </nav>
+
+    <div class="tip">
+      <strong>Quick renewal shortcut:</strong> sign in at
+      <a href="https://www.libib.com/u/mvbchurch">libib.com/u/mvbchurch</a>,
+      open the <strong>Active</strong> tab, and click <strong>Renew</strong>
+      next to the book. The walkthrough below covers it step-by-step with
+      screenshots if you'd like to follow along.
+    </div>
+
+    <!-- ─────────────  Section I  ───────────── -->
+    <h2 id="create"><span class="num">I.</span>Create a Libib account</h2>
+    <div class="section-rule"></div>
+
+    <ol>
+      <li>
+        Visit MVBC's Libib website at
+        <a href="https://www.libib.com/u/mvbchurch">libib.com/u/mvbchurch</a>.
+        <figure class="screenshot">
+          <img src="img/01-catalog-header.jpg" alt="MVBC Libib catalog homepage with collection thumbnails">
+          <figcaption>Step 1 — MVBC catalog</figcaption>
+        </figure>
+      </li>
+      <li>
+        Click the <strong>Patron Login</strong> option in the top-right corner.
+      </li>
+      <li>
+        In the Patron Login dialog, click the <strong>Need Password?</strong>
+        link.
+        <figure class="screenshot">
+          <img src="img/02-patron-login.png" alt="Patron Login dialog with email and password fields and a 'Need Password?' link">
+          <figcaption>Step 3 — Patron Login dialog</figcaption>
+        </figure>
+      </li>
+      <li>
+        Enter the email address you use to check out books and click
+        <strong>Submit</strong>.
+        <figure class="screenshot">
+          <img src="img/03-request-password.png" alt="Request Password form with an email field and Submit/Cancel buttons">
+          <figcaption>Step 4 — Request Password</figcaption>
+        </figure>
+      </li>
+      <li>
+        Copy the password from the email Libib sends to that address.
+        (You can replace it with one you'll remember — see
+        <a href="#password">Section III</a>.)
+        <figure class="screenshot">
+          <img src="img/04-password-email.png" alt="Email from Libib showing the generated patron password">
+          <figcaption>Step 5 — Password email from Libib</figcaption>
+        </figure>
+      </li>
+      <li>
+        Go back to
+        <a href="https://www.libib.com/u/mvbchurch">libib.com/u/mvbchurch</a>
+        and click <strong>Patron Login</strong> again.
+      </li>
+      <li>
+        Enter your email address and paste the password from the Libib
+        email, then click <strong>Login</strong>.
+        <figure class="screenshot">
+          <img src="img/05-login-filled.png" alt="Patron Login dialog with email and password filled in">
+          <figcaption>Step 7 — Sign in</figcaption>
+        </figure>
+      </li>
+    </ol>
+
+    <!-- ─────────────  Section II  ───────────── -->
+    <h2 id="renew"><span class="num">II.</span>Renew a checkout</h2>
+    <div class="section-rule"></div>
+
+    <ol>
+      <li>
+        Sign in to your Patron account (see
+        <a href="#create">Section I</a>, steps 1–2 and 7).
+      </li>
+      <li>
+        Click the <strong>Active</strong> option in the menu bar.
+        <figure class="screenshot">
+          <img src="img/06-active-tab.jpg" alt="Active page showing a current checkout with barcode, checkout date, and due date">
+          <figcaption>Step 2 — Active page</figcaption>
+        </figure>
+      </li>
+      <li>
+        Find the book you want to renew and click its <strong>Renew</strong>
+        button.
+        <figure class="screenshot">
+          <img src="img/07-active-with-book.png" alt="Close-up of a checked-out book with a Renew button below the cover">
+          <figcaption>Step 3 — Click Renew</figcaption>
+        </figure>
+      </li>
+      <li>
+        Confirm by clicking <strong>Renew</strong> in the dialog.
+        <figure class="screenshot">
+          <img src="img/08-renew-confirm.png" alt="Renew this item to extend your due date? dialog with Renew and Cancel buttons">
+          <figcaption>Step 4 — Confirm renewal</figcaption>
+        </figure>
+      </li>
+      <li>
+        Verify your new due date.
+        <figure class="screenshot">
+          <img src="img/09-renewed.png" alt="Book detail showing the updated due date and a disabled Renewed button">
+          <figcaption>Step 5 — Renewed, with new due date</figcaption>
+        </figure>
+      </li>
+    </ol>
+
+    <!-- ─────────────  Section III  ───────────── -->
+    <h2 id="password"><span class="num">III.</span>Update your password</h2>
+    <div class="section-rule"></div>
+
+    <ol>
+      <li>
+        Sign in to your Patron account (see
+        <a href="#create">Section I</a>).
+      </li>
+      <li>
+        Click the <strong>Edit Profile</strong> option in the menu bar.
+      </li>
+      <li>
+        Scroll down to the <strong>Password</strong> section.
+      </li>
+      <li>
+        Enter your <strong>New Password</strong>, its
+        <strong>Confirmation</strong>, and your <strong>Current Password</strong>.
+        Click <strong>Change Password</strong>.
+        <figure class="screenshot">
+          <img src="img/10-edit-profile-password.png" alt="Edit Profile page showing the Password section with New Password, Confirm New Password, and Current Password fields">
+          <figcaption>Step 4 — Change password</figcaption>
+        </figure>
+      </li>
+    </ol>
+
+    <footer>
+      <p>
+        Questions about the library? Email
+        <a href="mailto:familyministry@mvbchurch.org">familyministry@mvbchurch.org</a>.
+      </p>
+      <p class="signoff">Know, Equip, &amp; Send for the Worship &amp; Glory of God</p>
+    </footer>
+  </main>
+</body>
+</html>
