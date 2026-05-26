@@ -112,8 +112,8 @@ def build_card_manifest(
     """
     full_name = f"{first_name} {last_name}".strip()
     manifest = {
-        "name": f"MVBC Library — {full_name}",
-        "short_name": "MVBC Library",
+        "name": f"MVBC Card — {full_name}",
+        "short_name": "MVBC Card",
         "description": f"{full_name}'s MVBC Library card.",
         "start_url": f"{token}.html",
         "scope": f"{token}.html",

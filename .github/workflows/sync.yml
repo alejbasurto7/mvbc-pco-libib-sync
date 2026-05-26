@@ -88,8 +88,9 @@ jobs:
         run: |
           mkdir -p pages-checkout
           cp -r code/web/. pages-checkout/
-          # _build_icons.py is a one-off generator that doesn't belong on the live site
-          rm -f pages-checkout/_build_icons.py
+          # _build_*.py and other underscore-prefixed sources are one-off generators
+          # / asset sources that don't belong on the live site
+          rm -f pages-checkout/_build_*.py pages-checkout/icons/_*.svg
           mkdir -p pages-checkout/cards
           touch pages-checkout/cards/.gitkeep
           cd pages-checkout

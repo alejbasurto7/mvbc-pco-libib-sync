@@ -150,7 +150,7 @@ def test_build_card_manifest_is_valid_json_with_required_fields():
     )
     data = json.loads(manifest)
     assert data["name"].endswith("Ana Smith")
-    assert data["short_name"] == "MVBC Library"
+    assert data["short_name"] == "MVBC Card"
     assert data["display"] == "standalone"
     assert data["theme_color"] == "#113355"
 
