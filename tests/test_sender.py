@@ -58,11 +58,11 @@ def test_gmail_sender_includes_reply_to_when_set():
         sender = GmailSMTPSender(
             gmail_user="alex@gmail.com",
             gmail_app_password="abcdefghijklmnop",
-            reply_to="library@mvbchurch.org",
+            reply_to="familyministry@mvbchurch.org",
         )
         sender.send(to="to@example.com", subject="Hi", body_html="<p>Hi</p>", body_text="Hi")
         msg = fake_smtp_instance.send_message.call_args[0][0]
-        assert msg["Reply-To"] == "library@mvbchurch.org"
+        assert msg["Reply-To"] == "familyministry@mvbchurch.org"
 
 
 def test_gmail_sender_with_attachment():

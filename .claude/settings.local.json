@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(git -C \"c:/Users/T0226129/Claude/Projects/MVBC PCO-Libib Sync\" add .github/workflows/sync.yml)",
-      "Bash(git -C \"c:/Users/T0226129/Claude/Projects/MVBC PCO-Libib Sync\" commit -m \"ci: open issue on sync failures or orphans\")"
+      "Bash(git -C \"c:/Users/T0226129/Claude/Projects/MVBC PCO-Libib Sync\" commit -m \"ci: open issue on sync failures or orphans\")",
+      "Bash(ls \"C:/Users/T0226129/Downloads/\" 2>/dev/null | grep -i \"checkout\\\\|renewal\\\\|libib\" 2>/dev/null; echo \"---\"; ls \"C:/Users/T0226129/Desktop/\" 2>/dev/null | grep -i \"checkout\\\\|renewal\\\\|libib\" 2>/dev/null; echo \"---\"; ls \"C:/Users/T0226129/Documents/\" 2>/dev/null | grep -i \"checkout\\\\|renewal\\\\|libib\" 2>/dev/null)",
+      "Read(//c/Users/T0226129/Downloads/**)",
+      "Read(//c/Users/T0226129/Desktop/**)",
+      "Read(//c/Users/T0226129/Documents/**)"
     ]
   }
 }

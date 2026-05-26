@@ -235,11 +235,11 @@ Generated as a PNG image and attached to the welcome email. The legacy card desi
 
 **Backend:** Gmail SMTP via App Password (Python's stdlib `smtplib`). The email module is a `Sender` protocol with concrete implementations:
 - `GmailSMTPSender` — initial implementation; supports attachments; uses 2FA App Password
-- `MicrosoftGraphSender` — placeholder for future migration when `library@mvbchurch.org` becomes a real mailbox
+- `MicrosoftGraphSender` — placeholder for future migration when `familyministry@mvbchurch.org` becomes a real mailbox
 
 The active sender is selected via `EMAIL_BACKEND` env var, defaulting to `gmail`.
 
-Recipients see Alex's personal Gmail address as the From: address. The `EMAIL_FROM` env var sets a friendly display name (e.g., `"MVBC Library <alejandrobasurto7@gmail.com>"`) but Gmail rewrites the envelope sender to the authenticated account. This is a v1 tradeoff: cleanest sender experience requires `library@mvbchurch.org` via Microsoft Graph, which is the planned next step once the mailbox exists. Gmail SMTP's daily send limit (~500/day) is far above MVBC's volume.
+Recipients see Alex's personal Gmail address as the From: address. The `EMAIL_FROM` env var sets a friendly display name (e.g., `"MVBC Library <alejandrobasurto7@gmail.com>"`) but Gmail rewrites the envelope sender to the authenticated account. This is a v1 tradeoff: cleanest sender experience requires `familyministry@mvbchurch.org` via Microsoft Graph, which is the planned next step once the mailbox exists. Gmail SMTP's daily send limit (~500/day) is far above MVBC's volume.
 
 **Prerequisite:** 2-Step Verification must be enabled on the Gmail account; the App Password is generated at https://myaccount.google.com/apppasswords. The 16-character password is stored in `GMAIL_APP_PASSWORD` (whitespace stripped on read).
 
@@ -426,7 +426,7 @@ Run them manually before merging anything that changes `pco_client.py`, `libib_c
 
 ## 14. Open items
 
-- **Future: migrate Gmail SMTP → Microsoft Graph** when `library@mvbchurch.org` mailbox exists. No code change beyond config + new `MicrosoftGraphSender` class. Eliminates the cosmetic oddity of welcome emails coming from Alex's personal Gmail address.
+- **Future: migrate Gmail SMTP → Microsoft Graph** when `familyministry@mvbchurch.org` mailbox exists. No code change beyond config + new `MicrosoftGraphSender` class. Eliminates the cosmetic oddity of welcome emails coming from Alex's personal Gmail address.
 
 ## 15. Explicitly not building (YAGNI)
 

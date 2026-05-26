@@ -1,8 +1,8 @@
 """Email sending — Sender protocol + GmailSMTPSender implementation.
 
 The protocol exists so we can swap in a MicrosoftGraphSender later when
-library@mvbchurch.org becomes a real mailbox. No code change needed in
-execute.py; just a different config value.
+familyministry@mvbchurch.org becomes a real mailbox. No code change needed
+in execute.py; just a different config value.
 """
 from __future__ import annotations
 

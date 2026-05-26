@@ -73,14 +73,24 @@ def test_card_url_uses_https_scheme_from_base():
 def _render_card(token="a" * 32):
     return build_card_html(
         first_name="Sebastian", last_name="Parra-Diaz",
-        patron_id="2020000006497", token=token,
+        barcode="2020000006497", token=token,
     )
 
 
-def test_build_card_html_contains_name_and_id():
+def test_build_card_html_contains_name_and_barcode():
     html = _render_card()
     assert "Sebastian Parra-Diaz" in html
     assert "2020000006497" in html
+
+
+def test_build_card_html_rejects_empty_barcode():
+    # The barcode is what the kiosk scanner reads. Rendering a card without
+    # one would produce a useless QR — fail fast instead of silently shipping.
+    import pytest
+    with pytest.raises(ValueError):
+        build_card_html(
+            first_name="X", last_name="Y", barcode="", token="a" * 32,
+        )
 
 
 def test_build_card_html_inlines_qr_and_emblem_as_base64():
@@ -93,7 +103,7 @@ def test_build_card_html_inlines_qr_and_emblem_as_base64():
 def test_build_card_html_links_to_patron_specific_manifest():
     token = "feedface" * 4
     html = build_card_html(
-        first_name="A", last_name="B", patron_id="123", token=token,
+        first_name="A", last_name="B", barcode="123", token=token,
     )
     assert f'<link rel="manifest" href="{token}.webmanifest">' in html
 
@@ -124,7 +134,7 @@ def test_build_card_html_leaves_no_unresolved_placeholders():
     # string.Template placeholders all start with '$' (and we only use the
     # straight-substitute form). If any are left, substitution missed something.
     for placeholder in (
-        "$title", "$full_name", "$member_id",
+        "$title", "$full_name", "$barcode",
         "$qr_data_uri", "$emblem_data_uri", "$manifest_filename",
     ):
         assert placeholder not in html, f"unresolved placeholder {placeholder!r}"

@@ -28,6 +28,7 @@ libib_sample.json
 # Local migration artifacts
 migration_log.jsonl
 cards/
+.test-card/
 
 # Local sync logs (contain real PII; production state lives on the `state` branch)
 state/sync_log/*.jsonl
@@ -44,3 +45,6 @@ preview-card.png
 preview-email.html
 preview-email.txt
 scratch_*.py
+Joseph-Shanahan-library-card.png
+Joseph-Shanahan-VIP-dark.png
+Joseph-Shanahan-VIP.png

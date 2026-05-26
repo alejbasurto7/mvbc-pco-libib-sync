@@ -48,10 +48,10 @@ def _make_web_card_publisher(cfg):
     output_dir.mkdir(parents=True, exist_ok=True)
     base_url = cfg.card_base_url
 
-    def publish(*, first_name, last_name, patron_id, token):
+    def publish(*, first_name, last_name, barcode, token):
         html = build_card_html(
             first_name=first_name, last_name=last_name,
-            patron_id=patron_id, token=token,
+            barcode=barcode, token=token,
         )
         manifest = build_card_manifest(
             first_name=first_name, last_name=last_name, token=token,

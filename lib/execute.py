@@ -51,7 +51,7 @@ def execute_action(
                     card_url_value = web_card_publisher(
                         first_name=patron.first_name,
                         last_name=patron.last_name,
-                        patron_id=patron.patron_id,
+                        barcode=patron.barcode,
                         token=pending.card_token,
                     )
                     result.web_card_published = True

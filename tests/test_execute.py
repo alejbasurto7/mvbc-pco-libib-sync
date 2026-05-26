@@ -190,7 +190,7 @@ def test_create_patron_publishes_web_card_and_passes_url_to_email_render():
 
     publisher.assert_called_once_with(
         first_name="Ana", last_name="Smith",
-        patron_id="pco-1", token=pending.card_token,
+        barcode="BC-NEW", token=pending.card_token,
     )
     assert result.web_card_published is True
     assert result.web_card_url == "https://example/cards/aaaaaaaa.html"

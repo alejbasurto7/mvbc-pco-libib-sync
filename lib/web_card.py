@@ -72,23 +72,27 @@ def build_card_html(
     *,
     first_name: str,
     last_name: str,
-    patron_id: str,
+    barcode: str,
     token: str,
 ) -> str:
     """Render the per-patron PWA card HTML.
 
-    QR encodes the bare patron_id (matches the Libib barcode), emblem and QR
-    are inlined as base64 so the file is self-contained. The page references
-    its own manifest at ``<token>.webmanifest`` (sibling file) — see
-    ``build_card_manifest``.
+    QR encodes the Libib ``barcode`` (e.g. ``2020000010739``) — the same value
+    the kiosk scanner expects and the same field the printed PNG card uses.
+    This is distinct from ``Patron.patron_id`` (the CCB ID), which must never
+    appear on the card. Emblem and QR are inlined as base64 so the file is
+    self-contained. The page references its own manifest at
+    ``<token>.webmanifest`` (sibling file) — see ``build_card_manifest``.
     """
+    if not barcode:
+        raise ValueError("barcode is required to render a PWA card")
     full_name = f"{first_name} {last_name}".strip()
     tpl = Template(_TEMPLATE_PATH.read_text(encoding="utf-8"))
     return tpl.substitute(
         title=f"MVBC Library Card — {full_name}",
         full_name=full_name,
-        member_id=patron_id,
-        qr_data_uri=_qr_data_uri(patron_id),
+        barcode=barcode,
+        qr_data_uri=_qr_data_uri(barcode),
         emblem_data_uri=_emblem_data_uri(),
         manifest_filename=f"{token}.webmanifest",
     )

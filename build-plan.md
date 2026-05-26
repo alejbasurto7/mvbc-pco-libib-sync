@@ -123,7 +123,7 @@ If reversed before the gate, delete the pending row.
 | Gmail SMTP | App Password (initial) | Azure Function App Settings |
 | Azure Table Storage | Connection string | Azure Function App Settings (auto-injected) |
 
-**Future migration:** Gmail SMTP → Microsoft Graph (`library@mvbchurch.org`) once mailbox exists. Module designed with adapter pattern to swap.
+**Future migration:** Gmail SMTP → Microsoft Graph (`familyministry@mvbchurch.org`) once mailbox exists. Module designed with adapter pattern to swap.
 
 ---
 
@@ -565,7 +565,7 @@ class GmailSMTPSender:
     """Initial implementation."""
 
 class MicrosoftGraphSender:
-    """Future implementation when library@mvbchurch.org exists."""
+    """Future implementation when familyministry@mvbchurch.org exists."""
 
 def get_sender() -> EmailSender:
     """Factory based on EMAIL_BACKEND env var."""
@@ -720,7 +720,7 @@ Application Insights → Alerts:
 
 ### How to swap Gmail → Microsoft Graph
 1. Create app registration in Azure AD with `Mail.Send` permission
-2. Grant access to `library@mvbchurch.org` mailbox
+2. Grant access to `familyministry@mvbchurch.org` mailbox
 3. Update App Settings: `EMAIL_BACKEND=graph`, add `GRAPH_TENANT_ID`, `GRAPH_CLIENT_ID`, `GRAPH_CLIENT_SECRET`
 4. Restart Function App
 5. No code changes needed (adapter pattern)
@@ -741,7 +741,7 @@ Application Insights → Alerts:
 ## Open Items / Future Enhancements
 
 - [ ] Welcome email content (Alex to provide)
-- [ ] Migration to `library@mvbchurch.org` mailbox
+- [ ] Migration to `familyministry@mvbchurch.org` mailbox
 - [ ] Optional: SMS notification when patrons are frozen?
 - [ ] Optional: Slack/Teams notification on failures
 - [ ] Optional: monthly digest of all sync activity

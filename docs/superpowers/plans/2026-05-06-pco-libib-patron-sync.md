@@ -31,10 +31,10 @@ These are setup tasks that don't produce code but unblock the rest of the plan. 
 - [ ] Sign up at https://resend.com (free, no credit card)
 - [ ] Create an API key: Dashboard → API Keys → Create API Key. Save the `re_...` value to a password manager.
 - [ ] Decide on a sender domain. Two paths:
-  - **Preferred:** Add the DNS records Resend gives you (TXT, MX, etc.) to `mvbchurch.org`, then verify the domain in Resend. Sender becomes `library@mvbchurch.org`.
+  - **Preferred:** Add the DNS records Resend gives you (TXT, MX, etc.) to `mvbchurch.org`, then verify the domain in Resend. Sender becomes `familyministry@mvbchurch.org`.
   - **Fallback:** Verify a personal domain you control. Sender becomes `library@yourdomain.com` (or similar). Plan to migrate to mvbchurch.org sender later.
 - [ ] Once verified, send a test email via Resend's "Test" UI to confirm delivery to your inbox.
-- [ ] Record the verified sender domain and `EMAIL_FROM` value (e.g. `"MVBC Library <library@mvbchurch.org>"`) in your password manager / notes for use in Phase 6 configuration.
+- [ ] Record the verified sender domain and `EMAIL_FROM` value (e.g. `"MVBC Library <familyministry@mvbchurch.org>"`) in your password manager / notes for use in Phase 6 configuration.
 
 ### Task 0.2: Verify Libib `UPDATE_EMAIL` round-trip behavior
 
@@ -193,7 +193,7 @@ LIBIB_API_USER=
 
 # Resend (welcome email backend)
 RESEND_API_KEY=
-EMAIL_FROM="MVBC Library <library@mvbchurch.org>"
+EMAIL_FROM="MVBC Library <familyministry@mvbchurch.org>"
 EMAIL_REPLY_TO=
 EMAIL_BACKEND=resend
 
@@ -2919,7 +2919,7 @@ Expected: ImportError.
 """Email sending — Sender protocol + ResendSender implementation.
 
 The protocol exists so we can swap in a MicrosoftGraphSender later when
-library@mvbchurch.org becomes a real mailbox. No code change needed in
+familyministry@mvbchurch.org becomes a real mailbox. No code change needed in
 execute.py; just a different config value.
 """
 from __future__ import annotations
@@ -4067,5 +4067,5 @@ After Phase 8, walk through this list to confirm the full system is working as d
 
 These remain on the spec's "Open items" list:
 
-- Resolve Resend sender domain (verify `mvbchurch.org`, swap `EMAIL_FROM` to `library@mvbchurch.org`)
-- Migrate Resend → Microsoft Graph when `library@mvbchurch.org` mailbox exists
+- Resolve Resend sender domain (verify `mvbchurch.org`, swap `EMAIL_FROM` to `familyministry@mvbchurch.org`)
+- Migrate Resend → Microsoft Graph when `familyministry@mvbchurch.org` mailbox exists
