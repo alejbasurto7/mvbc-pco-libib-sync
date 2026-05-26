@@ -150,6 +150,10 @@ jobs:
         # see no pending.json (since this step is what moves it back).
         if: always()
         run: |
+          if [ ! -d state-checkout ]; then
+            echo "No state-checkout dir (early checkout failure); skipping."
+            exit 0
+          fi
           # If sync crashed before moving state, there is nothing to put back.
           if [ -d code/state ]; then
             rm -rf state-checkout/state
@@ -213,8 +217,12 @@ jobs:
           GH_REPO: ${{ github.repository }}
           GH_RUN_ID: ${{ github.run_id }}
           GH_SERVER: ${{ github.server_url }}
-        working-directory: state-checkout
         run: |
+          if [ ! -d state-checkout ]; then
+            echo "No state-checkout dir (early checkout failure); skipping notification."
+            exit 0
+          fi
+          cd state-checkout
           python3 - <<'PY'
           import json, os, smtplib, ssl, subprocess, sys
           from email.mime.text import MIMEText
@@ -306,6 +314,10 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          if [ ! -d state-checkout ]; then
+            echo "No state-checkout dir (early checkout failure); skipping alert."
+            exit 0
+          fi
           cd state-checkout
           if [ ! -f state/pending.json ]; then
             echo "No state/pending.json (sync likely crashed before state was written); skipping alert."
