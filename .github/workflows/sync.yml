@@ -181,11 +181,17 @@ jobs:
             echo "No pages-checkout dir (gh-pages branch not yet initialized); skipping."
             exit 0
           fi
-          # Mirror static web/ content. Exclude cards/ (generated) and any
-          # _build_*.py helpers (one-off generators that don't belong live).
+          # Mirror static web/ content. Exclusions:
+          #   .git/        — gh-pages branch metadata; rsync --delete would
+          #                  otherwise wipe it because code/web/ has no .git
+          #   cards/       — per-patron pages, generated each run
+          #   _build_*.py  — one-off generators (don't belong on the live site)
+          #   icons/_*.svg — icon source files (PNGs are what the manifest serves)
           rsync -a --delete \
+            --exclude='.git/' \
             --exclude='cards/' \
             --exclude='_build_*.py' \
+            --exclude='icons/_*.svg' \
             code/web/ pages-checkout/
           cd pages-checkout
           git add -A
