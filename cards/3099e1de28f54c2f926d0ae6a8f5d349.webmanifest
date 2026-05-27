@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Houston Bass",
+  "short_name": "MVBC Card",
+  "description": "Houston Bass's MVBC Library card.",
+  "start_url": "3099e1de28f54c2f926d0ae6a8f5d349.html",
+  "scope": "3099e1de28f54c2f926d0ae6a8f5d349.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
