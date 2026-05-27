@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Aaron Vick",
+  "short_name": "MVBC Card",
+  "description": "Aaron Vick's MVBC Library card.",
+  "start_url": "727085b17a184710b0a4c7d0c7ef6c2f.html",
+  "scope": "727085b17a184710b0a4c7d0c7ef6c2f.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
