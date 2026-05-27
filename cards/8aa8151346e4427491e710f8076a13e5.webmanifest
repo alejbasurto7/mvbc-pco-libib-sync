@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jamie Butts",
+  "short_name": "MVBC Card",
+  "description": "Jamie Butts's MVBC Library card.",
+  "start_url": "8aa8151346e4427491e710f8076a13e5.html",
+  "scope": "8aa8151346e4427491e710f8076a13e5.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
