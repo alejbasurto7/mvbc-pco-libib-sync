@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Chase Waddington",
+  "short_name": "MVBC Card",
+  "description": "Chase Waddington's MVBC Library card.",
+  "start_url": "6e50c0961ec84ea884c6738a43bdd146.html",
+  "scope": "6e50c0961ec84ea884c6738a43bdd146.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
