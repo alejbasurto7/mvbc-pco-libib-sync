@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jaynie Timmons",
+  "short_name": "MVBC Card",
+  "description": "Jaynie Timmons's MVBC Library card.",
+  "start_url": "bf880a88f5a942c283abef94e73ae4cc.html",
+  "scope": "bf880a88f5a942c283abef94e73ae4cc.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
