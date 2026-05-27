@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Caleb Oliver",
+  "short_name": "MVBC Card",
+  "description": "Caleb Oliver's MVBC Library card.",
+  "start_url": "0fdae2929acf49daa0b5aee606827e03.html",
+  "scope": "0fdae2929acf49daa0b5aee606827e03.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
