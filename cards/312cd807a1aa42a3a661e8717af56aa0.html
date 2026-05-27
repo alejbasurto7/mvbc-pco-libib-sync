@@ -1,0 +1,290 @@
+<!doctype html>
+<!--
+  Per-patron PWA library card.
+
+  Rendered by lib/web_card.build_card_html with string.Template (dollar-prefixed
+  placeholders) so CSS braces don't need escaping. Each card is self-contained:
+  emblem and QR are inlined as base64. The shared service worker (../sw.js)
+  caches the page for offline kiosk use.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#113355">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MVBC Card">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="312cd807a1aa42a3a661e8717af56aa0.webmanifest">
+<link rel="apple-touch-icon" href="../icons/touch-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<title>MVBC Library Card — Matt Flynn</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background: #E7E2D6;
+    color: #113355;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 20px max(20px, env(safe-area-inset-bottom));
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Centered column wrapping the badge and the install help below it. */
+  .stack {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: auto 0;
+  }
+
+  /* --- Badge (Mockup C — The Credential) --- */
+  .badge {
+    width: 100%;
+    background: #F3F0EB;
+    border-radius: 16px;
+    border: 1px solid rgba(17,51,85,0.12);
+    box-shadow: 0 12px 32px rgba(17,51,85,0.22);
+    padding: 0 32px 36px;
+    position: relative;
+    overflow: hidden;
+  }
+  .badge-stripe {
+    background: #113355;
+    color: #F3F0EB;
+    text-align: center;
+    padding: 22px 32px 20px;
+    margin: 0 -32px 36px;
+    border-radius: 16px 16px 0 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .badge-stripe::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 3px;
+    background: #C3AA7C;
+  }
+  .stripe-emblem {
+    width: 36px;
+    height: auto;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1) sepia(0.1) hue-rotate(180deg);
+  }
+  .stripe-text { text-align: left; }
+  .org {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .role {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    color: #C3AA7C;
+    white-space: nowrap;
+  }
+  .rule {
+    width: 40px;
+    height: 2px;
+    background: #C3AA7C;
+    margin: 12px auto 28px;
+    border-radius: 1px;
+  }
+  .name {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #113355;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .id {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #2C2A2B;
+    opacity: 0.6;
+    margin-bottom: 32px;
+  }
+  .qr-wrap {
+    background: white;
+    padding: 12px;
+    border-radius: 12px;
+    margin: 0 auto;
+    width: 280px;
+    height: 280px;
+  }
+  .qr-wrap img { width: 100%; height: 100%; display: block; image-rendering: pixelated; }
+  .scan-hint {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #2C2A2B;
+    opacity: 0.5;
+    margin-top: 20px;
+  }
+
+  /* --- Install help (hidden once the PWA is installed) --- */
+  .install {
+    background: #F3F0EB;
+    border-radius: 16px;
+    border: 1px solid rgba(17,51,85,0.12);
+    padding: 18px 22px;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    color: #2C2A2B;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .install h2 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #113355;
+    margin-bottom: 10px;
+  }
+  .install details {
+    border-top: 1px solid rgba(17,51,85,0.12);
+    padding: 10px 0;
+  }
+  .install details:first-of-type { border-top: 0; padding-top: 4px; }
+  .install summary {
+    font-weight: 700;
+    color: #113355;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  .install summary::-webkit-details-marker { display: none; }
+  .install summary::after {
+    content: "+";
+    font-weight: 700;
+    color: #C3AA7C;
+    font-size: 18px;
+    line-height: 1;
+    margin-left: 12px;
+  }
+  .install details[open] summary::after { content: "−"; }
+  .install ol { margin: 8px 0 4px 20px; padding: 0; }
+  .install li { margin-bottom: 4px; }
+  .install .tip {
+    margin-top: 8px;
+    font-size: 12px;
+    font-style: italic;
+    color: #767676;
+  }
+
+  /* Gmail-in-app-browser banner — shown only when UA sniff matches. */
+  .open-in-browser {
+    display: none;
+    background: #113355;
+    color: #F3F0EB;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .open-in-browser b { color: #C3AA7C; }
+  body.in-app-browser .open-in-browser { display: block; }
+
+  /* Once installed (display-mode: standalone), drop the install help —
+     the patron is already past that step. */
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    .install, .open-in-browser { display: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="open-in-browser">
+      Looks like you tapped this link from inside the Gmail app. To save your
+      card to your home screen, tap the <b>&middot;&middot;&middot;</b> menu and
+      choose <b>Open in Safari</b> (iPhone) or <b>Open in Chrome</b> (Android)
+      first.
+    </div>
+
+    <article class="badge">
+      <div class="badge-stripe">
+        <img class="stripe-emblem" src="data:image/png;base64,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" alt="MVBC emblem">
+        <div class="stripe-text">
+          <div class="org">Mount Vernon Baptist Church</div>
+          <div class="role">Library</div>
+        </div>
+      </div>
+      <div class="rule"></div>
+      <div class="name">Matt Flynn</div>
+      <div class="id">2020000011781</div>
+      <div class="qr-wrap"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASIAAAEiCAIAAADS3EjhAAAFEElEQVR4nO3dwW0cRxBAUdJQHJOMs3FAzsbJ7JUXAkzAV50asgdfXT187ypwd3a0H33YQs371+fHG1D6I311QGbwO8gMcjKDnMwgJzPIyQxyMoOczCAnM8jJDHIyg5zMICczyMkMcjKDnMwgJzPIyQxyP+788fXnX2/P8vrn7+iV79yrO1e1ft+Zn3emO/fKaQY5mUFOZpCTGeRkBjmZQU5mkJMZ5GQGs6dA1roJg13TCXcmKtb/uuuqdnmNvKpucsVpBjmZQU5mkJMZ5GQGOZlBTmaQkxnkZAYnT4Hs+sW9mzDoJjl2zXnMnCC5DvxurDnNICczyMkMcjKDnMwgJzPIyQxyMoOczOC5UyDPM3NmottQMnOfx0xOM8jJDHIyg5zMICczyMkMcjKDnMwgJzPImQL5TTsquo0dzOc0g5zMICczyMkMcjKDnMwgJzPIyQxyMoPnToGcuEmiu+Zdz3yZ6XXgd2PNaQY5mUFOZpCTGeRkBjmZQU5mkJMZ5GQGJ0+BnDh/0M1q7PrbtTvve8f1uO/GmtMMcjKDnMwgJzPIyQxyMoOczCAnM8jJDHLvX58f/bt8C91kw4k7SPiZ0wxyMoOczCAnM8jJDHIyg5zMICczyMkMZu8COXE3xq65h+6pLrt2gZw4m3Jt+kROM8jJDHIyg5zMICczyMkMcjKDnMwgJzOYPQXSzR90ds09zHzlO/tLnjcj0nGaQU5mkJMZ5GQGOZlBTmaQkxnkZAY5mcHsJ8LcmSHY9Wt9d80znwiz66pOnBG5smt2mkFOZpCTGeRkBjmZQU5mkJMZ5GQGOZnB7CmQO3ZtsDhx/qBz4iTHiZ/IaQY5mUFOZpCTGeRkBjmZQU5mkJMZ5GQGs58Is+s3dbsxft36fXc9p2bmfbYLBA4mM8jJDHIyg5zMICczyMkMcjKDnMxg9hTIiXMPMzdY7LrmzsxZjWvTzhWnGeRkBjmZQU5mkJMZ5GQGOZlBTmaQkxnMfiLMzL0L323e4sQ7eY18Ak7HaQY5mUFOZpCTGeRkBjmZQU5mkJMZ5GQGs6dA1nb90r+2azrheTMxJ96ra9N9dppBTmaQkxnkZAY5mUFOZpCTGeRkBjmZwXN3gezSXfOdqYiZswsnzvGsmQKBx5IZ5GQGOZlBTmaQkxnkZAY5mUFOZnDyLpDnmTkVsdbt83jehpKXKRA4l8wgJzPIyQxyMoOczCAnM8jJDHIyg9yP7zYVcWcOYNeTStZmXpU9MT9zmkFOZpCTGeRkBjmZQU5mkJMZ5GQGOZnB7CmQtRN/6d/1ee9MY8ycxZn5nJpXNvWy5jSDnMwgJzPIyQxyMoOczCAnM8jJDHIyg5OnQE6cxlibue1jrZsg2TV98to0yXGH0wxyMoOczCAnM8jJDHIyg5zMICczyMkMnjsFcqKZ2012mTn18sqej3OH0wxyMoOczCAnM8jJDHIyg5zMICczyMkMcqZA/oNdkw27NpScOPVyjbwbTjPIyQxyMoOczCAnM8jJDHIyg5zMICczyL1/fX787z8+cYZg5jXPvKqZz8dZm3mvnGaQkxnkZAY5mUFOZpCTGeRkBjmZQU5mcPIukO6X/u+2Z2LXjMid/8Fde1OukffZaQY5mUFOZpCTGeRkBjmZQU5mkJMZ5GQGs3eBAL/CaQY5mUFOZpCTGeRkBjmZQU5mkJMZ5GQGOZlBTmaQkxnkZAY5mUFOZpCTGeRkBjmZQU5m8Fb7F89XtBf5Zb21AAAAAElFTkSuQmCC" alt="QR code for library card 2020000011781"></div>
+      <div class="scan-hint">Scan at kiosk</div>
+    </article>
+
+    <section class="install" aria-label="Save to home screen">
+      <h2>Save to your home screen</h2>
+      <details>
+        <summary>iPhone &amp; iPad</summary>
+        <ol>
+          <li>Tap the <strong>Share</strong> button <svg viewBox="0 0 24 24" width="1.05em" height="1.05em" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" style="vertical-align: -0.2em;"><path d="M12 3v12"/><path d="M8 7l4-4 4 4"/><path d="M6 11v8a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-8"/></svg> at the bottom.</li>
+          <li>Scroll the share sheet down and tap <strong>Add to Home Screen</strong>.</li>
+          <li>Confirm the name and tap <strong>Add</strong>.</li>
+        </ol>
+        <div class="tip">Tip: the MVBC Library icon will appear on your home screen — tap it to open your card full-screen, even with no signal.</div>
+      </details>
+      <details>
+        <summary>Android</summary>
+        <ol>
+          <li>Tap the <strong>&#x22EE;</strong> menu (top-right).</li>
+          <li>Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).</li>
+          <li>Confirm the name and tap <strong>Add</strong> or <strong>Install</strong>.</li>
+        </ol>
+      </details>
+    </section>
+  </div>
+
+<script>
+  // Register the shared service worker so the page works offline at the kiosk.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('../sw.js').catch(function () { /* silent */ });
+    });
+  }
+
+  // Detect Gmail's in-app browser (iOS + Android) and show the "open in real
+  // browser" banner. The Gmail iOS app's UA contains "GSA"; the Android app
+  // routes through Chrome Custom Tabs but its UA includes "GoogleApp".
+  (function () {
+    var ua = navigator.userAgent || '';
+    var isGmailInApp = /GSA\//.test(ua) || /GoogleApp\//.test(ua);
+    if (isGmailInApp) {
+      document.body.classList.add('in-app-browser');
+    }
+  })();
+</script>
+</body>
+</html>
