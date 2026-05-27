@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Nathan Hales",
+  "short_name": "MVBC Card",
+  "description": "Nathan Hales's MVBC Library card.",
+  "start_url": "02178b00c23345eaadb30ee8b2b23aed.html",
+  "scope": "02178b00c23345eaadb30ee8b2b23aed.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
