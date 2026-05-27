@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Melissa Roche",
+  "short_name": "MVBC Card",
+  "description": "Melissa Roche's MVBC Library card.",
+  "start_url": "53a1074758aa458987a5ce3a0c43f5a7.html",
+  "scope": "53a1074758aa458987a5ce3a0c43f5a7.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
