@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Collin Ireland",
+  "short_name": "MVBC Card",
+  "description": "Collin Ireland's MVBC Library card.",
+  "start_url": "fa156b4153cf4a588e53a804890668f8.html",
+  "scope": "fa156b4153cf4a588e53a804890668f8.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
