@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Todd Foust",
+  "short_name": "MVBC Card",
+  "description": "Todd Foust's MVBC Library card.",
+  "start_url": "bf4eef3a32934c7b9f680337c5be8c53.html",
+  "scope": "bf4eef3a32934c7b9f680337c5be8c53.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
