@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jocelyn Heath",
+  "short_name": "MVBC Card",
+  "description": "Jocelyn Heath's MVBC Library card.",
+  "start_url": "7dfdcd21fa1341d189015c7bf523b18b.html",
+  "scope": "7dfdcd21fa1341d189015c7bf523b18b.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
