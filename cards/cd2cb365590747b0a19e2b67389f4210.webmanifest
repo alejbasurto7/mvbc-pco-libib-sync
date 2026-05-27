@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jonah Menikoff",
+  "short_name": "MVBC Card",
+  "description": "Jonah Menikoff's MVBC Library card.",
+  "start_url": "cd2cb365590747b0a19e2b67389f4210.html",
+  "scope": "cd2cb365590747b0a19e2b67389f4210.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
