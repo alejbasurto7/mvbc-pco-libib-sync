@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Deana Menikoff",
+  "short_name": "MVBC Card",
+  "description": "Deana Menikoff's MVBC Library card.",
+  "start_url": "0b65c34997c146139d741820ca9d574c.html",
+  "scope": "0b65c34997c146139d741820ca9d574c.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
