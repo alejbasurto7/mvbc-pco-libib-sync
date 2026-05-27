@@ -1,38 +1,41 @@
 # TODO
 
-## Blast email with two templates (+ per-recipient PWA card)
+## Blast email with three templates (+ per-recipient PWA card)
 
-Send a one-off blast email that branches by recipient segment, including a PWA library card per recipient (same flow as the welcome email — digital card primary, PNG attachment as backup):
+One-shot local blast that delivers a digital library card + PNG attachment to existing patrons. Segments by Libib Patron Status (CSV-driven; see [[project-blast-email-segmentation]]):
 
-- **Regular patrons** (active checkouts, no card yet) → `templates/regulars.{html,txt}`
-- **Members who have not visited the library** (existing patrons, dormant) → `templates/reminder.{html,txt}`
+- **active** → `regulars.{html,txt}` (or `regulars_vip.{html,txt}` if barcode ∈ VIP_BARCODES)
+- **inactive** + **new** → `reminder.{html,txt}`
+- **frozen** → skip (not a member anymore)
 
-Both templates now have a `{card_section}` placeholder and the same "Our Libraries" + PNG-as-backup framing as the welcome email. They will not render correctly until the blast pipeline supplies per-recipient PWA card URLs.
+### Foundation (DONE 2026-05-27)
 
-### Segmentation + recipient list
+- [x] `lib/blast.py` — CSV reader, `CsvRow` / `Recipient` / `Skipped` dataclasses, `assign_segment()`, `partition()`. Pure logic, 18 tests.
+- [x] `lib/sender.py::render_reminder_email` — third render helper, shares `_render_card_section` with welcome/regulars.
+- [x] `blast.py` CLI at repo root — `--dry-run` mode writes `state/blast_<DATE>/blast_state.json` (keyed by **barcode**) + one preview HTML per segment.
+- [x] Subject lines confirmed (see [[project-blast-email-segmentation]]).
 
-- [ ] Define the segmentation query: what counts as a "regular patron" vs. a "non-visiting member"? (e.g. checkouts in last N days, last visit date threshold)
-- [ ] Decide the source of truth for segmentation — Libib activity, PCO list, or a join of both
-- [ ] Build/identify the recipient list per segment (dedupe across segments; non-visitors take precedence if a member somehow lands in both)
-- [ ] Suppression list handling (opt-outs, bounces) before send
+### Per-recipient PWA card generation (still TODO)
 
-### Per-recipient PWA card generation (new — was missing from the original plan)
+Reuses existing primitives: `lib.web_card.{new_card_token, select_card_builders, card_url}`, `lib.card.{generate_card_png, generate_vip_card_png}`. Tokens currently minted fresh in `blast_state.json`; needs long-lived persistence per the user's decision.
 
-Each recipient needs their own card token, published card page on `gh-pages`, and PNG attachment — same as `CREATE_PATRON` does for new patrons. Reuses existing primitives: `lib.web_card.{new_card_token, build_card_html, build_card_manifest, card_url}`, `lib.card.generate_card_png`, and the `web_card_publisher` pattern from `run.py:_make_web_card_publisher`.
+- [ ] Add `state/card_tokens.json` keyed by **barcode** (not patron_id — barcodes are immutable; see [[feedback-identifier-choice]]). Helpers in a new `lib/card_tokens.py` (load / mint_if_absent / save).
+- [ ] Refactor `CREATE_PATRON` token flow ([[lib/reconcile.py]] / [[lib/execute.py]]) to persist tokens to `card_tokens.json` on success, so a future blast to the same patron reuses their URL.
+- [ ] `blast.py --dry-run` should consult `card_tokens.json` first; mint new ones for first-timers; never overwrite an existing token.
+- [ ] Publish step (separate from dry-run): for each recipient with status='pending' in `blast_state.json`, render via `select_card_builders(barcode=...)` and write `cards/<token>.{html,webmanifest}` to gh-pages.
+- [ ] PNG generator dispatch: add `select_png_generator(barcode)` symmetric to `select_card_builders` (returns `generate_vip_card_png` for VIP, `generate_card_png` otherwise). Wire into the send loop.
 
-- [ ] Persist per-recipient card tokens (new field on a per-patron record, or a separate `card_tokens.json` keyed by `patron_id` — decide which) so re-runs don't churn out fresh URLs for the same person
-- [ ] For each recipient: mint token if absent, publish `cards/<token>.{html,webmanifest}` to gh-pages
-- [ ] Render template with `card_url=...` injecting the per-recipient `{card_section}` snippet (reuse `lib.sender.render_welcome_email`'s splice pattern — extract into a shared helper that takes a base template path)
-- [ ] Generate per-recipient PNG card via `generate_card_png(barcode=patron.barcode, …)` and attach to the message
-- [ ] Decide what happens if a recipient has no Libib barcode (skip them? log and continue?) — same edge case as `CREATE_PATRON`
+### Real-send path
 
-### Sending
+- [ ] `blast.py --apply <blast_state.json>` — reads the JSON manifest (not the CSV), sends only to rows with `status` in {pending, failed}, marks each row in place (sent / failed / skipped + last_attempt_at + last_error).
+- [ ] Use existing `lib.sender.GmailSMTPSender`; pull `GMAIL_USER` / `GMAIL_APP_PASSWORD` from env via dotenv.
+- [ ] Pacing: 1–2 second delay between sends (Gmail-friendly, not spammy). Configurable.
+- [ ] Idempotency: never re-send to `status=sent` rows. User explicit constraint.
+- [ ] Baseline guard: require an explicit `--confirm <YYYYMMDD>` flag matching the manifest date so a stray `--apply` can't fire.
 
-- [ ] Wire up a sender path (Resend is already a project dep) with both HTML and plaintext alternatives per segment
-- [ ] Subject lines per template (regulars vs. reminder)
-- [ ] Dry-run / preview mode: print recipient list + rendered HTML/text + would-be card URL per recipient, no send, no gh-pages push
-- [ ] Add a baseline/safety guard so we don't accidentally blast on first run (consistent with the project's baseline-mode discipline)
-- [ ] Throttle / rate-limit (Resend has per-account caps; gh-pages commits also serialize)
+### Known environment issue
+
+- [ ] Local SSL cert verification fails against `api.libib.com` on the user's Windows machine (corporate TLS interception). Workaround: set `REQUESTS_CA_BUNDLE` to the corp CA chain, OR run from WSL/different network. Does not affect GitHub Actions runs.
 
 ## PWA library card — go-live
 

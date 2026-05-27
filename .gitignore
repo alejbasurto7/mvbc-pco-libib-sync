@@ -30,6 +30,10 @@ migration_log.jsonl
 cards/
 .test-card/
 
+# Blast email pipeline — patron CSVs and per-blast state contain PII
+Patrons-Status-*.csv
+state/blast_*/
+
 # Local sync logs (contain real PII; production state lives on the `state` branch)
 state/sync_log/*.jsonl
 

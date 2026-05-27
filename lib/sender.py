@@ -143,6 +143,34 @@ def render_welcome_email(
     return html, text
 
 
+def render_reminder_email(
+    *,
+    first_name: str,
+    email: str,
+    templates_dir: Path,
+    card_url: Optional[str] = None,
+) -> tuple[str, str]:
+    """Render the reminder-template email for inactive/new patrons.
+
+    Reminder has no VIP variant today (and isn't keyed by barcode).
+    Returns (html, text). Same placeholder contract as the other two
+    render helpers and shares the card-section snippet.
+    """
+    tdir = Path(templates_dir)
+    html_main = (tdir / "reminder.html").read_text(encoding="utf-8")
+    text_main = (tdir / "reminder.txt").read_text(encoding="utf-8")
+    html_snippet, text_snippet = _render_card_section(
+        templates_dir=tdir, card_url=card_url,
+    )
+    html = html_main.format(
+        first_name=first_name, email=email, card_section=html_snippet,
+    )
+    text = text_main.format(
+        first_name=first_name, email=email, card_section=text_snippet,
+    )
+    return html, text
+
+
 def render_regulars_email(
     *,
     first_name: str,

@@ -3,7 +3,12 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lib.sender import GmailSMTPSender, render_regulars_email, render_welcome_email
+from lib.sender import (
+    GmailSMTPSender,
+    render_regulars_email,
+    render_reminder_email,
+    render_welcome_email,
+)
 
 
 JOSEPH_BARCODE = "2020000006497"  # mirrors lib.web_card.VIP_BARCODES seed
@@ -233,6 +238,38 @@ def test_render_regulars_email_omits_card_section_when_no_url():
     assert "{card_section}" not in html
     assert "Add to Home Screen" not in html
     assert "Add to Home Screen" not in text
+
+
+def test_render_reminder_email_substitutes_placeholders():
+    html, text = render_reminder_email(
+        first_name="Ana", email="ana@example.com",
+        templates_dir=Path("templates"),
+    )
+    assert "Ana," in html
+    assert "ana@example.com" in html
+    for placeholder in ("{first_name}", "{email}", "{card_section}"):
+        assert placeholder not in html
+        assert placeholder not in text
+
+
+def test_render_reminder_email_includes_card_section_when_url_provided():
+    url = "https://example.github.io/repo/cards/abc.html"
+    html, text = render_reminder_email(
+        first_name="Ana", email="ana@x",
+        templates_dir=Path("templates"),
+        card_url=url,
+    )
+    assert url in html
+    assert url in text
+    assert "Add to Home Screen" in html
+
+
+def test_render_reminder_email_omits_card_section_when_no_url():
+    html, _ = render_reminder_email(
+        first_name="Ana", email="ana@x",
+        templates_dir=Path("templates"),
+    )
+    assert "Add to Home Screen" not in html
 
 
 def test_render_regulars_email_empty_barcode_falls_back_to_standard():

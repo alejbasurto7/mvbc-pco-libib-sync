@@ -96,16 +96,21 @@ def _gh_contents_get_sha(repo: str, path: str, branch: str) -> str | None:
 
 
 def _gh_put_file(*, repo: str, path: str, content: bytes, message: str, branch: str = "gh-pages") -> None:
+    # Pipe the request body via stdin (--input -) because base64-encoded
+    # content for ~40KB+ files (the VIP card's holographic layers push it
+    # past Windows' ~32KB command-line limit) overflows -f content=... .
     sha = _gh_contents_get_sha(repo, path, branch)
-    args = [
-        "gh", "api", "--method", "PUT", f"repos/{repo}/contents/{path}",
-        "-f", f"message={message}",
-        "-f", f"content={base64.b64encode(content).decode()}",
-        "-f", f"branch={branch}",
-    ]
+    body: dict = {
+        "message": message,
+        "content": base64.b64encode(content).decode(),
+        "branch": branch,
+    }
     if sha:
-        args += ["-f", f"sha={sha}"]
-    r = subprocess.run(args, capture_output=True, text=True)
+        body["sha"] = sha
+    r = subprocess.run(
+        ["gh", "api", "--method", "PUT", f"repos/{repo}/contents/{path}", "--input", "-"],
+        input=json.dumps(body), capture_output=True, text=True,
+    )
     if r.returncode != 0:
         raise RuntimeError(f"gh api PUT {path} failed: {r.stderr.strip()}")
 
