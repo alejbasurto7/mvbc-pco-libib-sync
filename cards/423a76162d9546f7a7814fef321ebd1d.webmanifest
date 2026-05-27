@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Will Kang",
+  "short_name": "MVBC Card",
+  "description": "Will Kang's MVBC Library card.",
+  "start_url": "423a76162d9546f7a7814fef321ebd1d.html",
+  "scope": "423a76162d9546f7a7814fef321ebd1d.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
