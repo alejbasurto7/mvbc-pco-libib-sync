@@ -96,6 +96,24 @@ class GmailSMTPSender:
         return {"to": to, "status": "sent"}
 
 
+def _render_card_section(*, templates_dir: Path, card_url: Optional[str]) -> tuple[str, str]:
+    # Shared install-instructions snippet — same content for welcome and
+    # regulars, since the iOS/Android Add-to-Home-Screen UX is identical
+    # regardless of which email delivered the link. Lives in
+    # templates/welcome_card_section.{html,txt} for historical reasons;
+    # not renamed to keep the diff small.
+    if not card_url:
+        return "", ""
+    tdir = Path(templates_dir)
+    html = (tdir / "welcome_card_section.html").read_text(encoding="utf-8").format(
+        card_url=card_url,
+    )
+    text = (tdir / "welcome_card_section.txt").read_text(encoding="utf-8").format(
+        card_url=card_url,
+    )
+    return html, text
+
+
 def render_welcome_email(
     *,
     first_name: str,
@@ -113,18 +131,51 @@ def render_welcome_email(
     tdir = Path(templates_dir)
     html_main = (tdir / "welcome.html").read_text(encoding="utf-8")
     text_main = (tdir / "welcome.txt").read_text(encoding="utf-8")
+    html_snippet, text_snippet = _render_card_section(
+        templates_dir=tdir, card_url=card_url,
+    )
+    html = html_main.format(
+        first_name=first_name, email=email, card_section=html_snippet,
+    )
+    text = text_main.format(
+        first_name=first_name, email=email, card_section=text_snippet,
+    )
+    return html, text
 
-    if card_url:
-        html_snippet = (tdir / "welcome_card_section.html").read_text(encoding="utf-8").format(
-            card_url=card_url,
-        )
-        text_snippet = (tdir / "welcome_card_section.txt").read_text(encoding="utf-8").format(
-            card_url=card_url,
-        )
+
+def render_regulars_email(
+    *,
+    first_name: str,
+    email: str,
+    barcode: str,
+    templates_dir: Path,
+    card_url: Optional[str] = None,
+) -> tuple[str, str]:
+    """Render the regulars-template email, dispatching by VIP membership.
+
+    Mirrors ``render_welcome_email`` but for the existing-patron touchpoint.
+    Returns (html, text). Dispatches on Libib ``barcode`` via
+    ``is_vip_patron`` from lib.web_card: VIP patrons get
+    ``regulars_vip.{html,txt}``; everyone else gets the standard
+    ``regulars.{html,txt}``. The card-section snippet is shared with
+    welcome.
+
+    Note: this only renders the body. Choosing the right PNG attachment
+    (standard vs ``generate_vip_card_png``) is the caller's job at send
+    time, also keyed on barcode.
+    """
+    from lib.web_card import is_vip_patron
+
+    tdir = Path(templates_dir)
+    if is_vip_patron(barcode=barcode):
+        html_main = (tdir / "regulars_vip.html").read_text(encoding="utf-8")
+        text_main = (tdir / "regulars_vip.txt").read_text(encoding="utf-8")
     else:
-        html_snippet = ""
-        text_snippet = ""
-
+        html_main = (tdir / "regulars.html").read_text(encoding="utf-8")
+        text_main = (tdir / "regulars.txt").read_text(encoding="utf-8")
+    html_snippet, text_snippet = _render_card_section(
+        templates_dir=tdir, card_url=card_url,
+    )
     html = html_main.format(
         first_name=first_name, email=email, card_section=html_snippet,
     )

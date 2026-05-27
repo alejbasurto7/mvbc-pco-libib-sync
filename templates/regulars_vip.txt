@@ -1,0 +1,51 @@
+MOUNT VERNON BAPTIST CHURCH · LIBRARY · VIP EDITION
+─────────────────────────────────────────────────────
+
+{first_name},
+
+You already have your VIP-edition library card — the
+one-of-a-kind dark Charcoal-and-Bronze edition reserved
+for the library's single most active patron. We've now
+added a digital version of it: same scannable barcode,
+ready to install on your phone for one-tap checkout
+at the kiosk.
+
+{card_section}
+HOW TO USE YOUR NEW CARD
+
+You already know the drill — scan your books at the kiosk and tap
+'Checkout'. The only change is at the final step:
+
+  - Instead of typing your email ({email}), just scan your library
+    card with the iPad camera and tap 'OK'.
+  - Your email still works as a backup if you don't have your card
+    on you.
+
+OUR LIBRARIES
+Both libraries share the same room, right next to the Fellowship Hall.
+
+  • MVBC Library — Commentaries, Christian Living, Biblical Theology,
+    Family and Parenting, Marriage and Relationships, Biographies,
+    Church History, and more.
+    https://www.libib.com/u/mvbchurch/l/812861
+
+  • Children's Library — Children's bibles, picture books, early readers,
+    and chapter books for kids.
+    https://www.libib.com/u/mvbchurch/l/471546
+
+Same as always: 3 weeks per book, drop returns in the boxes by the
+kiosk, and self-renew through the catalog (sign in -> Active -> Renew)
+if you need more time — walkthrough:
+  https://alejbasurto7.github.io/mvbc-pco-libib-sync/renew/
+
+Thanks again for being such a great part of the library.
+Questions? Just reply.
+
+—
+Alex Basurto
+MVBC Library Coordinator
+
+─────────────────────────────────────────────────────
+Mount Vernon Baptist Church
+850 Mt. Vernon Hwy NW · Sandy Springs, GA 30327
+mvbchurch.org · info@mvbchurch.org

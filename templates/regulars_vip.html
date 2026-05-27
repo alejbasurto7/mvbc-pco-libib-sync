@@ -1,0 +1,127 @@
+<!--
+  MVBC Library "here's your VIP card" email for the most active patrons.
+  Mirrors regulars.html with VIP-specific recognition wording. Visual
+  changes are minimal: a "VIP EDITION" wordmark under the Library header.
+  Inline styles only (email clients ignore stylesheets).
+  Brand: Mount Vernon Baptist Church Navy / Bronze / Cream palette.
+  Placeholders are substituted at render time via Python str.format.
+-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color: #F3F0EB; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif;">
+  <tr>
+    <td align="center" style="padding: 24px 12px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; width: 100%; background-color: #F3F0EB; border-collapse: collapse;">
+
+        <!-- Header banner: Navy bar with white wordmark, Bronze rule beneath, "VIP EDITION" tag -->
+        <tr>
+          <td style="background-color: #113355; padding: 24px 32px; text-align: left;">
+            <div style="font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: 900; font-size: 22px; color: #FFFFFF; letter-spacing: 0.04em; text-transform: uppercase;">
+              Mount Vernon Baptist Church
+            </div>
+            <div style="font-family: Arial, Helvetica, sans-serif; font-weight: normal; font-size: 12px; color: #C3AA7C; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px;">
+              Library &nbsp;&middot;&nbsp; <span style="color: #FFFFFF;">VIP Edition</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td style="background-color: #C3AA7C; height: 4px; line-height: 4px; font-size: 0;">&nbsp;</td>
+        </tr>
+
+        <!-- Body content -->
+        <tr>
+          <td style="background-color: #F3F0EB; padding: 36px 32px 24px 32px; font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.6; color: #2C2A2B;">
+
+            <p style="margin: 0 0 18px 0; font-size: 18px; color: #113355;">{first_name},</p>
+
+            <p style="margin: 0 0 16px 0;">
+              You already have your <strong>VIP-edition library card</strong> — the one-of-a-kind dark Charcoal-and-Bronze edition reserved for the library's <strong style="color: #113355;">single most active patron</strong>. We've now added a <strong>digital version</strong> of it: same scannable barcode, ready to install on your phone for one-tap checkout at the kiosk.
+            </p>
+
+            {card_section}
+
+            <!-- Section heading -->
+            <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
+              How to use your new card
+            </p>
+
+            <p style="margin: 0 0 16px 0;">
+              You already know the drill — scan your books at the kiosk and tap <em>Checkout</em>. The only change is at the final step:
+            </p>
+
+            <ul style="margin: 0 0 20px 24px; padding: 0; color: #2C2A2B;">
+              <li style="margin-bottom: 10px;">Instead of typing your email (<span style="color: #113355; font-weight: bold;">{email}</span>), just <strong>scan your library card</strong> with the iPad camera and tap <em>OK</em>.</li>
+              <li style="margin-bottom: 10px;">Your email still works as a backup if you don't have your card on you.</li>
+            </ul>
+
+            <!-- Section heading -->
+            <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
+              Our Libraries
+            </p>
+
+            <p style="margin: 0 0 18px 0;">
+              Both libraries share the same room, right next to the Fellowship Hall.
+            </p>
+
+            <!-- MVBC Library (adult) -->
+            <p style="margin: 0 0 4px 0;"><strong style="color: #113355;">MVBC Library</strong> — Commentaries, Christian Living, Biblical Theology, Family and Parenting, Marriage and Relationships, Biographies, Church History, and more.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 18px 0;">
+              <tr>
+                <td style="background-color: #C3AA7C; border-radius: 6px;">
+                  <a href="https://www.libib.com/u/mvbchurch/l/812861" target="_blank" style="display: inline-block; padding: 12px 24px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 13px; color: #FFFFFF; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;">
+                    Browse MVBC Library
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- Children's Library -->
+            <p style="margin: 0 0 4px 0;"><strong style="color: #113355;">Children's Library</strong> — Children's bibles, picture books, early readers, and chapter books for kids.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 20px 0;">
+              <tr>
+                <td style="background-color: #C3AA7C; border-radius: 6px;">
+                  <a href="https://www.libib.com/u/mvbchurch/l/471546" target="_blank" style="display: inline-block; padding: 12px 24px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 13px; color: #FFFFFF; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;">
+                    Browse Children's Library
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin: 0 0 24px 0;">
+              Same as always: 3 weeks per book, drop returns in the boxes by the kiosk, and self-renew through the catalog (sign in &rarr; <strong>Active</strong> &rarr; <strong>Renew</strong>) if you need more time &mdash;
+              <a href="https://alejbasurto7.github.io/mvbc-pco-libib-sync/renew/" style="color: #113355; text-decoration: underline;">walkthrough here</a>.
+            </p>
+
+            <p style="margin: 0 0 8px 0;">Thanks again for being such a great part of the library. Questions? Just reply.</p>
+
+            <!-- Signature -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px; border-top: 1px solid #C3AA7C; padding-top: 20px; width: 100%;">
+              <tr>
+                <td style="padding-right: 16px; vertical-align: middle;">
+                  <img width="48" height="48" alt="Alex Basurto" src="https://www.bricksafe.com/files/abasurto/img/ImageLoader.jpg" style="border-radius: 24px; display: block;">
+                </td>
+                <td style="vertical-align: middle; font-family: Arial, Helvetica, sans-serif; color: #2C2A2B;">
+                  <div style="font-weight: bold; font-size: 15px; color: #113355;">Alex Basurto</div>
+                  <div style="font-size: 13px; color: #767676; letter-spacing: 0.04em; text-transform: uppercase;">MVBC Library Coordinator</div>
+                </td>
+              </tr>
+            </table>
+
+          </td>
+        </tr>
+
+        <!-- Footer: Navy bar -->
+        <tr>
+          <td style="background-color: #113355; padding: 20px 32px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #FFFFFF; line-height: 1.5;">
+            <div style="font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px;">Mount Vernon Baptist Church</div>
+            <div style="color: #C3AA7C;">850 Mt. Vernon Hwy NW &middot; Sandy Springs, GA 30327</div>
+            <div style="color: #FFFFFF; margin-top: 4px;">
+              <a href="https://www.mvbchurch.org" style="color: #FFFFFF; text-decoration: none;">mvbchurch.org</a>
+              &nbsp;&middot;&nbsp;
+              <a href="mailto:info@mvbchurch.org" style="color: #FFFFFF; text-decoration: none;">info@mvbchurch.org</a>
+            </div>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
