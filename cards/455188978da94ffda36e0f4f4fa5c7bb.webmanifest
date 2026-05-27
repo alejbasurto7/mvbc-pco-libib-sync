@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Darius Tucker",
+  "short_name": "MVBC Card",
+  "description": "Darius Tucker's MVBC Library card.",
+  "start_url": "455188978da94ffda36e0f4f4fa5c7bb.html",
+  "scope": "455188978da94ffda36e0f4f4fa5c7bb.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
