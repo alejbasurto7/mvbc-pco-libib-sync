@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Helma Clark",
+  "short_name": "MVBC Card",
+  "description": "Helma Clark's MVBC Library card.",
+  "start_url": "bb46807c2b384b4c8ecc691b36fd921c.html",
+  "scope": "bb46807c2b384b4c8ecc691b36fd921c.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
