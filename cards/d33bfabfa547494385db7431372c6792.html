@@ -270,16 +270,10 @@
     justify-self: center;
   }
 
-  /* 3D tilt — perspective applied to the badge so only its plane
-     rotates, keeping the content readable. */
-  .badge {
-    transform-style: preserve-3d;
-    transform: perspective(900px)
-      rotateX(var(--rotate-y, 0deg))
-      rotateY(var(--rotate-x, 0deg));
-    transition: transform 0.25s cubic-bezier(0.2, 0, 0.2, 1);
-    will-change: transform;
-  }
+  /* 3D tilt removed — the card itself stays still; only the shine
+     layers respond to pointer/tilt. The --rotate-x/--rotate-y vars are
+     still set by JS but unused here (kept set so any future hover/tilt
+     style could pick them up without rewiring the script). */
 
   /* Sunpillar rainbow palette (from Simey's base.css). Six hues spaced
      ~60° apart in HSL space, all at high saturation. Defined as scope-
