@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Susan Lawrence",
+  "short_name": "MVBC Card",
+  "description": "Susan Lawrence's MVBC Library card.",
+  "start_url": "3d0fe78a1d5947a3a26f15ac41ad59f8.html",
+  "scope": "3d0fe78a1d5947a3a26f15ac41ad59f8.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
