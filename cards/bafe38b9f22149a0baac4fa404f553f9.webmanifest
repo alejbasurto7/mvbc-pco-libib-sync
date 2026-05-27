@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ryan Lavender",
+  "short_name": "MVBC Card",
+  "description": "Ryan Lavender's MVBC Library card.",
+  "start_url": "bafe38b9f22149a0baac4fa404f553f9.html",
+  "scope": "bafe38b9f22149a0baac4fa404f553f9.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
