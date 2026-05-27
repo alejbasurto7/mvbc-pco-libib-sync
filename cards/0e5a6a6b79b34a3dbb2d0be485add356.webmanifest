@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Micah Morris",
+  "short_name": "MVBC Card",
+  "description": "Micah Morris's MVBC Library card.",
+  "start_url": "0e5a6a6b79b34a3dbb2d0be485add356.html",
+  "scope": "0e5a6a6b79b34a3dbb2d0be485add356.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
