@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Kirby Wilson",
+  "short_name": "MVBC Card",
+  "description": "Kirby Wilson's MVBC Library card.",
+  "start_url": "01b0599b3b95445b9234de7d1576c371.html",
+  "scope": "01b0599b3b95445b9234de7d1576c371.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
