@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Daniel Johnstone",
+  "short_name": "MVBC Card",
+  "description": "Daniel Johnstone's MVBC Library card.",
+  "start_url": "6d8c1ff9d8cf4480b4612130cdd97299.html",
+  "scope": "6d8c1ff9d8cf4480b4612130cdd97299.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
