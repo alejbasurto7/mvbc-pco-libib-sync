@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Sharon Luck",
+  "short_name": "MVBC Card",
+  "description": "Sharon Luck's MVBC Library card.",
+  "start_url": "7a5c8eca7eea46ef90439b32ea60d536.html",
+  "scope": "7a5c8eca7eea46ef90439b32ea60d536.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
