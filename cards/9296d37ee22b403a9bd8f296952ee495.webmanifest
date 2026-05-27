@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jenna Shanahan",
+  "short_name": "MVBC Card",
+  "description": "Jenna Shanahan's MVBC Library card.",
+  "start_url": "9296d37ee22b403a9bd8f296952ee495.html",
+  "scope": "9296d37ee22b403a9bd8f296952ee495.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
