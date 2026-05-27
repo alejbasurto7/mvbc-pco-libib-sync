@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Lisa Timmons",
+  "short_name": "MVBC Card",
+  "description": "Lisa Timmons's MVBC Library card.",
+  "start_url": "46f4fe359b494a889a7a2b11b98eefec.html",
+  "scope": "46f4fe359b494a889a7a2b11b98eefec.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
