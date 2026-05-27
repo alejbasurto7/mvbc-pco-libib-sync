@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Fredda Coleman",
+  "short_name": "MVBC Card",
+  "description": "Fredda Coleman's MVBC Library card.",
+  "start_url": "6ee03dc3d6644a89bf63a6e7e0014385.html",
+  "scope": "6ee03dc3d6644a89bf63a6e7e0014385.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
