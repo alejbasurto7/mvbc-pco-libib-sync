@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jane Hall",
+  "short_name": "MVBC Card",
+  "description": "Jane Hall's MVBC Library card.",
+  "start_url": "935f122843934d6bb5e8164bd57b5d5a.html",
+  "scope": "935f122843934d6bb5e8164bd57b5d5a.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
