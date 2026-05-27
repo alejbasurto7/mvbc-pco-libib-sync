@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Eva Thayer",
+  "short_name": "MVBC Card",
+  "description": "Eva Thayer's MVBC Library card.",
+  "start_url": "0861278455e44a5996c9ebbd9f61d19c.html",
+  "scope": "0861278455e44a5996c9ebbd9f61d19c.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
