@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ansley Johnson",
+  "short_name": "MVBC Card",
+  "description": "Ansley Johnson's MVBC Library card.",
+  "start_url": "b12f8c71cf0e4145a4a52b237c33747a.html",
+  "scope": "b12f8c71cf0e4145a4a52b237c33747a.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
