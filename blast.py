@@ -33,6 +33,7 @@ try:
 except ImportError:
     pass
 
+from lib import card_tokens
 from lib.blast import (
     Recipient,
     Skipped,
@@ -44,7 +45,6 @@ from lib.sender import (
     render_regulars_email,
     render_reminder_email,
 )
-from lib.web_card import new_card_token
 
 
 SCHEMA_VERSION = 1
@@ -61,12 +61,15 @@ def _build_state(
     base_url: str,
     source_csv: Path,
     generated_at: datetime,
+    tokens: dict[str, str],
 ) -> dict:
+    """Build the blast_state.json payload. Mutates ``tokens`` in place for any
+    barcode that doesn't yet have a long-lived token (it'll be minted)."""
     seg_counts = Counter(r.segment for r in recipients)
     skip_counts = Counter(s.reason for s in skipped)
     recipients_map: dict[str, dict] = {}
     for r in recipients:
-        token = new_card_token()
+        token = card_tokens.get_or_mint(tokens, r.barcode)
         recipients_map[r.barcode] = {
             "patron_id": r.patron_id,
             "first_name": r.first_name,
@@ -236,17 +239,32 @@ def main() -> int:
 
     recipients, skipped = partition(csv_rows, patrons_by_patron_id)
 
+    # Load the long-lived barcode→token map. Any barcode already in here
+    # reuses its token (so a previously-published card URL stays stable
+    # for that patron forever); new barcodes get a fresh mint that's then
+    # written back to the file so the next caller sees it too.
+    tokens = card_tokens.load(args.state_dir)
+    tokens_before = dict(tokens)
+
     state = _build_state(
         recipients=recipients,
         skipped=skipped,
         base_url=args.base_url,
         source_csv=args.csv_path,
         generated_at=now,
+        tokens=tokens,
     )
 
     output_dir.mkdir(parents=True, exist_ok=True)
     state_path = output_dir / "blast_state.json"
     state_path.write_text(json.dumps(state, indent=2), encoding="utf-8")
+
+    if tokens != tokens_before:
+        card_tokens.save(args.state_dir, tokens, now=now)
+        minted = len(tokens) - len(tokens_before)
+        print(f"  minted {minted} new card token(s); persisted to {args.state_dir}/card_tokens.json")
+    else:
+        print(f"  all {len(recipients)} recipient(s) already had tokens; card_tokens.json unchanged")
 
     preview_paths = _render_previews(
         state=state, templates_dir=args.templates_dir, output_dir=output_dir,

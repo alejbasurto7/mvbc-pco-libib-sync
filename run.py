@@ -34,14 +34,21 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
-def _make_web_card_publisher(cfg):
+def _make_web_card_publisher(cfg, *, state_dir: Path):
     """Return a callable that writes per-patron card HTML + manifest and yields the URL.
 
     Returns None when either env var is unset — callers treat None as "skip".
+
+    The publisher consults ``state/card_tokens.json`` (keyed by Libib barcode):
+    if the patron already has a registered token, that one wins and the
+    ``token`` arg from the caller is ignored — keeps the patron's home-screen
+    icon URL stable forever. Otherwise the caller's token becomes the
+    canonical one for that barcode and is persisted.
     """
     if not cfg.card_base_url or not cfg.web_cards_output_dir:
         return None
 
+    from lib import card_tokens
     from lib.web_card import card_url, select_card_builders
 
     output_dir = Path(cfg.web_cards_output_dir)
@@ -49,6 +56,19 @@ def _make_web_card_publisher(cfg):
     base_url = cfg.card_base_url
 
     def publish(*, first_name, last_name, barcode, token):
+        # Reconcile may have minted a provisional token before the patron
+        # existed in Libib (and thus before we had a barcode to key on).
+        # Now that we know the barcode, defer to whatever's already
+        # registered for it — that's the URL that may already be on a
+        # patron's home screen from a previous email.
+        tokens = card_tokens.load(state_dir)
+        registered = tokens.get(barcode)
+        if registered:
+            token = registered
+        else:
+            tokens[barcode] = token
+            card_tokens.save(state_dir, tokens, now=_now())
+
         html_fn, manifest_fn = select_card_builders(barcode=barcode)
         html = html_fn(
             first_name=first_name, last_name=last_name,
@@ -144,7 +164,7 @@ def main(*, state_dir: Path = Path("state"), dry_run: bool = False) -> int:
     )
     card_generator = generate_card_png
 
-    web_card_publisher = _make_web_card_publisher(cfg)
+    web_card_publisher = _make_web_card_publisher(cfg, state_dir=state_dir)
     if web_card_publisher is None:
         print("  web card publishing disabled (CARD_BASE_URL or WEB_CARDS_OUTPUT_DIR unset)")
 

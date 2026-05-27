@@ -15,14 +15,12 @@ One-shot local blast that delivers a digital library card + PNG attachment to ex
 - [x] `blast.py` CLI at repo root — `--dry-run` mode writes `state/blast_<DATE>/blast_state.json` (keyed by **barcode**) + one preview HTML per segment.
 - [x] Subject lines confirmed (see [[project-blast-email-segmentation]]).
 
-### Per-recipient PWA card generation (still TODO)
+### Per-recipient PWA card generation
 
-Reuses existing primitives: `lib.web_card.{new_card_token, select_card_builders, card_url}`, `lib.card.{generate_card_png, generate_vip_card_png}`. Tokens currently minted fresh in `blast_state.json`; needs long-lived persistence per the user's decision.
+Reuses `lib.web_card.{select_card_builders, card_url}`, `lib.card.{generate_card_png, generate_vip_card_png}`.
 
-- [ ] Add `state/card_tokens.json` keyed by **barcode** (not patron_id — barcodes are immutable; see [[feedback-identifier-choice]]). Helpers in a new `lib/card_tokens.py` (load / mint_if_absent / save).
-- [ ] Refactor `CREATE_PATRON` token flow ([[lib/reconcile.py]] / [[lib/execute.py]]) to persist tokens to `card_tokens.json` on success, so a future blast to the same patron reuses their URL.
-- [ ] `blast.py --dry-run` should consult `card_tokens.json` first; mint new ones for first-timers; never overwrite an existing token.
-- [ ] Publish step (separate from dry-run): for each recipient with status='pending' in `blast_state.json`, render via `select_card_builders(barcode=...)` and write `cards/<token>.{html,webmanifest}` to gh-pages.
+- [x] `state/card_tokens.json` registry, keyed by **barcode**. [[lib/card_tokens.py]] (load / save / get_or_mint), 10 tests. Wired into `blast.py`, `publish_test_card.py`, and `run.py::_make_web_card_publisher` (so CREATE_PATRON also persists tokens after success). First blast run seeded 410 entries.
+- [ ] Publish step (separate from dry-run): for each recipient with status='pending' in `blast_state.json`, render via `select_card_builders(barcode=...)` and push `cards/<token>.{html,webmanifest}` to gh-pages.
 - [ ] PNG generator dispatch: add `select_png_generator(barcode)` symmetric to `select_card_builders` (returns `generate_vip_card_png` for VIP, `generate_card_png` otherwise). Wire into the send loop.
 
 ### Real-send path

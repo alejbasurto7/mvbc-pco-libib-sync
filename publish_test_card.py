@@ -45,6 +45,7 @@ try:
 except ImportError:
     pass
 
+from lib import card_tokens
 from lib.card import generate_card_png
 from lib.libib_client import LibibClient
 from lib.pco_client import PCOClient
@@ -52,7 +53,6 @@ from lib.sender import GmailSMTPSender, render_welcome_email
 from lib.types import Person
 from lib.web_card import (
     card_url,
-    new_card_token,
     select_card_builders,
 )
 
@@ -160,7 +160,21 @@ def cmd_publish(args: argparse.Namespace) -> int:
         print(f"error: Libib patron {patron.patron_id} has no barcode set", file=sys.stderr)
         return 1
 
-    token = args.token or new_card_token()
+    # Token resolution: explicit --token override > long-lived registry lookup
+    # by barcode (mints + persists if absent so this patron's URL stays stable
+    # across every future blast or email touchpoint).
+    state_dir = Path(args.state_dir)
+    if args.token:
+        token = args.token
+        tokens_changed = False
+    else:
+        tokens = card_tokens.load(state_dir)
+        before = len(tokens)
+        token = card_tokens.get_or_mint(tokens, patron.barcode)
+        tokens_changed = len(tokens) != before
+        if tokens_changed:
+            from datetime import datetime, timezone
+            card_tokens.save(state_dir, tokens, now=datetime.now(timezone.utc))
     base_url = args.base_url or os.environ.get("CARD_BASE_URL") or _derive_base_url()
 
     html_fn, manifest_fn = select_card_builders(barcode=patron.barcode)
@@ -253,7 +267,8 @@ def main(argv: list[str] | None = None) -> int:
     )
     ap.add_argument("--pco-id", help="PCO person id to look up")
     ap.add_argument("--email", help="primary email to look up the PCO person by")
-    ap.add_argument("--token", help="reuse a specific UUID4 hex token (default: fresh)")
+    ap.add_argument("--token", help="reuse a specific UUID4 hex token (default: look up by barcode in state/card_tokens.json, mint if absent)")
+    ap.add_argument("--state-dir", default="state", help="directory holding card_tokens.json (default: state/)")
     ap.add_argument("--base-url", help="override CARD_BASE_URL (default: derived from origin)")
     ap.add_argument("--cleanup", metavar="TOKEN", help="delete a previously-published test card")
     ap.add_argument("--apply", action="store_true", help="actually push (default: dry-run)")
