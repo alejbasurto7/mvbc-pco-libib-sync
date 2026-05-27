@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Laura Cramer",
+  "short_name": "MVBC Card",
+  "description": "Laura Cramer's MVBC Library card.",
+  "start_url": "895c22cce0c145258b5aa3cdc50e3f19.html",
+  "scope": "895c22cce0c145258b5aa3cdc50e3f19.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
