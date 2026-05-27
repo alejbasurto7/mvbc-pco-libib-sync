@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Pam Hutchins",
+  "short_name": "MVBC Card",
+  "description": "Pam Hutchins's MVBC Library card.",
+  "start_url": "67d564083e3c40fd9fa320927a16ebb2.html",
+  "scope": "67d564083e3c40fd9fa320927a16ebb2.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
