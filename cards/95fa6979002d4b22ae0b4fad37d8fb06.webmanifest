@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Isabella Salas",
+  "short_name": "MVBC Card",
+  "description": "Isabella Salas's MVBC Library card.",
+  "start_url": "95fa6979002d4b22ae0b4fad37d8fb06.html",
+  "scope": "95fa6979002d4b22ae0b4fad37d8fb06.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
