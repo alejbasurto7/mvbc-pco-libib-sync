@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Sam Edwards",
+  "short_name": "MVBC Card",
+  "description": "Sam Edwards's MVBC Library card.",
+  "start_url": "4e8502d6290541188e7c2f17478a013f.html",
+  "scope": "4e8502d6290541188e7c2f17478a013f.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
