@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Liya Agyekum",
+  "short_name": "MVBC Card",
+  "description": "Liya Agyekum's MVBC Library card.",
+  "start_url": "b071718ecd264c8480d229257888c0b3.html",
+  "scope": "b071718ecd264c8480d229257888c0b3.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
