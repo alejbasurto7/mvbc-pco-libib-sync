@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Hannah Coffin",
+  "short_name": "MVBC Card",
+  "description": "Hannah Coffin's MVBC Library card.",
+  "start_url": "c9a0226d12b24143859052df988d398d.html",
+  "scope": "c9a0226d12b24143859052df988d398d.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
