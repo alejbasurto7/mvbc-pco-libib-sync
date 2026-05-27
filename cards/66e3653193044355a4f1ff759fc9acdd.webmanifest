@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Casey Cone",
+  "short_name": "MVBC Card",
+  "description": "Casey Cone's MVBC Library card.",
+  "start_url": "66e3653193044355a4f1ff759fc9acdd.html",
+  "scope": "66e3653193044355a4f1ff759fc9acdd.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
