@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Larry Chandler",
+  "short_name": "MVBC Card",
+  "description": "Larry Chandler's MVBC Library card.",
+  "start_url": "1e292bb2e14c43279164f21861ce42b6.html",
+  "scope": "1e292bb2e14c43279164f21861ce42b6.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
