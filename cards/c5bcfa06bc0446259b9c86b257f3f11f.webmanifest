@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Dan Ryder",
+  "short_name": "MVBC Card",
+  "description": "Dan Ryder's MVBC Library card.",
+  "start_url": "c5bcfa06bc0446259b9c86b257f3f11f.html",
+  "scope": "c5bcfa06bc0446259b9c86b257f3f11f.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
