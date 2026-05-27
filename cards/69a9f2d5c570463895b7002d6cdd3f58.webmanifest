@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Kevin Vaughter",
+  "short_name": "MVBC Card",
+  "description": "Kevin Vaughter's MVBC Library card.",
+  "start_url": "69a9f2d5c570463895b7002d6cdd3f58.html",
+  "scope": "69a9f2d5c570463895b7002d6cdd3f58.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
