@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Nadine Giles",
+  "short_name": "MVBC Card",
+  "description": "Nadine Giles's MVBC Library card.",
+  "start_url": "4d7c90fc664e4459a56bf39fe2b80a4d.html",
+  "scope": "4d7c90fc664e4459a56bf39fe2b80a4d.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
