@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Carolyn Versele",
+  "short_name": "MVBC Card",
+  "description": "Carolyn Versele's MVBC Library card.",
+  "start_url": "b5c05f565c3f4b12ba17e4a34dad01cf.html",
+  "scope": "b5c05f565c3f4b12ba17e4a34dad01cf.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
