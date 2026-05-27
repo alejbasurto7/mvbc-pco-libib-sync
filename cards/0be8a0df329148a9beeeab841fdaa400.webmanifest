@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Nana Agyekum",
+  "short_name": "MVBC Card",
+  "description": "Nana Agyekum's MVBC Library card.",
+  "start_url": "0be8a0df329148a9beeeab841fdaa400.html",
+  "scope": "0be8a0df329148a9beeeab841fdaa400.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
