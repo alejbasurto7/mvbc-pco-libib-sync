@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Meredith Rodgers",
+  "short_name": "MVBC Card",
+  "description": "Meredith Rodgers's MVBC Library card.",
+  "start_url": "b363446e81fd4b229652857a4f253587.html",
+  "scope": "b363446e81fd4b229652857a4f253587.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
