@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ashley Waddington",
+  "short_name": "MVBC Card",
+  "description": "Ashley Waddington's MVBC Library card.",
+  "start_url": "0881ab19cb3f4d9fb568c0c126b4e4b6.html",
+  "scope": "0881ab19cb3f4d9fb568c0c126b4e4b6.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
