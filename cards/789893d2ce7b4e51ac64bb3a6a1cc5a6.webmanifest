@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Kevin Johnson",
+  "short_name": "MVBC Card",
+  "description": "Kevin Johnson's MVBC Library card.",
+  "start_url": "789893d2ce7b4e51ac64bb3a6a1cc5a6.html",
+  "scope": "789893d2ce7b4e51ac64bb3a6a1cc5a6.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
