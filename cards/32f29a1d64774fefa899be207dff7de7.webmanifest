@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Michael Tice",
+  "short_name": "MVBC Card",
+  "description": "Michael Tice's MVBC Library card.",
+  "start_url": "32f29a1d64774fefa899be207dff7de7.html",
+  "scope": "32f29a1d64774fefa899be207dff7de7.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
