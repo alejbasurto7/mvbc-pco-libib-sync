@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Amanda Mayer",
+  "short_name": "MVBC Card",
+  "description": "Amanda Mayer's MVBC Library card.",
+  "start_url": "e2eb13dfca934c8182d382792b62b8d0.html",
+  "scope": "e2eb13dfca934c8182d382792b62b8d0.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
