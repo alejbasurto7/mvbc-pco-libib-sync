@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Richard Sutter",
+  "short_name": "MVBC Card",
+  "description": "Richard Sutter's MVBC Library card.",
+  "start_url": "0d844356e0bd483c861357e1f843d420.html",
+  "scope": "0d844356e0bd483c861357e1f843d420.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
