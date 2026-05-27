@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Paul Hill",
+  "short_name": "MVBC Card",
+  "description": "Paul Hill's MVBC Library card.",
+  "start_url": "15655c63d80e429db59a2fa7b20b3655.html",
+  "scope": "15655c63d80e429db59a2fa7b20b3655.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
