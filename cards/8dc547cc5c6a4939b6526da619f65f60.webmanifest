@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 James Gibson",
+  "short_name": "MVBC Card",
+  "description": "James Gibson's MVBC Library card.",
+  "start_url": "8dc547cc5c6a4939b6526da619f65f60.html",
+  "scope": "8dc547cc5c6a4939b6526da619f65f60.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
