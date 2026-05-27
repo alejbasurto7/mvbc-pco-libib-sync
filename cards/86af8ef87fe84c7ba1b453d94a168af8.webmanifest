@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Nathalie Acosta",
+  "short_name": "MVBC Card",
+  "description": "Nathalie Acosta's MVBC Library card.",
+  "start_url": "86af8ef87fe84c7ba1b453d94a168af8.html",
+  "scope": "86af8ef87fe84c7ba1b453d94a168af8.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
