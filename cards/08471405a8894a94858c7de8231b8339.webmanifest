@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Evelyn Norwood",
+  "short_name": "MVBC Card",
+  "description": "Evelyn Norwood's MVBC Library card.",
+  "start_url": "08471405a8894a94858c7de8231b8339.html",
+  "scope": "08471405a8894a94858c7de8231b8339.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
