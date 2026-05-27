@@ -15,6 +15,9 @@ API_BASE = "https://api.planningcenteronline.com/people/v2"
 _MAX_ATTEMPTS = 5
 _BASE_DELAY = 1.0  # seconds
 
+MEMBER_STATUS_FIELD_DEFINITION_ID = 965092
+MEMBER_STATUS_ACTIVE_VALUE = "Active"
+
 
 class PCOClient:
     def __init__(self, app_id: str, secret: str, session: requests.Session | None = None):
@@ -113,3 +116,60 @@ class PCOClient:
 
             url = payload.get("links", {}).get("next")
             params = None  # next URL has its own query
+
+    def fetch_non_active_patron_ids(self) -> set[str]:
+        """Return the set of Libib patron_ids whose PCO Member Status != Active.
+
+        Two-step query:
+          1. Walk /field_data for the Member Status custom field, collecting
+             {person_id: status} for everyone who has the field set.
+          2. Bulk-fetch /people for the non-Active person_ids to read their
+             ``remote_id`` (= Libib patron_id = CCB ID).
+
+        Returned set is suitable for use as a block-list against CSV
+        ``patron_id`` values. People without a ``remote_id`` (i.e. no Libib
+        mirror) are omitted — they aren't library patrons anyway.
+        """
+        # Step 1: enumerate everyone with a Member Status value.
+        non_active_person_ids: list[str] = []
+        url = f"{API_BASE}/field_data"
+        params: dict | None = {
+            "where[field_definition_id]": MEMBER_STATUS_FIELD_DEFINITION_ID,
+            "per_page": 100,
+        }
+        while url:
+            resp = self._get(url, params=params)
+            resp.raise_for_status()
+            payload = resp.json()
+            for item in payload.get("data", []):
+                value = (item.get("attributes") or {}).get("value") or ""
+                if value == MEMBER_STATUS_ACTIVE_VALUE or not value:
+                    continue
+                person_ref = (
+                    (item.get("relationships") or {}).get("customizable", {}).get("data") or {}
+                )
+                if person_ref.get("type") == "Person":
+                    non_active_person_ids.append(str(person_ref["id"]))
+            url = (payload.get("links") or {}).get("next")
+            params = None
+
+        if not non_active_person_ids:
+            return set()
+
+        # Step 2: resolve remote_ids in batches via /people?where[id]=...
+        patron_ids: set[str] = set()
+        CHUNK = 75  # keep URLs comfortably under common query-string limits
+        for i in range(0, len(non_active_person_ids), CHUNK):
+            batch = non_active_person_ids[i : i + CHUNK]
+            resp = self._get(
+                f"{API_BASE}/people",
+                params={"where[id]": ",".join(batch), "per_page": 100},
+            )
+            resp.raise_for_status()
+            for item in resp.json().get("data", []):
+                if item.get("type") != "Person":
+                    continue
+                rid = (item.get("attributes") or {}).get("remote_id")
+                if rid is not None:
+                    patron_ids.add(str(rid))
+        return patron_ids

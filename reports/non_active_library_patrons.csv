@@ -1,0 +1,113 @@
+member_status,first_name,last_name,email,patron_id,barcode,libib_csv_status,libib_bucket,pco_person_id
+Homebound - In Area,Bob,Becknell,bob.becknell@aol.com,44,,frozen,frozen,180056370
+Homebound - In Area,John,Bolger,jbolger2014@gmail.com,2742,2020000010906,inactive,reminder,180061281
+Homebound - In Area,Richard,Carron,richanna@bellsouth.net,153,2020000001027,inactive,reminder,180056511
+Homebound - In Area,Marcia,Cassell,mhcassell@comcast.net,2427,2020000008910,inactive,reminder,180060987
+Homebound - In Area,Jan,Chastain,jgdchast@gmail.com,188,2020000001218,inactive,reminder,180056542
+Homebound - In Area,Kerry,Danoff,ykrhsongofsol63@gmail.com,2844,2020000010319,inactive,reminder,180061394
+Homebound - In Area,Martha,Fisher,marthafisher@mac.com,348,,frozen,frozen,180056728
+Homebound - In Area,Don,Ireland,abc3d11@gmail.com,1854,2020000008316,inactive,reminder,180060349
+Homebound - In Area,Donna,Ireland,abc3d11@gmail.com,1854,2020000008316,inactive,reminder,180060367
+Homebound - In Area,Carey,Louthan,careyloop@gmail.com,692,2020000004486,inactive,reminder,180057148
+Homebound - In Area,Alice,Nelson,aliceturnagenelson@gmail.com,840,2020000005155,inactive,reminder,180057928
+Homebound - In Area,Jane,Payne,williamroyjr@bellsouth.net,879,2020000005421,inactive,reminder,180057359
+Homebound - In Area,Roy,Payne,williamroyjr@bellsouth.net,879,2020000005421,inactive,reminder,180057358
+Homebound - In Area,Courtney,Sizemore,courtneymsizemore@gmail.com,3750,2020000013150,inactive,reminder,180066307
+Homebound - In Area,Robert,Stroupe,rcstroupe@comcast.net,2426,2020000009283,inactive,reminder,180060981
+Homebound - In Area,Hank,Sturgess,ahsturgess@gmail.com,1087,,frozen,frozen,180057600
+Homebound - In Area,Bob,Wharton,pegwharton1933@yahoo.com,1221,2020000013457,inactive,reminder,180057795
+Homebound - In Area,Peg,Wharton,pegwharton1933@yahoo.com,1221,2020000013457,inactive,reminder,180057791
+Homebound - In Area,Jerrie,Woodward,jeriwoo@att.net,1260,2020000007838,inactive,reminder,180057848
+Homebound - Out of Area,Jo,Davidson,jowdavidson3036@hotmail.com,257,2020000001829,inactive,reminder,180056623
+Homebound - Out of Area,Marilyn,Early,zhearly@bellsouth.net,324,2020000002338,inactive,reminder,180056702
+Homebound - Out of Area,Mel,Wakefield,mowake1@comcast.net,1181,,frozen,frozen,180057741
+Not Attending - In Area,Joy,Baxley,joybaxley@gmail.com,1406,2020000011453,inactive,reminder,180059834
+Not Attending - In Area,Hadiss,Bronous,hadisstghv@gmail.com,1526,2020000006978,inactive,reminder,180059969
+Not Attending - In Area,Clint,Daniel,cdaniel_01@yahoo.com,248,,frozen,frozen,180056616
+Not Attending - In Area,Marni,Daniel,marni.daniel@gmail.com,249,,frozen,frozen,180056618
+Not Attending - In Area,Bernie,Davis,bernieldavis@yahoo.com,258,,frozen,frozen,180056631
+Not Attending - In Area,Jocelyn,Davis,jocelynrdavis@yahoo.com,259,,frozen,frozen,180056626
+Not Attending - In Area,Luke,Davis,lukedavis8251@yahoo.com,262,2020000011774,inactive,reminder,180061399
+Not Attending - In Area,David,Derrer,davidderrer@gmail.com,288,,frozen,frozen,180056662
+Not Attending - In Area,Joy,Derrer,thederrerfamily@gmail.com,1295,,frozen,frozen,180056660
+Not Attending - In Area,Sam,Galbraith,galbsgg@gmail.com,2185,,frozen,frozen,180056757
+Not Attending - In Area,Jill,Lennon,jillesalzberg@mac.com,2353,2020000009696,inactive,reminder,180060920
+Not Attending - In Area,Parker,McAlister,parkermcalister2000@gmail.com,3689,2020000012962,inactive,reminder,180066236
+Not Attending - In Area,Daniel,Morgan,danielmorgan404@gmail.com,3541,2020000012344,inactive,reminder,180066127
+Not Attending - In Area,Kathryn,Morris,pegacorn248@gmail.com,3245,2020000011736,inactive,reminder,180065838
+Not Attending - In Area,Micah,Morris,irongears10@gmail.com,3217,2020000011477,inactive,reminder,180065835
+Not Attending - In Area,Bryan,Pillsbury,bryanpillsbury@gmail.com,894,,frozen,frozen,180057374
+Not Attending - In Area,Paige,Pillsbury,pillsmama@gmail.com,895,,frozen,frozen,180057386
+Not Attending - In Area,Gabi,Priolo,gabriellaapriolo@gmail.com,3542,2020000012658,inactive,reminder,180066121
+Not Attending - In Area,Garner,Sanford,calsanford@comcast.net,1700,,frozen,frozen,180060227
+Not Attending - In Area,Linda,Sanford,lcksanford@comcast.net,1701,,frozen,frozen,180060219
+Not Attending - In Area,Gary,Stillwagon,gbs772@aol.com,1079,,frozen,frozen,180057608
+Not Attending - In Area,Lincoln,Stillwagon,udtseal2010@aol.com,1080,,frozen,frozen,180057603
+Not Attending - In Area,Gordie,Zimmermann,gzimmermann10@gmail.com,2793,,frozen,frozen,180061333
+Not Attending - In Area,Keegan,Zimmermann,keeganborgias@gmail.com,3273,,frozen,frozen,180061332
+Not Attending - Out of Area,Katherine,Allen,katherine.bell368@gmail.com,3770,2020000013181,inactive,reminder,180066331
+Not Attending - Out of Area,Cherifa,Benzid,cyprien@fastmail.net,2997,,frozen,frozen,180065638
+Not Attending - Out of Area,Nourredine,Benzid,pastor13@proton.me,2998,,frozen,frozen,180065637
+Not Attending - Out of Area,Jonathan,Branton,jonathanbranton10@gmail.com,3691,,frozen,frozen,180066255
+Not Attending - Out of Area,Lauren,Branton,laurentripp12@gmail.com,3530,,frozen,frozen,180066256
+Not Attending - Out of Area,Kyle,Buck,josiah1121ira@gmail.com,2823,,frozen,frozen,180061353
+Not Attending - Out of Area,Juan,Chaur,juan.chaur89@gmail.com,2203,,frozen,frozen,180060552
+Not Attending - Out of Area,Stephanie,Chaur,sldugan24@gmail.com,2038,,frozen,frozen,180060545
+Not Attending - Out of Area,Alina,Cocian,alinacocian@gmail.com,1417,2020000001447,inactive,reminder,180059847
+Not Attending - Out of Area,Joel,Cocian,joelcocian@gmail.com,1416,2020000001454,inactive,reminder,5106618
+Not Attending - Out of Area,Ansley,Cook,ansleyivey@gmail.com,2840,2020000010258,inactive,reminder,180061362
+Not Attending - Out of Area,Samuel,Cook,greeneggs@gmx.com,2829,2020000010265,active,regulars,180061370
+Not Attending - Out of Area,Amy,Cooley,amy4given@gmail.com,1544,,frozen,frozen,180061247
+Not Attending - Out of Area,Will,Crider,willcrider86@gmail.com,3179,,frozen,frozen,180065811
+Not Attending - Out of Area,Allison,Crook,aleffler1214@aol.com,2864,2020000010395,inactive,reminder,180061410
+Not Attending - Out of Area,Dalton,Crosby,andrew.d.crosbyv@gmail.com,1626,2020000010296,inactive,reminder,180065931
+Not Attending - Out of Area,Angela,Darlington,angela.naomi86@gmail.com,1574,2020000008422,active,regulars,180060017
+Not Attending - Out of Area,Jake,Darlington,jakethethird@gmail.com,1571,2020000001782,active,regulars,180060026
+Not Attending - Out of Area,Luke,Dean,lukedeanforever@gmail.com,3568,2020000012696,inactive,reminder,180066154
+Not Attending - Out of Area,Amy,Dierking,mahoneyamy@gmail.com,1418,,frozen,frozen,180059856
+Not Attending - Out of Area,Scott,Fleming,scottfleming31@gmail.com,3134,,frozen,frozen,180065767
+Not Attending - Out of Area,Hadley,Foust,hadleymfoust@gmail.com,1392,2020000011279,inactive,reminder,180065772
+Not Attending - Out of Area,Rachelle,Guertin,rachelleguertin@yahoo.com,2682,,frozen,frozen,180061223
+Not Attending - Out of Area,Jocelyn,Heath,heathjocelyn1791@protonmail.com,3257,2020000012610,inactive,reminder,180065874
+Not Attending - Out of Area,Amy,Hermance,adehnel@gmail.com,2563,2020000008972,inactive,reminder,180061114
+Not Attending - Out of Area,Nathan,Hermance,nhermance84@gmail.com,2564,2020000009054,inactive,reminder,180061112
+Not Attending - Out of Area,Raquel,Hernandez,r.herddez223@gmail.com,2211,,frozen,frozen,180060734
+Not Attending - Out of Area,Anna,Huffman,rockyroadlambert@gmail.com,1291,,frozen,frozen,180065729
+Not Attending - Out of Area,Diane,Hughs,dthughs@gmail.com,560,,frozen,frozen,180056990
+Not Attending - Out of Area,Frances,Johnson,vfjohns45@gmail.com,599,,frozen,frozen,180057040
+Not Attending - Out of Area,Rachel,Johnson,rachel.menikoff@gmail.com,759,,frozen,frozen,180061502
+Not Attending - Out of Area,Esther,Lambert,eelambert33@gmail.com,1292,2020000011897,inactive,reminder,180065990
+Not Attending - Out of Area,Cole,Landrum,thunder.c.02@gmail.com,3176,2020000011903,inactive,reminder,180065800
+Not Attending - Out of Area,William,Manirakiza,william.thibaud02@gmail.com,180061489,2020000011071,inactive,reminder,180061489
+Not Attending - Out of Area,Kris,McNeese,kris@tmcneese.com,747,,frozen,frozen,180057211
+Not Attending - Out of Area,Tommy,McNeese,tommy@tmcneese.com,746,,frozen,frozen,180057209
+Not Attending - Out of Area,Natalie,Menikoff,njmenikoff@gmail.com,758,2020000011460,inactive,reminder,180065836
+Not Attending - Out of Area,Will,Niederhauser,wdniederhauser@gmail.com,3718,,frozen,frozen,180066297
+Not Attending - Out of Area,Kahra,Nix,kdmanji@gmail.com,3060,,frozen,frozen,180065705
+Not Attending - Out of Area,Morgan,Nix,halmorgannix@gmail.com,3059,,frozen,frozen,180065703
+Not Attending - Out of Area,Anne Elizabeth,Price,aegoodgame2013@gmail.com,400,,frozen,frozen,180060911
+Not Attending - Out of Area,Kim,Priolo,kpriolo52@gmail.com,3599,,frozen,frozen,180066211
+Not Attending - Out of Area,Pam,Reimann,pam@jimreimann.com,2288,,frozen,frozen,180060832
+Not Attending - Out of Area,David,Rhoden,davidcrhoden@gmail.com,3241,,frozen,frozen,180065862
+Not Attending - Out of Area,Glenna,Rhoden,glenna.williams1@gmail.com,3508,,frozen,frozen,180065866
+Not Attending - Out of Area,Jack,Roberson,jackvroberson@gmail.com,1679,2020000005865,inactive,reminder,40066764
+Not Attending - Out of Area,Marjorie,Roberson,roberson.msl@gmail.com,1680,2020000005872,active,regulars,180060184
+Not Attending - Out of Area,Emma Grace,Roe,emmagraceroe15@gmail.com,1373,2020000011309,active,regulars,132875750
+Not Attending - Out of Area,Maggie,Roe,myankovich5@gmail.com,3506,2020000012177,inactive,reminder,180065600
+Not Attending - Out of Area,Zachary,Roe,zacharyeroe@gmail.com,1386,2020000009863,inactive,reminder,180065602
+Not Attending - Out of Area,Caleb,Rogers,caleb.m.rogers@gmail.com,3242,,frozen,frozen,180065864
+Not Attending - Out of Area,Delaney,Scherpereel,delaneyscherpereel@gmail.com,1698,,frozen,frozen,180061178
+Not Attending - Out of Area,Keaton,Scherpereel,keaton@gatech.edu,2617,,frozen,frozen,81307298
+Not Attending - Out of Area,Madison,Skilling,madisonlee822@gmail.com,3882,2020000013655,active,regulars,180066417
+Not Attending - Out of Area,Zachary,Skilling,zacskilling@gmail.com,3881,2020000013648,active,regulars,180066425
+Not Attending - Out of Area,Marcela,Soares,bmarcelasoares@gmail.com,3267,2020000012146,inactive,reminder,180065887
+Not Attending - Out of Area,Ally,Stilley,stilleyaa@gmail.com,3877,,frozen,frozen,180066420
+Not Attending - Out of Area,Michael,Stilley,mstilley22@gmail.com,3876,,frozen,frozen,180066410
+Not Attending - Out of Area,Emmy,Taylor,emadbailey@gmail.com,3505,,frozen,frozen,180066085
+Not Attending - Out of Area,Evan,Taylor,ebtaylor07@gmail.com,3504,,frozen,frozen,180066081
+Not Attending - Out of Area,Wesley,Toler,wjtoler@gmail.com,2297,,frozen,frozen,65661695
+Not Attending - Out of Area,John,Turner,generaljt3@gmail.com,1536,,frozen,frozen,180059979
+Not Attending - Out of Area,Heather,Vernon,heather.l.vernon@gmail.com,3048,,frozen,frozen,180065652
+Not Attending - Out of Area,Timothy,Vernon,timothy.n.vernon@gmail.com,2994,,frozen,frozen,180065648
+Not Attending - Out of Area,Michael,Wilson,michael.w.wilson@outlook.com,2950,2020000010524,inactive,reminder,180061492
+Not Attending - Out of Area,Beining,Xiao,xiaobeining3@gmail.com,1659,2020000007845,inactive,reminder,180065671

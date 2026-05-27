@@ -1,6 +1,7 @@
 <!--
-  MVBC Library "Top Patron of the Year" email — for the #1 reader.
-  Tone: warm and funny, special-edition card attached.
+  MVBC Library "here's your VIP card" email for the most active patrons.
+  Mirrors regulars.html with VIP-specific recognition wording. Visual
+  changes are minimal: a "VIP EDITION" wordmark under the Library header.
   Inline styles only (email clients ignore stylesheets).
   Brand: Mount Vernon Baptist Church Navy / Bronze / Cream palette.
   Placeholders are substituted at render time via Python str.format.
@@ -10,14 +11,14 @@
     <td align="center" style="padding: 24px 12px;">
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="max-width: 600px; width: 100%; background-color: #F3F0EB; border-collapse: collapse;">
 
-        <!-- Header banner: Navy bar with white wordmark, Bronze rule beneath -->
+        <!-- Header banner: Navy bar with white wordmark, Bronze rule beneath, "VIP EDITION" tag -->
         <tr>
           <td style="background-color: #113355; padding: 24px 32px; text-align: left;">
             <div style="font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: 900; font-size: 22px; color: #FFFFFF; letter-spacing: 0.04em; text-transform: uppercase;">
               Mount Vernon Baptist Church
             </div>
             <div style="font-family: Arial, Helvetica, sans-serif; font-weight: normal; font-size: 12px; color: #C3AA7C; letter-spacing: 0.12em; text-transform: uppercase; margin-top: 4px;">
-              Library · Hall of Fame
+              Library &nbsp;&middot;&nbsp; <span style="color: #FFFFFF;">VIP Edition</span>
             </div>
           </td>
         </tr>
@@ -32,67 +33,64 @@
             <p style="margin: 0 0 18px 0; font-size: 18px; color: #113355;">{first_name},</p>
 
             <p style="margin: 0 0 16px 0;">
-              We ran the numbers. We ran them again. We even checked to make sure the kiosk wasn't broken. The result is in:
+              You already have your <strong>VIP-edition library card</strong> — the one-of-a-kind dark Charcoal-and-Bronze edition reserved for the library's <strong style="color: #113355;">single most active patron</strong>. We've now added a <strong>digital version</strong> of it: same scannable barcode, ready to install on your phone for one-tap checkout at the kiosk.
             </p>
 
-            <p style="margin: 0 0 16px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-size: 22px; color: #113355; text-align: center; letter-spacing: 0.02em;">
-              You are the <span style="color: #C3AA7C;">#1 MVBC Library patron</span> of the year.
-            </p>
-
-            <p style="margin: 0 0 16px 0;">
-              You out-read everyone. You wore a path in the carpet between the kiosk and the shelves. You almost certainly owe a librarian, somewhere, an apology.
-            </p>
-
-            <p style="margin: 0 0 16px 0;">
-              We couldn't let an accomplishment like that go unmarked, so we made you something:
-            </p>
-
-            <!-- Special edition callout -->
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin: 8px 0 24px 0;">
-              <tr>
-                <td style="background-color: #113355; border-left: 4px solid #C3AA7C; padding: 18px 22px;">
-                  <div style="font-family: Arial Black, Arial, Helvetica, sans-serif; font-size: 13px; color: #C3AA7C; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 6px;">
-                    Special Edition
-                  </div>
-                  <div style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; color: #FFFFFF; line-height: 1.5;">
-                    A one-of-one MVBC Library card, attached to this email. Print it, screenshot it, laminate it, frame it — your call. We won't judge.
-                  </div>
-                </td>
-              </tr>
-            </table>
+            {card_section}
 
             <!-- Section heading -->
             <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
-              How to use it
+              How to use your new card
             </p>
 
             <p style="margin: 0 0 16px 0;">
-              You could probably check out a book in your sleep at this point, but for the record: scan your books, tap <em>Checkout</em>, and at the final screen scan your shiny new card with the iPad camera instead of typing your email. Tap <em>OK</em>.
+              You already know the drill — scan your books at the kiosk and tap <em>Checkout</em>. The only change is at the final step:
             </p>
 
-            <p style="margin: 0 0 24px 0;">
-              Your email (<span style="color: #113355; font-weight: bold;">{email}</span>) still works as a backup. For the rare occasion when you, hypothetically, forget your card.
+            <ul style="margin: 0 0 20px 24px; padding: 0; color: #2C2A2B;">
+              <li style="margin-bottom: 10px;">Instead of typing your email (<span style="color: #113355; font-weight: bold;">{email}</span>), just <strong>scan your library card</strong> with the iPad camera and tap <em>OK</em>.</li>
+              <li style="margin-bottom: 10px;">Your email still works as a backup if you don't have your card on you.</li>
+            </ul>
+
+            <!-- Section heading -->
+            <p style="margin: 28px 0 12px 0; font-family: Arial Black, Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #113355; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 2px solid #C3AA7C; padding-bottom: 6px; display: inline-block;">
+              Our Libraries
             </p>
 
-            <!-- Catalog CTA -->
-            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+            <p style="margin: 0 0 18px 0;">
+              Both libraries share the same room, right next to the Fellowship Hall.
+            </p>
+
+            <!-- MVBC Library (adult) -->
+            <p style="margin: 0 0 4px 0;"><strong style="color: #113355;">MVBC Library</strong> — Commentaries, Christian Living, Biblical Theology, Family and Parenting, Marriage and Relationships, Biographies, Church History, and more.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 18px 0;">
               <tr>
                 <td style="background-color: #C3AA7C; border-radius: 6px;">
-                  <a href="https://www.libib.com/u/mvbchurch" target="_blank" style="display: inline-block; padding: 14px 28px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 14px; color: #FFFFFF; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;">
-                    Find Your Next Read
+                  <a href="https://www.libib.com/u/mvbchurch/l/812861" target="_blank" style="display: inline-block; padding: 12px 24px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 13px; color: #FFFFFF; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;">
+                    Browse MVBC Library
                   </a>
                 </td>
               </tr>
             </table>
 
-            <p style="margin: 0 0 16px 0;">
-              Same rules as ever: 3 weeks per book, drop returns in the boxes by the kiosk, and self-renew through the catalog (sign in &rarr; <strong>Active</strong> &rarr; <strong>Renew</strong>) when you inevitably need more time &mdash;
+            <!-- Children's Library -->
+            <p style="margin: 0 0 4px 0;"><strong style="color: #113355;">Children's Library</strong> — Children's bibles, picture books, early readers, and chapter books for kids.</p>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin: 0 0 20px 0;">
+              <tr>
+                <td style="background-color: #C3AA7C; border-radius: 6px;">
+                  <a href="https://www.libib.com/u/mvbchurch/l/471546" target="_blank" style="display: inline-block; padding: 12px 24px; font-family: Arial, Helvetica, sans-serif; font-weight: bold; font-size: 13px; color: #FFFFFF; text-decoration: none; letter-spacing: 0.04em; text-transform: uppercase;">
+                    Browse Children's Library
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin: 0 0 24px 0;">
+              Same as always: 3 weeks per book, drop returns in the boxes by the kiosk, and self-renew through the catalog (sign in &rarr; <strong>Active</strong> &rarr; <strong>Renew</strong>) if you need more time &mdash;
               <a href="https://alejbasurto7.github.io/mvbc-pco-libib-sync/renew/" style="color: #113355; text-decoration: underline;">walkthrough here</a>.
             </p>
 
-            <p style="margin: 0 0 8px 0;">
-              Thank you for loving the library so loudly. We'll see you at the shelves — probably tomorrow.
-            </p>
+            <p style="margin: 0 0 8px 0;">Thanks again for being such a great part of the library. Questions? Just reply.</p>
 
             <!-- Signature -->
             <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 32px; border-top: 1px solid #C3AA7C; padding-top: 20px; width: 100%;">
@@ -114,10 +112,10 @@
         <tr>
           <td style="background-color: #113355; padding: 20px 32px; text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #FFFFFF; line-height: 1.5;">
             <div style="font-weight: bold; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px;">Mount Vernon Baptist Church</div>
-            <div style="color: #C3AA7C;">850 Mt. Vernon Hwy NW · Sandy Springs, GA 30327</div>
+            <div style="color: #C3AA7C;">850 Mt. Vernon Hwy NW &middot; Sandy Springs, GA 30327</div>
             <div style="color: #FFFFFF; margin-top: 4px;">
               <a href="https://www.mvbchurch.org" style="color: #FFFFFF; text-decoration: none;">mvbchurch.org</a>
-              &nbsp;·&nbsp;
+              &nbsp;&middot;&nbsp;
               <a href="mailto:familyministry@mvbchurch.org" style="color: #FFFFFF; text-decoration: none;">familyministry@mvbchurch.org</a>
             </div>
           </td>
