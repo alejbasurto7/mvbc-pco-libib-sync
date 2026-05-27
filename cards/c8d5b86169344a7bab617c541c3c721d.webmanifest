@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Alice Wareham",
+  "short_name": "MVBC Card",
+  "description": "Alice Wareham's MVBC Library card.",
+  "start_url": "c8d5b86169344a7bab617c541c3c721d.html",
+  "scope": "c8d5b86169344a7bab617c541c3c721d.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
