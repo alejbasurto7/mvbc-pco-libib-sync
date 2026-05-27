@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Tiffany Seto",
+  "short_name": "MVBC Card",
+  "description": "Tiffany Seto's MVBC Library card.",
+  "start_url": "210d107090fe471891ded32c3854ed68.html",
+  "scope": "210d107090fe471891ded32c3854ed68.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
