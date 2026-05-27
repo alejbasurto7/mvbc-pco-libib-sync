@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jo Davidson",
+  "short_name": "MVBC Card",
+  "description": "Jo Davidson's MVBC Library card.",
+  "start_url": "69674f81af194c05a08cae2dc383c0f3.html",
+  "scope": "69674f81af194c05a08cae2dc383c0f3.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
