@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Caroline McGill",
+  "short_name": "MVBC Card",
+  "description": "Caroline McGill's MVBC Library card.",
+  "start_url": "5c5e3b4b7a8440f6a42666faa68ccf04.html",
+  "scope": "5c5e3b4b7a8440f6a42666faa68ccf04.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
