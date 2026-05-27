@@ -5,10 +5,15 @@ import json
 import re
 
 from lib.web_card import (
+    VIP_BARCODES,
     build_card_html,
     build_card_manifest,
+    build_vip_card_html,
+    build_vip_card_manifest,
     card_url,
+    is_vip_patron,
     new_card_token,
+    select_card_builders,
 )
 
 
@@ -164,3 +169,133 @@ def test_build_card_manifest_start_url_is_patron_specific():
     ))
     assert data["start_url"] == f"{token}.html"
     assert data["scope"] == f"{token}.html"
+
+
+# --- VIP variant -------------------------------------------------------------
+
+
+JOSEPH_BARCODE = "2020000006497"
+
+
+def _render_vip_card(token="a" * 32):
+    return build_vip_card_html(
+        first_name="Joseph", last_name="Shanahan",
+        barcode=JOSEPH_BARCODE, token=token,
+    )
+
+
+def test_vip_barcodes_set_includes_joseph():
+    # The VIP roster is keyed by Libib barcode (NOT patron_id). Joseph is
+    # the only entry today; if this assertion ever fails the team has
+    # extended the VIP set and needs to update the project memory note.
+    assert JOSEPH_BARCODE in VIP_BARCODES
+
+
+def test_is_vip_patron_returns_true_for_joseph_only():
+    assert is_vip_patron(barcode=JOSEPH_BARCODE) is True
+    assert is_vip_patron(barcode="2020000000001") is False
+    assert is_vip_patron(barcode="") is False
+
+
+def test_build_vip_card_html_contains_name_and_barcode():
+    html = _render_vip_card()
+    assert "Joseph Shanahan" in html
+    assert JOSEPH_BARCODE in html
+
+
+def test_build_vip_card_html_rejects_empty_barcode():
+    import pytest
+    with pytest.raises(ValueError):
+        build_vip_card_html(
+            first_name="X", last_name="Y", barcode="", token="a" * 32,
+        )
+
+
+def test_build_vip_card_html_inlines_qr_and_emblem_as_base64():
+    html = _render_vip_card()
+    data_uris = re.findall(r'data:image/png;base64,', html)
+    assert len(data_uris) >= 2
+
+
+def test_build_vip_card_html_links_to_patron_specific_manifest():
+    token = "cafebabe" * 4
+    html = build_vip_card_html(
+        first_name="Joseph", last_name="Shanahan",
+        barcode=JOSEPH_BARCODE, token=token,
+    )
+    assert f'<link rel="manifest" href="{token}.webmanifest">' in html
+
+
+def test_build_vip_card_html_marks_page_noindex_and_pwa_capable():
+    html = _render_vip_card()
+    assert '<meta name="robots" content="noindex,nofollow">' in html
+    assert '<meta name="apple-mobile-web-app-capable" content="yes">' in html
+    assert '<link rel="apple-touch-icon"' in html
+
+
+def test_build_vip_card_html_registers_service_worker():
+    assert "serviceWorker" in _render_vip_card()
+
+
+def test_build_vip_card_html_leaves_no_unresolved_placeholders():
+    html = _render_vip_card()
+    for placeholder in (
+        "$title", "$full_name", "$barcode",
+        "$qr_data_uri", "$emblem_data_uri", "$manifest_filename",
+    ):
+        assert placeholder not in html, f"unresolved placeholder {placeholder!r}"
+
+
+def test_build_vip_card_html_carries_vip_visual_signals():
+    # The VIP variant differs from the standard card in a few visible ways:
+    # charcoal theme, "VIP PATRON" pill, Shiny Vault holographic layers.
+    # These assertions guard against an accidental regression to the
+    # standard template.
+    html = _render_vip_card()
+    assert '<meta name="theme-color" content="#2C2A2B">' in html  # charcoal
+    assert "VIP PATRON" in html
+    assert 'class="holo-shine"' in html
+    assert 'class="holo-glare"' in html
+
+
+def test_build_vip_card_manifest_uses_vip_branding_and_charcoal_theme():
+    token = "12345678" * 4
+    data = json.loads(build_vip_card_manifest(
+        first_name="Joseph", last_name="Shanahan", token=token,
+    ))
+    assert "VIP" in data["name"]
+    assert data["short_name"] == "MVBC VIP"
+    assert data["theme_color"] == "#2C2A2B"
+    assert data["display"] == "standalone"
+
+
+def test_build_vip_card_manifest_start_url_is_patron_specific():
+    token = "fedcba98" * 4
+    data = json.loads(build_vip_card_manifest(
+        first_name="A", last_name="B", token=token,
+    ))
+    assert data["start_url"] == f"{token}.html"
+    assert data["scope"] == f"{token}.html"
+
+
+# --- select_card_builders ----------------------------------------------------
+
+
+def test_select_card_builders_returns_vip_pair_for_joseph():
+    html_fn, manifest_fn = select_card_builders(barcode=JOSEPH_BARCODE)
+    assert html_fn is build_vip_card_html
+    assert manifest_fn is build_vip_card_manifest
+
+
+def test_select_card_builders_returns_standard_pair_for_non_vip():
+    html_fn, manifest_fn = select_card_builders(barcode="2020000000001")
+    assert html_fn is build_card_html
+    assert manifest_fn is build_card_manifest
+
+
+def test_select_card_builders_returns_standard_pair_for_empty_barcode():
+    # An empty/missing barcode should NEVER opt into the VIP card by
+    # accident — fall through to the standard builder. (The builder itself
+    # will raise ValueError on empty barcode, which is the correct error.)
+    html_fn, _ = select_card_builders(barcode="")
+    assert html_fn is build_card_html

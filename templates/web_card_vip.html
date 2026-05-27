@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2C2A2B">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MVBC VIP">
+<meta name="robots" content="noindex,nofollow">
+<title>$title</title>
+<link rel="manifest" href="$manifest_filename">
+<link rel="apple-touch-icon" href="../icons/touch-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    /* Slightly darker, warmer cream than the production card so the
+       Navy VIP badge reads as a "presentation piece" sitting on a velvet
+       backdrop rather than a clinical sheet. */
+    background: radial-gradient(ellipse at top, #ECE6DA 0%, #D8D0BE 100%);
+    color: #113355;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Vertically center the card stack in the viewport. When the install
+       section is hidden (PWA standalone mode) the stack shrinks and the
+       centering pushes it to the middle; in Safari with instructions
+       visible, the stack fills the viewport so centering is a no-op. */
+    justify-content: center;
+    padding: 24px 20px max(20px, env(safe-area-inset-bottom));
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  .stack {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* --- VIP Badge (dark-mode credential) --- */
+  .badge {
+    width: 100%;
+    background: #2C2A2B;
+    border-radius: 18px;
+    /* Deeper, black-tinted drop shadow to match the charcoal surface —
+       sells the "presentation piece" weight on the page. */
+    box-shadow:
+      0 18px 48px rgba(0,0,0,0.45),
+      0 2px 6px rgba(0,0,0,0.25);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Bronze inset frame — the structural "special edition" tell, mirrored
+     from the PNG VIP card (lib/card.py:184). Two-step inset: outer border
+     on the badge, an inner 2px Bronze stroke 8px in. */
+  .badge::before {
+    content: "";
+    position: absolute;
+    top: 10px; left: 10px; right: 10px; bottom: 10px;
+    border: 2px solid #C3AA7C;
+    border-radius: 12px;
+    pointer-events: none;
+  }
+  .badge-inner {
+    position: relative;
+    padding: 14px 6px 4px;
+  }
+
+  /* Header: emblem + wordmark, left-aligned. The VIP pill now lives at
+     the footer (level with SCAN AT KIOSK) as a seal, not a banner. */
+  .badge-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .stripe-emblem {
+    width: 32px;
+    height: auto;
+    flex-shrink: 0;
+    /* Invert the navy emblem to cream so it reads on the dark surface. */
+    filter: brightness(0) invert(1) sepia(0.08) hue-rotate(180deg);
+  }
+  .stripe-text { min-width: 0; }
+  .org {
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #F3F0EB;
+    line-height: 1.1;
+  }
+  .role {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    margin-top: 3px;
+    color: #C3AA7C;
+    line-height: 1.1;
+  }
+  /* ★ VIP PATRON ★ pill — Bronze outline + Bronze text, mirrors the PNG
+     badge (lib/card.py:246-260). Display-only Bronze-on-Charcoal: 3:1
+     contrast satisfied at this weight + letter-spacing. Lives in the
+     footer right column (see .footer-row). */
+  .vip-pill {
+    justify-self: end;
+    border: 2px solid #C3AA7C;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    color: #C3AA7C;
+    white-space: nowrap;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .vip-pill .star { font-size: 10px; line-height: 1; }
+
+  /* Bronze horizontal rule — same separator as the standard card and PNG. */
+  .vip-rule {
+    height: 2px;
+    background: #C3AA7C;
+    margin: 18px 0 26px;
+    border-radius: 1px;
+  }
+
+  /* Patron block */
+  .name {
+    text-align: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #F3F0EB;
+    margin-bottom: 8px;
+    letter-spacing: -0.3px;
+    line-height: 1.2;
+  }
+  .id {
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #C3AA7C;
+    opacity: 0.85;
+    margin-bottom: 26px;
+  }
+
+  /* QR — Cream on Charcoal. Bronze frame instead of the standard white
+     card, so the QR feels framed like a portrait rather than slapped on. */
+  .qr-wrap {
+    background: #2C2A2B;
+    border: 2px solid #C3AA7C;
+    padding: 10px;
+    border-radius: 12px;
+    margin: 0 auto;
+    width: 280px;
+    height: 280px;
+  }
+  .qr-wrap img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    image-rendering: pixelated;
+  }
+  /* Footer row: 3-column grid keeps SCAN AT KIOSK truly centered while
+     the VIP PATRON pill sits in the right column. The matching empty
+     left column reserves equal space so the center column stays
+     mathematically centered, not just centered in the leftover space. */
+  .footer-row {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 8px;
+  }
+  .scan-hint {
+    grid-column: 2;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #C3AA7C;
+    opacity: 0.8;
+    white-space: nowrap;
+  }
+
+  /* --- Install help — same as standard card, light surface so the
+         dark badge above it stays the visual hero. --- */
+  .install {
+    background: #F3F0EB;
+    border-radius: 16px;
+    border: 1px solid rgba(17,51,85,0.12);
+    padding: 18px 22px;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    color: #2C2A2B;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .install h2 {
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: #113355;
+    margin-bottom: 10px;
+  }
+  .install details {
+    border-top: 1px solid rgba(17,51,85,0.12);
+    padding: 10px 0;
+  }
+  .install details:first-of-type { border-top: 0; padding-top: 4px; }
+  .install summary {
+    font-weight: 700;
+    color: #113355;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0;
+  }
+  .install summary::-webkit-details-marker { display: none; }
+  .install summary::after {
+    content: "+";
+    font-weight: 700;
+    color: #C3AA7C;
+    font-size: 18px;
+    line-height: 1;
+    margin-left: 12px;
+  }
+  .install details[open] summary::after { content: "−"; }
+  .install ol { margin: 8px 0 4px 20px; padding: 0; }
+  .install li { margin-bottom: 4px; }
+  .install .tip {
+    margin-top: 8px;
+    font-size: 12px;
+    font-style: italic;
+    color: #767676;
+  }
+
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    .install { display: none !important; }
+  }
+
+  /* --- Variant-specific overrides (slotted in via extra_css). --- */
+
+  /* Footer change: drop "Scan at kiosk" entirely and promote the VIP
+     PATRON pill to the center column. */
+  .scan-hint { display: none; }
+  .footer-row .vip-pill {
+    grid-column: 2;
+    justify-self: center;
+  }
+
+  /* 3D tilt removed — the card itself stays still; only the shine
+     layers respond to pointer/tilt. The --rotate-x/--rotate-y vars are
+     still set by JS but unused here (kept set so any future hover/tilt
+     style could pick them up without rewiring the script). */
+
+  /* Sunpillar rainbow palette (from Simey's base.css). Six hues spaced
+     ~60° apart in HSL space, all at high saturation. Defined as scope-
+     local custom properties on the badge so they don't leak globally. */
+  .badge {
+    --sunpillar-1: hsl(2, 100%, 73%);
+    --sunpillar-2: hsl(53, 100%, 69%);
+    --sunpillar-3: hsl(93, 100%, 69%);
+    --sunpillar-4: hsl(176, 100%, 76%);
+    --sunpillar-5: hsl(228, 100%, 74%);
+    --sunpillar-6: hsl(283, 100%, 73%);
+  }
+
+  /* The shine container — covers the badge surface, clipped to the
+     rounded corners and inside the Bronze inset frame. opacity is driven
+     by --card-opacity (set by JS on interaction; 0 at rest). filter
+     intentionally desaturates and lowers contrast so the shine reads as
+     a hint of holographic foil rather than a full rainbow trading card.
+     mix-blend-mode: color-dodge means the shine only BRIGHTENS the
+     underlying surface, never darkens it. */
+  .holo-shine {
+    position: absolute;
+    inset: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 4;
+    display: grid;
+    /* Multiply by 0.25 — the JS sets --card-opacity to 1.0 on full
+       interaction; this caps the visible shine at ~25% so the brand
+       identity (charcoal + bronze) stays dominant. */
+    opacity: calc(var(--card-opacity, 0) * 0.25);
+    filter: brightness(0.95) contrast(1.4) saturate(0.4);
+    mix-blend-mode: color-dodge;
+    transition: opacity 0.4s ease-out;
+    /* Main layer: foil + vertical rainbow + diagonal sunpillars + radial
+       dark spot, blended together. --space controls how tall each
+       rainbow band is; smaller values = more bands. */
+    --space: 5%;
+    --angle: 133deg;
+    background-image:
+      repeating-linear-gradient(0deg,
+        var(--sunpillar-1) calc(var(--space) * 1),
+        var(--sunpillar-2) calc(var(--space) * 2),
+        var(--sunpillar-3) calc(var(--space) * 3),
+        var(--sunpillar-4) calc(var(--space) * 4),
+        var(--sunpillar-5) calc(var(--space) * 5),
+        var(--sunpillar-6) calc(var(--space) * 6),
+        var(--sunpillar-1) calc(var(--space) * 7)
+      ),
+      repeating-linear-gradient(var(--angle),
+        #0e152e 0%,
+        hsl(180, 10%, 60%) 3.8%,
+        hsl(180, 29%, 66%) 4.5%,
+        hsl(180, 10%, 60%) 5.2%,
+        #0e152e 10%,
+        #0e152e 12%
+      ),
+      radial-gradient(farthest-corner circle
+        at var(--pointer-x, 50%) var(--pointer-y, 50%),
+        hsla(0, 0%, 0%, 0.10) 12%,
+        hsla(0, 0%, 0%, 0.15) 20%,
+        hsla(0, 0%, 0%, 0.25) 120%
+      );
+    background-position:
+      0% var(--background-y, 50%),
+      calc(var(--background-x, 50%) + (var(--background-y, 50%) * 0.2)) var(--background-y, 50%),
+      var(--background-x, 50%) var(--background-y, 50%);
+    background-blend-mode: hue, hard-light;
+    background-size:
+      200% 700%,
+      300% 100%,
+      200% 100%;
+  }
+
+  /* The bright "hot spot" — a small white-fading-to-transparent radial
+     at the pointer. mix-blend-mode: overlay punches it through the
+     rainbow underneath. */
+  .holo-shine::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      farthest-corner circle
+      at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsl(0, 0%, 100%) 0%,
+      hsla(0, 0%, 0%, 0) 40%
+    );
+    mix-blend-mode: overlay;
+    opacity: 0.75;
+    z-index: 1;
+  }
+
+  /* The DOUBLED shine layer — same gradients, opposite positions, and
+     mix-blend-mode: exclusion. Two shimmers crossing each other is what
+     reads as holographic "diffraction" vs a simple metallic shine. */
+  .holo-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg,
+        var(--sunpillar-4) calc(var(--space) * 1),
+        var(--sunpillar-5) calc(var(--space) * 2),
+        var(--sunpillar-6) calc(var(--space) * 3),
+        var(--sunpillar-1) calc(var(--space) * 4),
+        var(--sunpillar-2) calc(var(--space) * 5),
+        var(--sunpillar-3) calc(var(--space) * 6),
+        var(--sunpillar-4) calc(var(--space) * 7)
+      ),
+      repeating-linear-gradient(var(--angle),
+        #0e152e 0%,
+        hsl(180, 10%, 60%) 3.8%,
+        hsl(180, 29%, 66%) 4.5%,
+        hsl(180, 10%, 60%) 5.2%,
+        #0e152e 10%,
+        #0e152e 12%
+      ),
+      radial-gradient(farthest-corner circle
+        at var(--pointer-x, 50%) var(--pointer-y, 50%),
+        hsla(0, 0%, 0%, 0.10) 12%,
+        hsla(0, 0%, 0%, 0.15) 20%,
+        hsla(0, 0%, 0%, 0.25) 120%
+      );
+    background-position:
+      0% var(--background-y, 50%),
+      calc((var(--background-x, 50%) + (var(--background-y, 50%) * 0.2)) * -1) calc(var(--background-y, 50%) * -1),
+      var(--background-x, 50%) var(--background-y, 50%);
+    background-size:
+      200% 400%,
+      195% 100%,
+      200% 100%;
+    /* The exclusion-blended doubled layer: keep contrast/saturate
+       low so it stays a hint rather than a second rainbow stacked on
+       the first. */
+    filter: brightness(calc((var(--pointer-from-center, 0) * 0.3) + 0.7)) contrast(1.1) saturate(0.5);
+    mix-blend-mode: exclusion;
+  }
+
+  /* The diffuse glare envelope — a wide soft radial that brightens the
+     whole area around the pointer. Opacity ramps with distance from
+     center so the glare is strongest when the pointer is near the
+     edges (mimicking a light source raking across the surface). */
+  .holo-glare {
+    position: absolute;
+    inset: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 5;
+    background-image: radial-gradient(
+      farthest-corner circle
+      at var(--pointer-x, 50%) var(--pointer-y, 50%),
+      hsla(0, 0%, 100%, 0.35) 10%,
+      hsla(0, 0%, 100%, 0.18) 25%,
+      hsla(0, 0%, 0%, 0.4) 90%
+    );
+    mix-blend-mode: overlay;
+    opacity: calc(var(--card-opacity, 0) * 0.25);
+    transition: opacity 0.4s ease-out;
+  }
+
+  /* The shine layers cover the badge content. badge-inner sits BELOW
+     them at z-index 1 so the rainbow plays across the wordmark, name,
+     and bronze rule (subtly). */
+  .badge-inner { z-index: 1; }
+
+  /* The Bronze inset frame must sit ABOVE the shine so the frame still
+     reads as the structural element. */
+  .badge::before { z-index: 6; }
+
+  /* The QR must stay UNTINTED for kiosk scanning — lift it above the
+     shine layers (4-5) and above the bronze frame (6). The shine still
+     plays across the rest of the card but the QR rectangle is clean. */
+  .qr-wrap {
+    position: relative;
+    z-index: 7;
+  }
+
+  /* Permission-request affordance for iOS 13+ DeviceOrientation. */
+  .holo-permit {
+    display: none;
+    align-self: center;
+    background: transparent;
+    border: 1px solid #C3AA7C;
+    color: #C3AA7C;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-family: 'Montserrat', system-ui, sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  body.needs-motion-permit .holo-permit { display: inline-block; }
+
+  /* PWA standalone mode — hide install instructions AND the permit
+     button once granted. The CSS media query for display-mode:standalone
+     is meant to handle this, but on some iOS versions / PWA install
+     paths it doesn't match. The .pwa-standalone class set by JS on the
+     body (checking both matchMedia and navigator.standalone) is the
+     reliable signal. */
+  body.pwa-standalone .install {
+    display: none !important;
+  }
+
+  .holo-shine,
+  .holo-glare {
+    /* QR cutout coordinates as % of the shine layer (which spans
+       inset: 14px from the badge edges). These match Joseph's single-
+       line name layout; if the name wraps to two lines the QR will
+       shift down ~36px and these will need to come down by ~6% on Y. */
+    --qr-x-fade-start: 7%;
+    --qr-x-start: 10%;
+    --qr-x-end: 90%;
+    --qr-x-fade-end: 93%;
+    --qr-y-fade-start: 36%;
+    --qr-y-start: 39%;
+    --qr-y-end: 87%;
+    --qr-y-fade-end: 90%;
+
+    -webkit-mask-image:
+      linear-gradient(to right,
+        #000 var(--qr-x-fade-start),
+        transparent var(--qr-x-start),
+        transparent var(--qr-x-end),
+        #000 var(--qr-x-fade-end)
+      ),
+      linear-gradient(to bottom,
+        #000 var(--qr-y-fade-start),
+        transparent var(--qr-y-start),
+        transparent var(--qr-y-end),
+        #000 var(--qr-y-fade-end)
+      );
+    -webkit-mask-composite: source-over;
+    mask-image:
+      linear-gradient(to right,
+        #000 var(--qr-x-fade-start),
+        transparent var(--qr-x-start),
+        transparent var(--qr-x-end),
+        #000 var(--qr-x-fade-end)
+      ),
+      linear-gradient(to bottom,
+        #000 var(--qr-y-fade-start),
+        transparent var(--qr-y-start),
+        transparent var(--qr-y-end),
+        #000 var(--qr-y-fade-end)
+      );
+    mask-composite: add;
+  }
+
+  /* Gilded foil gradient — anchored 135deg so the highlight runs
+     top-left → bottom-right. The four-stop gradient cycles light gold
+     → champagne → bronze → deep bronze, giving each glyph a small
+     metallic shimmer even at rest. */
+  .gilded {
+    background: linear-gradient(135deg,
+      #D4B27A 0%, #F5E0AC 35%, #C3AA7C 65%, #A8895E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    /* A subtle dark drop-shadow keeps the gilded text legible against
+       the charcoal even where the gradient is at its lightest. */
+    filter: drop-shadow(0 1px 0 rgba(0,0,0,0.45));
+  }
+  .org.gilded, .name.gilded { color: transparent; }
+  .name.gilded {
+    background-size: 200% 200%;
+    background-position: 50% 50%;
+  }
+
+  /* Guilloché crosshatch — two near-invisible diagonal repeating lines
+     layered onto the charcoal. Per-stripe opacity ~4% so the texture is
+     perceptible but never dominant. The pattern sits BELOW the holo
+     shine, which can paint over it via color-dodge when active. */
+  .badge {
+    background:
+      repeating-linear-gradient(45deg,
+        transparent 0 14px, rgba(195,170,124,0.04) 14px 15px),
+      repeating-linear-gradient(-45deg,
+        transparent 0 14px, rgba(195,170,124,0.04) 14px 15px),
+      #2C2A2B;
+  }
+
+  /* Beveled inset frame — the existing 2px Bronze rim is replaced with
+     a top-left highlight + bottom-right shadow split. Border-color
+     takes 4 values: top right bottom left. Pale champagne top + left
+     simulates raked light from upper-left; deep bronze bottom + right
+     simulates the shadow side. The frame is z-index 6 (above shine),
+     so the bevel stays visible even during interaction. */
+  .badge::before {
+    border-color: #F5E0AC #6A5538 #6A5538 #F5E0AC;
+    border-width: 2px;
+  }
+
+  /* Gilded QR frame — the existing flat Bronze border becomes a gradient
+     via border-image. Note: border-image cancels border-radius, so the
+     QR corners go from 12px-rounded to square. That actually reinforces
+     the "framed portrait" feel rather than weakening it. */
+  .qr-wrap {
+    border: 3px solid transparent;
+    border-image: linear-gradient(135deg,
+      #F5E0AC 0%, #C3AA7C 50%, #6A5538 100%) 1;
+  }
+
+  /* Gilded pill — text becomes transparent for background-clip: text
+     to reveal the gilt gradient. Border stays the standard Bronze. */
+  .vip-pill.gilded {
+    color: transparent;
+    border-color: #C3AA7C;
+  }
+
+
+  /* Gmail-in-app-browser banner — shown only when UA sniff matches. */
+  .open-in-browser {
+    display: none;
+    background: #113355;
+    color: #F3F0EB;
+    border-radius: 12px;
+    padding: 14px 18px;
+    font-family: 'Open Sans', system-ui, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .open-in-browser b { color: #C3AA7C; }
+  body.in-app-browser .open-in-browser { display: block; }
+  @media (display-mode: standalone), (display-mode: fullscreen) {
+    .open-in-browser { display: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="stack">
+    <div class="open-in-browser">
+      Looks like you tapped this link from inside the Gmail app. To save your
+      card to your home screen, tap the <b>&middot;&middot;&middot;</b> menu and
+      choose <b>Open in Safari</b> (iPhone) or <b>Open in Chrome</b> (Android)
+      first.
+    </div>
+    <article class="badge">
+      <div class="badge-inner">
+        <div class="badge-head">
+          <div class="wordmark">
+            <img class="stripe-emblem" src="$emblem_data_uri" alt="MVBC emblem">
+            <div class="stripe-text">
+              <div class="org gilded">Mount Vernon Baptist Church</div>
+              <div class="role">Library</div>
+              
+            </div>
+          </div>
+        </div>
+        <div class="vip-rule"></div>
+        
+        <div class="name gilded">$full_name</div>
+        
+        <div class="id">$barcode</div>
+        <div class="qr-wrap"><img src="$qr_data_uri" alt="QR code for library card $barcode"></div>
+        <div class="footer-row">
+          <span></span>
+          <div class="scan-hint">Scan at kiosk</div>
+          <div class="vip-pill gilded"><span class="star gilded">&#9733;</span><span class="gilded">VIP PATRON</span><span class="star gilded">&#9733;</span></div>
+        </div>
+      </div>
+      <div class="holo-shine" aria-hidden="true"></div><div class="holo-glare" aria-hidden="true"></div>
+    </article>
+    <button class="holo-permit" type="button">Enable shine effect</button>
+
+    <section class="install" aria-label="Save to home screen">
+      <h2>Save to your home screen</h2>
+      <details>
+        <summary>iPhone &amp; iPad</summary>
+        <ol>
+          <li>Tap the <strong>Share</strong> button at the bottom.</li>
+          <li>Scroll the share sheet down and tap <strong>Add to Home Screen</strong>.</li>
+          <li>Confirm the name and tap <strong>Add</strong>.</li>
+        </ol>
+        <div class="tip">Tip: your VIP card icon will appear on your home screen — tap it to open full-screen, even with no signal.</div>
+      </details>
+      <details>
+        <summary>Android</summary>
+        <ol>
+          <li>Tap the <strong>&#x22EE;</strong> menu (top-right).</li>
+          <li>Tap <strong>Add to Home screen</strong> (or <strong>Install app</strong>).</li>
+          <li>Confirm the name and tap <strong>Add</strong> or <strong>Install</strong>.</li>
+        </ol>
+      </details>
+    </section>
+  </div>
+
+<script>
+// Shiny Vault driver — adapted from Simey's pokemon-cards-css (GPL-3.0).
+(function () {
+  var badge = document.querySelector('.badge');
+  if (!badge) return;
+
+  var STORAGE_KEY = 'mvbcShineEnabled';
+  var fadeTimer = null;
+  var orientFadeTimer = null;
+
+  // PWA standalone detection. The CSS media query for display-mode:
+  // standalone is meant to match iOS PWAs launched from the home screen,
+  // but on some iOS versions/install paths it silently fails. We check
+  // matchMedia AND iOS's legacy navigator.standalone, then set a body
+  // class for CSS rules to key off.
+  function isStandalone() {
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches) return true;
+      if (window.matchMedia('(display-mode: fullscreen)').matches) return true;
+    } catch (_) {}
+    return window.navigator.standalone === true;
+  }
+  if (isStandalone()) document.body.classList.add('pwa-standalone');
+
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+  function applyShine(xPct, yPct, opacity) {
+    var fromLeft = xPct / 100;
+    var fromTop = yPct / 100;
+    var fromCenter = clamp(
+      Math.sqrt(
+        (xPct - 50) * (xPct - 50) +
+        (yPct - 50) * (yPct - 50)
+      ) / 50,
+      0, 1
+    );
+    var rotateX = ((yPct - 50) / 50) * -10;
+    var rotateY = ((xPct - 50) / 50) * 10;
+    badge.style.setProperty('--pointer-x', xPct.toFixed(1) + '%');
+    badge.style.setProperty('--pointer-y', yPct.toFixed(1) + '%');
+    badge.style.setProperty('--background-x', (50 + (xPct - 50) * 0.4).toFixed(1) + '%');
+    badge.style.setProperty('--background-y', (50 + (yPct - 50) * 0.4).toFixed(1) + '%');
+    badge.style.setProperty('--pointer-from-center', fromCenter.toFixed(3));
+    badge.style.setProperty('--pointer-from-top', fromTop.toFixed(3));
+    badge.style.setProperty('--pointer-from-left', fromLeft.toFixed(3));
+    badge.style.setProperty('--card-opacity', opacity.toFixed(2));
+    badge.style.setProperty('--rotate-x', rotateY.toFixed(2) + 'deg');
+    badge.style.setProperty('--rotate-y', rotateX.toFixed(2) + 'deg');
+  }
+
+  function fadeOut() {
+    if (fadeTimer) clearTimeout(fadeTimer);
+    fadeTimer = setTimeout(function () { applyShine(50, 50, 0); }, 80);
+  }
+
+  document.addEventListener('mousemove', function (e) {
+    if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
+    var rect = badge.getBoundingClientRect();
+    var x = clamp((e.clientX - rect.left) / rect.width, 0, 1) * 100;
+    var y = clamp((e.clientY - rect.top) / rect.height, 0, 1) * 100;
+    applyShine(x, y, 1);
+  });
+  document.addEventListener('mouseleave', fadeOut);
+
+  function onOrient(e) {
+    var gamma = e.gamma || 0;
+    var beta = e.beta || 0;
+    var x = clamp((gamma + 25) / 50, 0, 1) * 100;
+    var y = clamp((beta - 20) / 50, 0, 1) * 100;
+    applyShine(x, y, 1);
+    // If orientation events stop firing (phone held still or sensor
+    // momentarily silent) the shine would freeze at the last reading
+    // and look "stuck". This timer fades it back to neutral after 1s
+    // of no events; the next tilt event clears the timer and restores.
+    if (orientFadeTimer) clearTimeout(orientFadeTimer);
+    orientFadeTimer = setTimeout(function () { applyShine(50, 50, 0); }, 1000);
+  }
+
+  // CRITICAL FIX (from previous version): attach the deviceorientation
+  // listener UNCONDITIONALLY at script load, not inside a Promise.then()
+  // after permission is granted. On iOS, addEventListener calls inside
+  // an async callback after the gesture has ended sometimes fail to
+  // register reliably. Events simply don't fire until permission is
+  // granted, so attaching early is harmless.
+  if (typeof window.DeviceOrientationEvent !== 'undefined') {
+    window.addEventListener('deviceorientation', onOrient);
+  }
+
+  function hasGrantedBefore() {
+    try { return localStorage.getItem(STORAGE_KEY) === '1'; }
+    catch (_) { return false; }
+  }
+  function rememberGranted() {
+    try { localStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
+  }
+
+  // iOS 13+ permission flow. requestPermission() must come from a user
+  // gesture. The listener is already attached above — this call just
+  // unlocks the events from iOS's side.
+  var needsPermit = (typeof DeviceOrientationEvent !== 'undefined') &&
+                    typeof DeviceOrientationEvent.requestPermission === 'function';
+  if (needsPermit) {
+    if (hasGrantedBefore()) {
+      // Returning visitor — auto-request on first tap, no button shown.
+      var requested = false;
+      var autoRequest = function () {
+        if (requested) return;
+        requested = true;
+        DeviceOrientationEvent.requestPermission().then(function (state) {
+          if (state !== 'granted') localStorage.removeItem(STORAGE_KEY);
+        }).catch(function () {});
+      };
+      document.addEventListener('click', autoRequest, { once: true });
+    } else {
+      // First-time visitor — show the "Enable shine effect" button.
+      document.body.classList.add('needs-motion-permit');
+      var btn = document.querySelector('.holo-permit');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          DeviceOrientationEvent.requestPermission().then(function (state) {
+            if (state === 'granted') {
+              rememberGranted();
+              document.body.classList.remove('needs-motion-permit');
+            }
+          }).catch(function () {});
+        });
+      }
+    }
+  }
+
+  applyShine(50, 50, 0);
+})();
+
+// Register the shared service worker so the page works offline at kiosk.
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('../sw.js').catch(function () { /* silent */ });
+  });
+}
+
+// Detect Gmail's in-app browser (iOS + Android) and reveal the "open in
+// real browser" banner. The Gmail iOS app's UA contains "GSA"; the
+// Android app routes through a custom in-app browser whose UA includes
+// "GoogleApp".
+(function () {
+  var ua = navigator.userAgent || '';
+  var isGmailInApp = /GSA\//.test(ua) || /GoogleApp\//.test(ua);
+  if (isGmailInApp) document.body.classList.add('in-app-browser');
+})();
+</script>
+
+</body>
+</html>

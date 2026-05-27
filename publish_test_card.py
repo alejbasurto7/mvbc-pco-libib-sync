@@ -51,10 +51,9 @@ from lib.pco_client import PCOClient
 from lib.sender import GmailSMTPSender, render_welcome_email
 from lib.types import Person
 from lib.web_card import (
-    build_card_html,
-    build_card_manifest,
     card_url,
     new_card_token,
+    select_card_builders,
 )
 
 
@@ -159,11 +158,12 @@ def cmd_publish(args: argparse.Namespace) -> int:
     token = args.token or new_card_token()
     base_url = args.base_url or os.environ.get("CARD_BASE_URL") or _derive_base_url()
 
-    html = build_card_html(
+    html_fn, manifest_fn = select_card_builders(barcode=patron.barcode)
+    html = html_fn(
         first_name=person.first_name, last_name=person.last_name,
         barcode=patron.barcode, token=token,
     )
-    manifest = build_card_manifest(
+    manifest = manifest_fn(
         first_name=person.first_name, last_name=person.last_name, token=token,
     )
     url = card_url(base_url=base_url, token=token)

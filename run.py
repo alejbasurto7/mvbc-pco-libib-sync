@@ -42,18 +42,19 @@ def _make_web_card_publisher(cfg):
     if not cfg.card_base_url or not cfg.web_cards_output_dir:
         return None
 
-    from lib.web_card import build_card_html, build_card_manifest, card_url
+    from lib.web_card import card_url, select_card_builders
 
     output_dir = Path(cfg.web_cards_output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     base_url = cfg.card_base_url
 
     def publish(*, first_name, last_name, barcode, token):
-        html = build_card_html(
+        html_fn, manifest_fn = select_card_builders(barcode=barcode)
+        html = html_fn(
             first_name=first_name, last_name=last_name,
             barcode=barcode, token=token,
         )
-        manifest = build_card_manifest(
+        manifest = manifest_fn(
             first_name=first_name, last_name=last_name, token=token,
         )
         (output_dir / f"{token}.html").write_text(html, encoding="utf-8")
