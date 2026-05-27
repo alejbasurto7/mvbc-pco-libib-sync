@@ -165,27 +165,28 @@
 
   /* --- Shiny Vault holographic foil ---
      Adapted from Simey's pokemon-cards-css (GPL-3.0). The VIP card uses
-     this same system on a charcoal surface with color-dodge blending;
-     here we drop it onto a CREAM surface with overlay blending, which
-     reads as iridescent foil over the existing brand color rather than
-     a full rainbow trading card.
+     this system on a charcoal surface with color-dodge blending; here
+     it drops onto a CREAM surface with a generic pastel sunpillar
+     palette and the `color` blend mode, which transfers ONLY the
+     rainbow's hue/saturation onto the cream luminance — the cream
+     surface stays cream-bright but takes on iridescent color washes.
 
-     Sunpillar palette — six high-saturation hues spaced ~60° in HSL,
-     scoped to the badge so they don't leak globally. */
+     Tuned in mockups/holo-playground.html — these specific values
+     (palette, blend, opacity caps, band size) are the chosen look. */
   .badge {
-    --sunpillar-1: hsl(2, 100%, 73%);
-    --sunpillar-2: hsl(53, 100%, 69%);
-    --sunpillar-3: hsl(93, 100%, 69%);
-    --sunpillar-4: hsl(176, 100%, 76%);
-    --sunpillar-5: hsl(228, 100%, 74%);
-    --sunpillar-6: hsl(283, 100%, 73%);
+    --sunpillar-1: #ff7a75;
+    --sunpillar-2: #ffec61;
+    --sunpillar-3: #a8ff61;
+    --sunpillar-4: #85fff7;
+    --sunpillar-5: #7a95ff;
+    --sunpillar-6: #d875ff;
   }
 
   /* Main shine layer — covers the badge interior. Opacity driven by
-     --card-opacity (JS sets it to 1.0 on full interaction; we cap visible
-     intensity at 45% so the brand stays dominant on the lighter surface).
-     overlay blend brightens highlights and darkens shadows of the cream
-     base, producing iridescent foil instead of blown-out rainbow. */
+     --card-opacity (JS sets it to 1.0 on full interaction). `color`
+     blend transfers hue + chroma of the rainbow onto the cream
+     surface's luminance; narrow --space (3%) makes the bands fine
+     enough to read as foil grain rather than wide rainbow stripes. */
   .holo-shine {
     position: absolute;
     inset: 0;
@@ -193,11 +194,11 @@
     overflow: hidden;
     pointer-events: none;
     z-index: 1;
-    opacity: calc(var(--card-opacity, 0) * 0.45);
-    filter: contrast(1.15) saturate(0.85);
-    mix-blend-mode: overlay;
+    opacity: calc(var(--card-opacity, 0) * 0.40);
+    filter: contrast(1.20) saturate(0.85);
+    mix-blend-mode: color;
     transition: opacity 0.4s ease-out;
-    --space: 5%;
+    --space: 3%;
     --angle: 133deg;
     background-image:
       repeating-linear-gradient(0deg,
@@ -234,8 +235,10 @@
       200% 100%;
   }
 
-  /* Hot-spot — a small white-fading-to-transparent radial at the pointer
-     punched through the rainbow via overlay. */
+  /* Hot-spot — a small white-fading-to-transparent radial at the
+     pointer. `saturation` blend pulls maximum chroma at the pointer
+     position, intensifying whichever sunpillar band sits underneath
+     so the touched area pops without flashing pure white. */
   .holo-shine::before {
     content: "";
     position: absolute;
@@ -246,8 +249,8 @@
       hsl(0, 0%, 100%) 0%,
       hsla(0, 0%, 0%, 0) 40%
     );
-    mix-blend-mode: overlay;
-    opacity: 0.6;
+    mix-blend-mode: saturation;
+    opacity: 0.60;
     z-index: 1;
   }
 
@@ -290,14 +293,15 @@
       200% 400%,
       195% 100%,
       200% 100%;
-    filter: brightness(calc((var(--pointer-from-center, 0) * 0.3) + 0.7)) contrast(1.1) saturate(0.6);
+    filter: brightness(calc((var(--pointer-from-center, 0) * 0.30) + 0.70)) contrast(1.10) saturate(0.60);
     mix-blend-mode: exclusion;
   }
 
   /* Diffuse glare envelope — a wide soft radial brightening the area
      around the pointer. Opacity ramps with --card-opacity. Sits above
      the rainbow shine but below the QR (z-index 4) so it brightens text
-     but never tints the QR. */
+     but never tints the QR. Pure white-to-black stops keep the glare
+     neutral, letting the `color`-blended shine underneath own the hue. */
   .holo-glare {
     position: absolute;
     inset: 0;
@@ -308,9 +312,9 @@
     background-image: radial-gradient(
       farthest-corner circle
       at var(--pointer-x, 50%) var(--pointer-y, 50%),
-      hsla(0, 0%, 100%, 0.30) 10%,
-      hsla(0, 0%, 100%, 0.12) 30%,
-      hsla(0, 0%, 0%, 0.25) 90%
+      rgba(255,255,255,0.30) 10%,
+      rgba(255,255,255,0.10) 30%,
+      rgba(0,0,0,0.25) 90%
     );
     mix-blend-mode: overlay;
     opacity: calc(var(--card-opacity, 0) * 0.35);
