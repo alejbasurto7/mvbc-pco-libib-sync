@@ -479,6 +479,16 @@
   }
   body.needs-motion-permit .holo-permit { display: inline-block; }
 
+  /* PWA standalone mode — hide install instructions AND the permit
+     button once granted. The CSS media query for display-mode:standalone
+     is meant to handle this, but on some iOS versions / PWA install
+     paths it doesn't match. The .pwa-standalone class set by JS on the
+     body (checking both matchMedia and navigator.standalone) is the
+     reliable signal. */
+  body.pwa-standalone .install {
+    display: none !important;
+  }
+
   .holo-shine,
   .holo-glare {
     /* QR cutout coordinates as % of the shine layer (which spans
@@ -580,25 +590,28 @@
   </div>
 
 <script>
-// Drives the Shiny Vault shine layers via CSS custom properties.
-// Adapted from Simey's pokemon-cards-css (GPL-3.0).
-//
-// The shine reads these vars set on .badge:
-//   --pointer-x, --pointer-y     : cursor position 0..100% across the card
-//   --background-x, --background-y: same range but used to drive parallax
-//                                   on the rainbow stripe layers
-//   --pointer-from-center        : 0..1 distance from card center (drives
-//                                   the after-layer's brightness ramp)
-//   --pointer-from-top, --pointer-from-left: 0..1 normalized
-//   --card-opacity               : overall shine opacity (0 at rest, 1
-//                                   when interacting)
-//   --rotate-x, --rotate-y       : 3D tilt angles (±10° max)
+// Shiny Vault driver — adapted from Simey's pokemon-cards-css (GPL-3.0).
 (function () {
   var badge = document.querySelector('.badge');
   if (!badge) return;
 
   var STORAGE_KEY = 'mvbcShineEnabled';
   var fadeTimer = null;
+  var orientFadeTimer = null;
+
+  // PWA standalone detection. The CSS media query for display-mode:
+  // standalone is meant to match iOS PWAs launched from the home screen,
+  // but on some iOS versions/install paths it silently fails. We check
+  // matchMedia AND iOS's legacy navigator.standalone, then set a body
+  // class for CSS rules to key off.
+  function isStandalone() {
+    try {
+      if (window.matchMedia('(display-mode: standalone)').matches) return true;
+      if (window.matchMedia('(display-mode: fullscreen)').matches) return true;
+    } catch (_) {}
+    return window.navigator.standalone === true;
+  }
+  if (isStandalone()) document.body.classList.add('pwa-standalone');
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
@@ -646,48 +659,48 @@
     var x = clamp((gamma + 25) / 50, 0, 1) * 100;
     var y = clamp((beta - 20) / 50, 0, 1) * 100;
     applyShine(x, y, 1);
+    // If orientation events stop firing (phone held still or sensor
+    // momentarily silent) the shine would freeze at the last reading
+    // and look "stuck". This timer fades it back to neutral after 1s
+    // of no events; the next tilt event clears the timer and restores.
+    if (orientFadeTimer) clearTimeout(orientFadeTimer);
+    orientFadeTimer = setTimeout(function () { applyShine(50, 50, 0); }, 1000);
   }
 
-  // iOS Safari resets the DeviceOrientation permission on each page load
-  // (it doesn't persist across reloads or PWA launches the way camera/mic
-  // permissions do). The browser will not let us silently re-grant; the
-  // requestPermission() call MUST come from a user gesture every time.
-  //
-  // What we CAN persist via localStorage is the knowledge that this user
-  // has previously granted. With that flag set, we skip the explicit
-  // "Enable shine effect" button and instead attach a one-shot tap/click
-  // handler on the document — the first time they tap the card, we call
-  // requestPermission() inside the gesture. iOS typically shows a much
-  // faster prompt the second time (sometimes silent) since it remembers
-  // the prior decision at the OS level.
+  // CRITICAL FIX (from previous version): attach the deviceorientation
+  // listener UNCONDITIONALLY at script load, not inside a Promise.then()
+  // after permission is granted. On iOS, addEventListener calls inside
+  // an async callback after the gesture has ended sometimes fail to
+  // register reliably. Events simply don't fire until permission is
+  // granted, so attaching early is harmless.
+  if (typeof window.DeviceOrientationEvent !== 'undefined') {
+    window.addEventListener('deviceorientation', onOrient);
+  }
+
   function hasGrantedBefore() {
     try { return localStorage.getItem(STORAGE_KEY) === '1'; }
-    catch (_) { return false; }  // private mode / disabled storage
+    catch (_) { return false; }
   }
   function rememberGranted() {
     try { localStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
   }
 
-  function attachOrientation() {
-    window.addEventListener('deviceorientation', onOrient);
-  }
-
+  // iOS 13+ permission flow. requestPermission() must come from a user
+  // gesture. The listener is already attached above — this call just
+  // unlocks the events from iOS's side.
   var needsPermit = (typeof DeviceOrientationEvent !== 'undefined') &&
                     typeof DeviceOrientationEvent.requestPermission === 'function';
   if (needsPermit) {
     if (hasGrantedBefore()) {
-      // Returning visitor — auto-request on the next user gesture, no
-      // button shown. The handler fires once then detaches itself.
+      // Returning visitor — auto-request on first tap, no button shown.
       var requested = false;
       var autoRequest = function () {
         if (requested) return;
         requested = true;
         DeviceOrientationEvent.requestPermission().then(function (state) {
-          if (state === 'granted') attachOrientation();
-          else { localStorage.removeItem(STORAGE_KEY); /* user revoked — re-ask next time */ }
+          if (state !== 'granted') localStorage.removeItem(STORAGE_KEY);
         }).catch(function () {});
       };
-      document.addEventListener('touchstart', autoRequest, { once: true, passive: true });
       document.addEventListener('click', autoRequest, { once: true });
     } else {
       // First-time visitor — show the "Enable shine effect" button.
@@ -698,16 +711,12 @@
           DeviceOrientationEvent.requestPermission().then(function (state) {
             if (state === 'granted') {
               rememberGranted();
-              attachOrientation();
               document.body.classList.remove('needs-motion-permit');
             }
           }).catch(function () {});
         });
       }
     }
-  } else if (typeof window.DeviceOrientationEvent !== 'undefined') {
-    // Android / non-iOS — no permission needed.
-    attachOrientation();
   }
 
   applyShine(50, 50, 0);
