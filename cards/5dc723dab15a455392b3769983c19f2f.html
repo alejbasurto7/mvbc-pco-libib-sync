@@ -183,10 +183,9 @@
   }
 
   /* Main shine layer — covers the badge interior. Opacity driven by
-     --card-opacity (JS sets it to 1.0 on full interaction). `color`
-     blend transfers hue + chroma of the rainbow onto the cream
-     surface's luminance; narrow --space (3%) makes the bands fine
-     enough to read as foil grain rather than wide rainbow stripes. */
+     --card-opacity (JS sets it to 1.0 on full interaction). `overlay`
+     blend brightens highlights and darkens shadows of the cream
+     surface, producing iridescent foil bands at the chosen --space. */
   .holo-shine {
     position: absolute;
     inset: 0;
@@ -194,11 +193,11 @@
     overflow: hidden;
     pointer-events: none;
     z-index: 1;
-    opacity: calc(var(--card-opacity, 0) * 0.40);
-    filter: contrast(1.20) saturate(0.85);
-    mix-blend-mode: color;
+    opacity: calc(var(--card-opacity, 0) * 0.45);
+    filter: contrast(1.15) saturate(0.85);
+    mix-blend-mode: overlay;
     transition: opacity 0.4s ease-out;
-    --space: 3%;
+    --space: 5%;
     --angle: 133deg;
     background-image:
       repeating-linear-gradient(0deg,
@@ -236,9 +235,8 @@
   }
 
   /* Hot-spot — a small white-fading-to-transparent radial at the
-     pointer. `saturation` blend pulls maximum chroma at the pointer
-     position, intensifying whichever sunpillar band sits underneath
-     so the touched area pops without flashing pure white. */
+     pointer, punched through the rainbow via overlay so the touched
+     area brightens without losing the underlying band color. */
   .holo-shine::before {
     content: "";
     position: absolute;
@@ -249,7 +247,7 @@
       hsl(0, 0%, 100%) 0%,
       hsla(0, 0%, 0%, 0) 40%
     );
-    mix-blend-mode: saturation;
+    mix-blend-mode: overlay;
     opacity: 0.60;
     z-index: 1;
   }
@@ -297,11 +295,11 @@
     mix-blend-mode: exclusion;
   }
 
-  /* Diffuse glare envelope — a wide soft radial brightening the area
-     around the pointer. Opacity ramps with --card-opacity. Sits above
-     the rainbow shine but below the QR (z-index 4) so it brightens text
-     but never tints the QR. Pure white-to-black stops keep the glare
-     neutral, letting the `color`-blended shine underneath own the hue. */
+  /* Diffuse glare envelope — a wide soft radial centered on the
+     pointer. Opacity ramps with --card-opacity. Sits above the
+     rainbow shine but below the QR (z-index 4) so it tints text and
+     surface but never the QR. Gold → copper → deep-purple stops
+     stack a warm-to-cool gradient on top of the foil. */
   .holo-glare {
     position: absolute;
     inset: 0;
@@ -312,12 +310,12 @@
     background-image: radial-gradient(
       farthest-corner circle
       at var(--pointer-x, 50%) var(--pointer-y, 50%),
-      rgba(255,255,255,0.30) 10%,
-      rgba(255,255,255,0.10) 30%,
-      rgba(0,0,0,0.25) 90%
+      rgba(203,179,21,0.5) 10%,
+      rgba(184,118,25,0.75) 30%,
+      rgba(16,3,79,0.7) 90%
     );
     mix-blend-mode: overlay;
-    opacity: calc(var(--card-opacity, 0) * 0.35);
+    opacity: calc(var(--card-opacity, 0) * 1.10);
     transition: opacity 0.4s ease-out;
   }
 
