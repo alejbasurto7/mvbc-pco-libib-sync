@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Chuqin Anderson",
+  "short_name": "MVBC Card",
+  "description": "Chuqin Anderson's MVBC Library card.",
+  "start_url": "d893188294294c82bf619873786f32e6.html",
+  "scope": "d893188294294c82bf619873786f32e6.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
