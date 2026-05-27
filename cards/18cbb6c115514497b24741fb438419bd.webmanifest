@@ -1,0 +1,25 @@
+{
+  "name": "MVBC VIP Card \u2014 Joseph Shanahan",
+  "short_name": "MVBC VIP",
+  "description": "Joseph Shanahan's MVBC Library VIP card.",
+  "start_url": "18cbb6c115514497b24741fb438419bd.html",
+  "scope": "18cbb6c115514497b24741fb438419bd.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ECE6DA",
+  "theme_color": "#2C2A2B",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
