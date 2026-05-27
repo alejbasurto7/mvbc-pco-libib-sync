@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Will Hulsey",
+  "short_name": "MVBC Card",
+  "description": "Will Hulsey's MVBC Library card.",
+  "start_url": "e2e5e229e3754312ba4d2f1406f85fc0.html",
+  "scope": "e2e5e229e3754312ba4d2f1406f85fc0.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
