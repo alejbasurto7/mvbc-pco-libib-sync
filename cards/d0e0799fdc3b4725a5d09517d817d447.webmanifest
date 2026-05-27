@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Jim Heiskell",
+  "short_name": "MVBC Card",
+  "description": "Jim Heiskell's MVBC Library card.",
+  "start_url": "d0e0799fdc3b4725a5d09517d817d447.html",
+  "scope": "d0e0799fdc3b4725a5d09517d817d447.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
