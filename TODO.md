@@ -20,16 +20,21 @@ One-shot local blast that delivers a digital library card + PNG attachment to ex
 Reuses `lib.web_card.{select_card_builders, card_url}`, `lib.card.{generate_card_png, generate_vip_card_png}`.
 
 - [x] `state/card_tokens.json` registry, keyed by **barcode**. [[lib/card_tokens.py]] (load / save / get_or_mint), 10 tests. Wired into `blast.py`, `publish_test_card.py`, and `run.py::_make_web_card_publisher` (so CREATE_PATRON also persists tokens after success). First blast run seeded 410 entries.
-- [ ] Publish step (separate from dry-run): for each recipient with status='pending' in `blast_state.json`, render via `select_card_builders(barcode=...)` and push `cards/<token>.{html,webmanifest}` to gh-pages.
-- [ ] PNG generator dispatch: add `select_png_generator(barcode)` symmetric to `select_card_builders` (returns `generate_vip_card_png` for VIP, `generate_card_png` otherwise). Wire into the send loop.
+- [x] Publish step: [[publish_blast_cards.py]] walks every recipient in `blast_state.json`, renders via `select_card_builders`, pushes `cards/<token>.{html,webmanifest}` to gh-pages. Dry-run by default; `--apply` to push; `--force` to overwrite existing; `--limit N` for staged rollouts. Idempotent (skips already-published tokens). 4 dry-run tests.
+- [x] PNG generator dispatch: `select_png_generator(barcode)` in [[lib/card.py]], symmetric to `select_card_builders`. 3 tests. Wired into the `--apply` send loop below.
 
 ### Real-send path
 
-- [ ] `blast.py --apply <blast_state.json>` — reads the JSON manifest (not the CSV), sends only to rows with `status` in {pending, failed}, marks each row in place (sent / failed / skipped + last_attempt_at + last_error).
-- [ ] Use existing `lib.sender.GmailSMTPSender`; pull `GMAIL_USER` / `GMAIL_APP_PASSWORD` from env via dotenv.
-- [ ] Pacing: 1–2 second delay between sends (Gmail-friendly, not spammy). Configurable.
-- [ ] Idempotency: never re-send to `status=sent` rows. User explicit constraint.
-- [ ] Baseline guard: require an explicit `--confirm <YYYYMMDD>` flag matching the manifest date so a stray `--apply` can't fire.
+- [x] `blast.py --apply <blast_state.json>` — reads the JSON manifest (not the CSV), sends only to rows with `status` in {pending, failed}, marks each row in place. Persists state JSON after every attempt (crash mid-loop preserves what's sent). 12 CLI tests covering happy path, baseline guard, idempotency, retry-on-failed, --limit, mode mutex.
+- [x] Uses existing `lib.sender.GmailSMTPSender`; reads `GMAIL_USER` / `GMAIL_APP_PASSWORD` (+ optional `EMAIL_FROM` / `EMAIL_REPLY_TO`) from env via dotenv.
+- [x] Pacing: `--pace SECONDS` flag (default 1.5s). Configurable per the user's earlier "Gmail-friendly, not spammy" constraint.
+- [x] Idempotency: only rows with status in {pending, failed} are picked up. `status=sent` rows are skipped — user explicit constraint upheld.
+- [x] Baseline guard: `--confirm <YYYYMMDD>` is required and must match the manifest directory's date suffix (`blast_<YYYYMMDD>/`). A stray `--apply` against yesterday's manifest is rejected with rc=2.
+
+### Pre-production gates (manual)
+
+- [x] Run `python publish_blast_cards.py state/blast_<DATE>/blast_state.json --apply --limit 5` and eyeball five real URLs on iPhone + Android before going full 410.
+- [x] Run `python blast.py --apply state/blast_<DATE>/blast_state.json --confirm <DATE> --limit 1` against your own row first and inspect the delivered email + attachment before opening the floodgates.
 
 ### Known environment issue
 

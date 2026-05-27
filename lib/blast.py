@@ -22,7 +22,7 @@ from lib.web_card import is_vip_patron
 
 PatronStatus = Literal["active", "inactive", "new", "frozen"]
 BlastSegment = Literal["regulars", "regulars_vip", "reminder"]
-SkipReason = Literal["frozen", "no_api_match", "no_email", "no_barcode"]
+SkipReason = Literal["frozen", "no_api_match", "no_email", "no_barcode", "non_active_pco"]
 
 
 @dataclass(frozen=True)
@@ -117,13 +117,19 @@ def assign_segment(*, csv_status: PatronStatus, barcode: str) -> Optional[BlastS
 def partition(
     csv_rows: Iterable[CsvRow],
     patrons_by_patron_id: dict[str, Patron],
+    *,
+    non_active_pco_patron_ids: frozenset[str] | set[str] = frozenset(),
 ) -> tuple[list[Recipient], list[Skipped]]:
     """Split CSV rows into sendable Recipients and Skipped entries.
 
     For each row we look up the patron in ``patrons_by_patron_id`` to
     get the real (immutable) barcode. Rows are skipped — in priority
     order — for: no API match, missing email, missing barcode on the
-    API side, or csv_status='frozen'.
+    API side, csv_status='frozen', or PCO Member Status != Active.
+
+    Libib's ``frozen`` takes precedence over PCO non-Active for the skip
+    label, so the existing freeze workflow stays the audit source of
+    truth when both signals agree.
     """
     recipients: list[Recipient] = []
     skipped: list[Skipped] = []
@@ -140,6 +146,9 @@ def partition(
             continue
         if row.csv_status == "frozen":
             skipped.append(_skip(row, "frozen"))
+            continue
+        if row.patron_id in non_active_pco_patron_ids:
+            skipped.append(_skip(row, "non_active_pco"))
             continue
         segment = assign_segment(csv_status=row.csv_status, barcode=patron.barcode)
         assert segment is not None  # frozen was filtered above

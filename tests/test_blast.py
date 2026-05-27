@@ -196,3 +196,40 @@ def test_partition_priority_no_api_match_beats_other_reasons():
     csv_rows = [_csv_row("999", email="")]
     _, skipped = partition(csv_rows, {})
     assert skipped[0].reason == "no_api_match"
+
+
+def test_partition_non_active_pco_skipped():
+    # Active in Libib but flagged non-Active in PCO Member Status → skip.
+    csv_rows = [_csv_row("42", status="active")]
+    patrons = {"42": _patron("42", barcode=SOME_BARCODE)}
+    recipients, skipped = partition(
+        csv_rows, patrons, non_active_pco_patron_ids={"42"},
+    )
+    assert recipients == []
+    assert len(skipped) == 1
+    assert skipped[0].reason == "non_active_pco"
+
+
+def test_partition_non_active_pco_does_not_block_unrelated_patrons():
+    csv_rows = [_csv_row("1"), _csv_row("2")]
+    patrons = {
+        "1": _patron("1", barcode="2020000000001"),
+        "2": _patron("2", barcode="2020000000002"),
+    }
+    recipients, skipped = partition(
+        csv_rows, patrons, non_active_pco_patron_ids={"2"},
+    )
+    assert {r.patron_id for r in recipients} == {"1"}
+    assert [s.patron_id for s in skipped] == ["2"]
+    assert skipped[0].reason == "non_active_pco"
+
+
+def test_partition_libib_frozen_takes_precedence_over_non_active_pco():
+    # A patron flagged BOTH by Libib (frozen) and PCO (non-Active) is reported
+    # as frozen — Libib remains the audit source of truth for the freeze flow.
+    csv_rows = [_csv_row("7", status="frozen")]
+    patrons = {"7": _patron("7", barcode=SOME_BARCODE)}
+    _, skipped = partition(
+        csv_rows, patrons, non_active_pco_patron_ids={"7"},
+    )
+    assert skipped[0].reason == "frozen"

@@ -301,3 +301,20 @@ def generate_vip_card_png(
     buf = io.BytesIO()
     img.save(buf, format="PNG", optimize=True)
     return buf.getvalue()
+
+
+def select_png_generator(*, barcode: str):
+    """Return the PNG generator appropriate for this patron.
+
+    Symmetric to ``lib.web_card.select_card_builders``: keyed on Libib
+    barcode (the QR-encoded scannable value), VIP patrons get the dark
+    variant, everyone else gets the standard generator. Returned callables
+    share the same keyword-only signature, so call sites stay branch-free::
+
+        png_fn = select_png_generator(barcode=patron.barcode)
+        png = png_fn(first_name=..., last_name=..., email=..., barcode=...)
+    """
+    from lib.web_card import is_vip_patron  # local import keeps card.py free of web_card deps at module load
+    if is_vip_patron(barcode=barcode):
+        return generate_vip_card_png
+    return generate_card_png
