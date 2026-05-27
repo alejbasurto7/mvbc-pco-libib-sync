@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Zach Rodgers",
+  "short_name": "MVBC Card",
+  "description": "Zach Rodgers's MVBC Library card.",
+  "start_url": "b9115889eb484d16894d217c8eb08dfa.html",
+  "scope": "b9115889eb484d16894d217c8eb08dfa.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
