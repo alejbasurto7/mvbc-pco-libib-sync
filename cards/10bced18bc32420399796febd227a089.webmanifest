@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ian Witherspoon",
+  "short_name": "MVBC Card",
+  "description": "Ian Witherspoon's MVBC Library card.",
+  "start_url": "10bced18bc32420399796febd227a089.html",
+  "scope": "10bced18bc32420399796febd227a089.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
