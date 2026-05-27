@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Chad Ireland",
+  "short_name": "MVBC Card",
+  "description": "Chad Ireland's MVBC Library card.",
+  "start_url": "945b524c65d24a2dba2eb11cb2a9da2b.html",
+  "scope": "945b524c65d24a2dba2eb11cb2a9da2b.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
