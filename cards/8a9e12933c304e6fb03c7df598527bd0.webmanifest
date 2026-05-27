@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Matt Cox",
+  "short_name": "MVBC Card",
+  "description": "Matt Cox's MVBC Library card.",
+  "start_url": "8a9e12933c304e6fb03c7df598527bd0.html",
+  "scope": "8a9e12933c304e6fb03c7df598527bd0.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
