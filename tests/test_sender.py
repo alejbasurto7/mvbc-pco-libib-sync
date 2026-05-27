@@ -170,9 +170,9 @@ def test_render_regulars_email_uses_standard_template_for_non_vip():
     assert "Ana," in html
     assert "ana@example.com" in html
     assert "Ana," in text
-    # Standard regulars greets with "thanks for being part of the community",
+    # Standard regulars greets with "thanks for keeping the shelves moving",
     # not the VIP recognition line.
-    assert "thanks for being part of the community" in html
+    assert "thanks for keeping the shelves moving" in html
     assert "VIP-edition" not in html
     assert "VIP-edition" not in text
 
@@ -193,7 +193,7 @@ def test_render_regulars_email_uses_vip_template_for_joseph():
     # Header carries the VIP EDITION marker (case-insensitive substring).
     assert "VIP Edition" in html
     # Sanity: not delivering the standard regulars opener.
-    assert "thanks for being part of the community" not in html
+    assert "thanks for keeping the shelves moving" not in html
 
 
 def test_render_regulars_email_substitutes_all_placeholders_vip():
@@ -280,4 +280,4 @@ def test_render_regulars_email_empty_barcode_falls_back_to_standard():
         barcode="", templates_dir=Path("templates"),
     )
     assert "VIP-edition" not in html
-    assert "thanks for being part of the community" in html
+    assert "thanks for keeping the shelves moving" in html
