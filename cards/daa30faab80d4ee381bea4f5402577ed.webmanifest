@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ting Ting Xiao",
+  "short_name": "MVBC Card",
+  "description": "Ting Ting Xiao's MVBC Library card.",
+  "start_url": "daa30faab80d4ee381bea4f5402577ed.html",
+  "scope": "daa30faab80d4ee381bea4f5402577ed.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
