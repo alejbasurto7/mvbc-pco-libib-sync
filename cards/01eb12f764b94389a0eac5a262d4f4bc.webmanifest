@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Abigail Vedder",
+  "short_name": "MVBC Card",
+  "description": "Abigail Vedder's MVBC Library card.",
+  "start_url": "01eb12f764b94389a0eac5a262d4f4bc.html",
+  "scope": "01eb12f764b94389a0eac5a262d4f4bc.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
