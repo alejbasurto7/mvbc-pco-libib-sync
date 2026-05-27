@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Matt Flynn",
+  "short_name": "MVBC Card",
+  "description": "Matt Flynn's MVBC Library card.",
+  "start_url": "312cd807a1aa42a3a661e8717af56aa0.html",
+  "scope": "312cd807a1aa42a3a661e8717af56aa0.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
