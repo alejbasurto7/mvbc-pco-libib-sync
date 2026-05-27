@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ismael Alcantara",
+  "short_name": "MVBC Card",
+  "description": "Ismael Alcantara's MVBC Library card.",
+  "start_url": "a350eb02f3724bbe9f0438cfad7070f8.html",
+  "scope": "a350eb02f3724bbe9f0438cfad7070f8.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
