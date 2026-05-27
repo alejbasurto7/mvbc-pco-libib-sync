@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Nathan Schuh",
+  "short_name": "MVBC Card",
+  "description": "Nathan Schuh's MVBC Library card.",
+  "start_url": "53b1da23dc074e76a8a4dead8baf2292.html",
+  "scope": "53b1da23dc074e76a8a4dead8baf2292.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
