@@ -26,6 +26,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* Vertically center the card stack in the viewport. When the install
+       section is hidden (PWA standalone mode) the stack shrinks and the
+       centering pushes it to the middle; in Safari with instructions
+       visible, the stack fills the viewport so centering is a no-op. */
+    justify-content: center;
     padding: 24px 20px max(20px, env(safe-area-inset-bottom));
     min-height: 100vh;
     min-height: 100dvh;
@@ -36,7 +41,6 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin: auto 0;
   }
 
   /* --- VIP Badge (dark-mode credential) --- */
@@ -524,7 +528,7 @@
 </head>
 <body>
   <div class="stack">
-    <button class="holo-permit" type="button">Enable shine effect</button>
+    
     <article class="badge">
       <div class="badge-inner">
         <div class="badge-head">
@@ -551,6 +555,7 @@
       </div>
       <div class="holo-shine" aria-hidden="true"></div><div class="holo-glare" aria-hidden="true"></div>
     </article>
+    <button class="holo-permit" type="button">Enable shine effect</button>
 
     <section class="install" aria-label="Save to home screen">
       <h2>Save to your home screen</h2>
@@ -592,12 +597,12 @@
   var badge = document.querySelector('.badge');
   if (!badge) return;
 
+  var STORAGE_KEY = 'mvbcShineEnabled';
   var fadeTimer = null;
 
   function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
   function applyShine(xPct, yPct, opacity) {
-    // xPct, yPct are in 0..100. Compute the derived variables.
     var fromLeft = xPct / 100;
     var fromTop = yPct / 100;
     var fromCenter = clamp(
@@ -607,14 +612,10 @@
       ) / 50,
       0, 1
     );
-    // Tilt: 16° each axis at the edges; cursor at right edge tilts the
-    // card's right side toward the viewer (rotateY positive).
-    var rotateX = ((yPct - 50) / 50) * -10;   // top => tilt forward
-    var rotateY = ((xPct - 50) / 50) * 10;    // right => tilt right
+    var rotateX = ((yPct - 50) / 50) * -10;
+    var rotateY = ((xPct - 50) / 50) * 10;
     badge.style.setProperty('--pointer-x', xPct.toFixed(1) + '%');
     badge.style.setProperty('--pointer-y', yPct.toFixed(1) + '%');
-    // background-x/y are derived from pointer but with a slight offset
-    // so the rainbow stripes shift with the pointer (parallax).
     badge.style.setProperty('--background-x', (50 + (xPct - 50) * 0.4).toFixed(1) + '%');
     badge.style.setProperty('--background-y', (50 + (yPct - 50) * 0.4).toFixed(1) + '%');
     badge.style.setProperty('--pointer-from-center', fromCenter.toFixed(3));
@@ -626,16 +627,10 @@
   }
 
   function fadeOut() {
-    // Slow fade back to neutral when the pointer leaves.
     if (fadeTimer) clearTimeout(fadeTimer);
-    fadeTimer = setTimeout(function () {
-      applyShine(50, 50, 0);
-    }, 80);
+    fadeTimer = setTimeout(function () { applyShine(50, 50, 0); }, 80);
   }
 
-  // Desktop: pointer tracking on the document. We use the badge's rect
-  // so the shine tracks the card itself, even when the cursor is over
-  // the install help or background.
   document.addEventListener('mousemove', function (e) {
     if (fadeTimer) { clearTimeout(fadeTimer); fadeTimer = null; }
     var rect = badge.getBoundingClientRect();
@@ -645,8 +640,6 @@
   });
   document.addEventListener('mouseleave', fadeOut);
 
-  // Mobile: phone orientation. Map a ±25° gamma/beta band to the full
-  // 0..100% range so a small tilt produces a meaningful effect.
   function onOrient(e) {
     var gamma = e.gamma || 0;
     var beta = e.beta || 0;
@@ -655,28 +648,68 @@
     applyShine(x, y, 1);
   }
 
-  // iOS 13+ requires explicit permission for DeviceOrientation events.
-  // Surface a tap-to-enable button only on devices that need it.
-  var needsPermit = (typeof DeviceOrientationEvent !== 'undefined') &&
-                    typeof DeviceOrientationEvent.requestPermission === 'function';
-  if (needsPermit) {
-    document.body.classList.add('needs-motion-permit');
-    var btn = document.querySelector('.holo-permit');
-    if (btn) {
-      btn.addEventListener('click', function () {
-        DeviceOrientationEvent.requestPermission().then(function (state) {
-          if (state === 'granted') {
-            window.addEventListener('deviceorientation', onOrient);
-            document.body.classList.remove('needs-motion-permit');
-          }
-        }).catch(function () { /* ignore */ });
-      });
-    }
-  } else if (typeof window.DeviceOrientationEvent !== 'undefined') {
+  // iOS Safari resets the DeviceOrientation permission on each page load
+  // (it doesn't persist across reloads or PWA launches the way camera/mic
+  // permissions do). The browser will not let us silently re-grant; the
+  // requestPermission() call MUST come from a user gesture every time.
+  //
+  // What we CAN persist via localStorage is the knowledge that this user
+  // has previously granted. With that flag set, we skip the explicit
+  // "Enable shine effect" button and instead attach a one-shot tap/click
+  // handler on the document — the first time they tap the card, we call
+  // requestPermission() inside the gesture. iOS typically shows a much
+  // faster prompt the second time (sometimes silent) since it remembers
+  // the prior decision at the OS level.
+  function hasGrantedBefore() {
+    try { return localStorage.getItem(STORAGE_KEY) === '1'; }
+    catch (_) { return false; }  // private mode / disabled storage
+  }
+  function rememberGranted() {
+    try { localStorage.setItem(STORAGE_KEY, '1'); } catch (_) {}
+  }
+
+  function attachOrientation() {
     window.addEventListener('deviceorientation', onOrient);
   }
 
-  // Initial state: centered, no shine. Reveals only on interaction.
+  var needsPermit = (typeof DeviceOrientationEvent !== 'undefined') &&
+                    typeof DeviceOrientationEvent.requestPermission === 'function';
+  if (needsPermit) {
+    if (hasGrantedBefore()) {
+      // Returning visitor — auto-request on the next user gesture, no
+      // button shown. The handler fires once then detaches itself.
+      var requested = false;
+      var autoRequest = function () {
+        if (requested) return;
+        requested = true;
+        DeviceOrientationEvent.requestPermission().then(function (state) {
+          if (state === 'granted') attachOrientation();
+          else { localStorage.removeItem(STORAGE_KEY); /* user revoked — re-ask next time */ }
+        }).catch(function () {});
+      };
+      document.addEventListener('touchstart', autoRequest, { once: true, passive: true });
+      document.addEventListener('click', autoRequest, { once: true });
+    } else {
+      // First-time visitor — show the "Enable shine effect" button.
+      document.body.classList.add('needs-motion-permit');
+      var btn = document.querySelector('.holo-permit');
+      if (btn) {
+        btn.addEventListener('click', function () {
+          DeviceOrientationEvent.requestPermission().then(function (state) {
+            if (state === 'granted') {
+              rememberGranted();
+              attachOrientation();
+              document.body.classList.remove('needs-motion-permit');
+            }
+          }).catch(function () {});
+        });
+      }
+    }
+  } else if (typeof window.DeviceOrientationEvent !== 'undefined') {
+    // Android / non-iOS — no permission needed.
+    attachOrientation();
+  }
+
   applyShine(50, 50, 0);
 })();
 </script>
