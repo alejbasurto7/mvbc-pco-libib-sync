@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Andy Merl",
+  "short_name": "MVBC Card",
+  "description": "Andy Merl's MVBC Library card.",
+  "start_url": "e3af5a9cd28244eda0d91cac787b8d41.html",
+  "scope": "e3af5a9cd28244eda0d91cac787b8d41.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
