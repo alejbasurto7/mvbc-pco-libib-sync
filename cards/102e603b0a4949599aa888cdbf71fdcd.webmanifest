@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Katherine Allen",
+  "short_name": "MVBC Card",
+  "description": "Katherine Allen's MVBC Library card.",
+  "start_url": "102e603b0a4949599aa888cdbf71fdcd.html",
+  "scope": "102e603b0a4949599aa888cdbf71fdcd.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
