@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Ansley Cook",
+  "short_name": "MVBC Card",
+  "description": "Ansley Cook's MVBC Library card.",
+  "start_url": "e517dac17f03486fa3c3f38a1570b577.html",
+  "scope": "e517dac17f03486fa3c3f38a1570b577.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
