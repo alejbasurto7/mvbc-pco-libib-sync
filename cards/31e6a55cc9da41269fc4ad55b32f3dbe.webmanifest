@@ -1,0 +1,25 @@
+{
+  "name": "MVBC Card \u2014 Zachary Stepp",
+  "short_name": "MVBC Card",
+  "description": "Zachary Stepp's MVBC Library card.",
+  "start_url": "31e6a55cc9da41269fc4ad55b32f3dbe.html",
+  "scope": "31e6a55cc9da41269fc4ad55b32f3dbe.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#E7E2D6",
+  "theme_color": "#113355",
+  "icons": [
+    {
+      "src": "../icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "../icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
